@@ -567,7 +567,6 @@ test_that("sort_ard_hierarchical() warning messaging works", {
   )
 
   # invalid sort_level input
-
   expect_snapshot(
     sort_ard_hierarchical(ard_2, sort_level = "Placebo1"),
     error = TRUE
@@ -578,4 +577,38 @@ test_that("sort_ard_hierarchical() warning messaging works", {
     sort_ard_hierarchical(ard_2, sort_level = c("Placebo", "Xanomeline Low Dose")),
     error = TRUE
   )
+
+  # no by variable specified - this should error.
+
+  ard_no_by <- ard_stack_hierarchical(
+    data = ADAE_subset,
+    variables = c(SEX, RACE, AETERM),
+    denominator = cards::ADSL,
+    id = USUBJID,
+    statistic = everything() ~ "N"
+  )
+
+  expect_snapshot(
+    sort_ard_hierarchical(ard_no_by, sort_level = "F"),
+    error = TRUE
+  )
+
+
+  # if more than two variables in the by statement then sort_level has no useful meaning.
+  ard_by_more <- ard_stack_hierarchical(
+    data = ADAE_subset,
+    variables = c(AESOC, AEDECOD),
+    by = c(TRTA,SEX),
+    denominator = cards::ADSL,
+    id = USUBJID,
+    statistic = everything() ~ "N"
+  )
+
+
+  expect_snapshot(
+    sort_ard_hierarchical(ard_by_more, sort_level = "Placebo"),
+    error = TRUE
+  )
+
+
 })

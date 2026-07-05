@@ -91,19 +91,15 @@ sort_ard_hierarchical <- function(x, sort = everything() ~ "descending", sort_le
 
   ard_args <- attributes(x)$args
 
-  # check that the values for sort_level actually exists
-
-  if (!is.null(sort_level)) {
-    valid_choices <- unlist(unique(x$group1_level))
-    sort_level <- rlang::arg_match(sort_level, values = valid_choices)
-  }
 
 
   # for calculations by highest severity, innermost variable is extracted from `by`
   if (length(ard_args$by) > 1) {
     ard_args$variables <- c(ard_args$variables, dplyr::last(ard_args$by))
     ard_args$include <- c(ard_args$include, dplyr::last(ard_args$by))
-    ard_args$by <- ard_args$by[-length(ard_args$by)]
+    ard_args$original_by <- ard_args$by
+    ard_args$by  <- ard_args$by[-length(ard_args$by)]
+
   }
 
   # get and check sorting method(s)
@@ -125,6 +121,33 @@ sort_ard_hierarchical <- function(x, sort = everything() ~ "descending", sort_le
   )
 
   by <- ard_args$by
+
+
+  # if sort_level is specified then we can't have missing by argument.
+  if(!is.null(sort_level) & is_empty(ard_args$by)){
+    cli::cli_abort(
+        "If 'by' argument is missing then sort_level has no useful meaning, please specify 'by' argument if you want to use sort_level.",
+      call = get_cli_abort_call()
+    )
+  }
+
+
+  # if there are two or more by variables then sort_level is no longer useful, therefore abort.
+  if(!is.null(sort_level) & !is_empty(ard_args$by) & length(ard_args$original_by) > 1){
+    cli::cli_abort(
+        "sort_level is not useful with more than one by variables.",
+        call = get_cli_abort_call()
+    )
+  }
+
+
+  # check that the values for sort_level actually exists in the data
+  if (!is.null(sort_level) & !is_empty(ard_args$by)) {
+    valid_choices <- unlist(unique(x$group1_level))
+    sort_level <- rlang::arg_match(sort_level, values = valid_choices)
+  }
+
+
   cols <-
     ard_args$variables |>
     stats::setNames(
@@ -132,6 +155,7 @@ sort_ard_hierarchical <- function(x, sort = everything() ~ "descending", sort_le
         dplyr::select(all_ard_group_n(seq_along(ard_args$variables) + length(by), types = "names"), "variable") |>
         names()
     )
+
 
   # attributes and total n not sorted - appended to bottom of sorted ARD
   has_attr <- "attributes" %in% x$context | "total_n" %in% x$context
@@ -296,12 +320,13 @@ sort_ard_hierarchical <- function(x, sort = everything() ~ "descending", sort_le
   sort_stat <- if (n_stat) "n" else "p" # statistic used to calculate group sums
 
 
+
   # calculate group sums
   sum_i <- paste0("sum_group_", i) # sum column label
   x_sums <- x |>
     dplyr::filter(
       .data$stat_name == sort_stat, # select statistic to sum
-      if (!is.null(sort_level)) .data$group1_level == sort_level else TRUE,
+      if (!is.null(sort_level) & !is_empty(ard_args$by)) .data$group1_level == sort_level else TRUE,
       if (!is_empty(ard_args$by)) .data$group1 %in% ard_args$by else TRUE,
       if (length(c(ard_args$by, ard_args$variables)) > 1) {
         if (ard_args$variables[i] %in% ard_args$include & !cur_var %in% "variable") {

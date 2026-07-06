@@ -84,15 +84,22 @@ ard_tabulate_value.data.frame <- function(data,
     fmt_fun = fmt_fun,
     stat_label = stat_label
   ) |>
-    dplyr::filter(
-      pmap(
-        list(.data$variable, .data$variable_level),
-        function(variable, variable_level) {
-          variable_level %in% .env$value[[variable]]
+    dplyr::filter({
+      keep <- logical(dplyr::n())
+      val <- .env$value
+      for (v in names(val)) {
+        idx <- which(.data$variable == v)
+        if (length(idx) > 0) {
+          v_levels <- .data$variable_level[idx]
+          if (all(lengths(v_levels) == 1L)) {
+            keep[idx] <- unlist(v_levels, recursive = FALSE, use.names = FALSE) %in% val[[v]]
+          } else {
+            keep[idx] <- vapply(v_levels, function(x) x %in% val[[v]], logical(1))
+          }
         }
-      ) |>
-        unlist()
-    ) |>
+      }
+      keep
+    }) |>
     dplyr::mutate(context = "tabulate_value")
 
   # append attributes ----------------------------------------------------------

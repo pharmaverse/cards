@@ -43,8 +43,6 @@ msgs <- eval_capture_conditions({
 })
 
 cards:::.lst_results_as_df(msgs, "result", "mean")
-#> # A tibble: 1 × 5
-#>   stat      warning   error  stat_name variable
-#>   <list>    <list>    <list> <chr>     <chr>   
-#> 1 <chr [2]> <chr [2]> <NULL> mean      result  
+#>   stat_name stat              warning error variable
+#> 1      mean a, b Warning 1, Warning 2  NULL   result
 ```

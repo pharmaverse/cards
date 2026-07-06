@@ -31,6 +31,9 @@ Authors:
 - Emily de la Rua <emily.de_la_rua@contractors.roche.com>
   ([ORCID](https://orcid.org/0009-0000-8738-5561))
 
+- Davide Garolini <dgarolini@gmail.com>
+  ([ORCID](https://orcid.org/0000-0002-1445-1369))
+
 - Malan Bosman <malanbos@gmail.com>
   ([ORCID](https://orcid.org/0000-0002-3020-195X))
 

@@ -42,7 +42,7 @@ unlist_ard_columns(
 
 ## Value
 
-a data frame
+a data frame of class `'card_unlisted'`
 
 ## Examples
 

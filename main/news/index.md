@@ -1,6 +1,6 @@
 # Changelog
 
-## cards 0.8.0.9006
+## cards 0.8.1
 
 - The output of
   [`bind_ard()`](https://insightsengineering.github.io/cards/reference/bind_ard.md)

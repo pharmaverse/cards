@@ -1,4 +1,4 @@
-# cards 0.8.0.9005
+# cards 0.8.0.9006
 
 * The output of `bind_ard()` now has a `"bind_ard"` class. (#572; @alanahjonas95).
 

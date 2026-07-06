@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cards</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
 
     <div style="width: 140px; margin-left: 0.5rem;"> <small class="nav-text text-muted me-auto">part of</small> <img src="https://github.com/insightsengineering/hex-stickers/blob/main/PNG/nest.png?raw=true" alt="NEST" style="height: 30px;"><a href="https://pharmaverse.org/" class="external-link"><img src="https://github.com/insightsengineering/hex-stickers/blob/main/PNG/pharmaverse.png?raw=true" alt="pharmaverse" style="height: 28px;"></a> </div>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,7 @@
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/cards/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/cards/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/cards/v0.8.1">v0.8.1</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/cards/v0.8.0">v0.8.0</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/cards/v0.7.1">v0.7.1</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/cards/v0.7.0">v0.7.0</a>
@@ -85,9 +86,18 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/insightsengineering/cards/blob/v0.8.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/insightsengineering/cards/blob/v0.8.1/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.8.1" id="cards-081">cards 0.8.1<a class="anchor" aria-label="anchor" href="#cards-081"></a>
+</h2>
+<ul>
+<li><p>The output of <code><a href="../reference/bind_ard.html">bind_ard()</a></code> now has a <code>"bind_ard"</code> class. (<a href="https://github.com/insightsengineering/cards/issues/572" class="external-link">#572</a>; <a href="https://github.com/alanahjonas95" class="external-link">@alanahjonas95</a>).</p></li>
+<li><p><code><a href="../reference/unlist_ard_columns.html">unlist_ard_columns()</a></code> and <code><a href="../reference/rename_ard_columns.html">rename_ard_columns()</a></code> now return objects subclassed <code>"card_unlisted"</code> and <code>"card_renamed"</code> respectively, rather than retaining the <code>"card"</code> class. The result no longer satisfies the ARD contract, so functions requiring a proper ARD now reject these objects with a clear error. <code><a href="../reference/rename_ard_columns.html">rename_ard_columns()</a></code> accepts both <code>"card"</code> and <code>"card_unlisted"</code> inputs. (<a href="https://github.com/insightsengineering/cards/issues/513" class="external-link">#513</a>, <a href="https://github.com/Melkiades" class="external-link">@Melkiades</a>)</p></li>
+<li><p>Fixed <code><a href="../reference/get_ard_statistics.html">get_ard_statistics()</a></code> to return <code>NULL</code> statistics unchanged instead of attempting to attach attributes to <code>NULL</code>, which errors as of R 4.5.0.</p></li>
+</ul>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.0" id="cards-080">cards 0.8.0<a class="anchor" aria-label="anchor" href="#cards-080"></a>
 </h2>

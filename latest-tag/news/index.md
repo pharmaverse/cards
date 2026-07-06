@@ -1,5 +1,30 @@
 # Changelog
 
+## cards 0.8.1
+
+- The output of
+  [`bind_ard()`](https://insightsengineering.github.io/cards/reference/bind_ard.md)
+  now has a `"bind_ard"` class.
+  ([\#572](https://github.com/insightsengineering/cards/issues/572);
+  [@alanahjonas95](https://github.com/alanahjonas95)).
+
+- [`unlist_ard_columns()`](https://insightsengineering.github.io/cards/reference/unlist_ard_columns.md)
+  and
+  [`rename_ard_columns()`](https://insightsengineering.github.io/cards/reference/rename_ard_columns.md)
+  now return objects subclassed `"card_unlisted"` and `"card_renamed"`
+  respectively, rather than retaining the `"card"` class. The result no
+  longer satisfies the ARD contract, so functions requiring a proper ARD
+  now reject these objects with a clear error.
+  [`rename_ard_columns()`](https://insightsengineering.github.io/cards/reference/rename_ard_columns.md)
+  accepts both `"card"` and `"card_unlisted"` inputs.
+  ([\#513](https://github.com/insightsengineering/cards/issues/513),
+  [@Melkiades](https://github.com/Melkiades))
+
+- Fixed
+  [`get_ard_statistics()`](https://insightsengineering.github.io/cards/reference/get_ard_statistics.md)
+  to return `NULL` statistics unchanged instead of attempting to attach
+  attributes to `NULL`, which errors as of R 4.5.0.
+
 ## cards 0.8.0
 
 CRAN release: 2026-05-28

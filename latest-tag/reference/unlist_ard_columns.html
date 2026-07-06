@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cards</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
 
     <div style="width: 140px; margin-left: 0.5rem;"> <small class="nav-text text-muted me-auto">part of</small> <img src="https://github.com/insightsengineering/hex-stickers/blob/main/PNG/nest.png?raw=true" alt="NEST" style="height: 30px;"><a href="https://pharmaverse.org/" class="external-link"><img src="https://github.com/insightsengineering/hex-stickers/blob/main/PNG/pharmaverse.png?raw=true" alt="pharmaverse" style="height: 28px;"></a> </div>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,6 +57,7 @@
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/cards/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/cards/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/cards/v0.8.1">v0.8.1</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/cards/v0.8.0">v0.8.0</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/cards/v0.7.1">v0.7.1</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/cards/v0.7.0">v0.7.0</a>
@@ -87,7 +88,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Unlist ARD Columns</h1>
-      <small class="dont-index">Source: <a href="https://github.com/insightsengineering/cards/blob/v0.8.0/R/unlist_ard_columns.R" class="external-link"><code>R/unlist_ard_columns.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/insightsengineering/cards/blob/v0.8.1/R/unlist_ard_columns.R" class="external-link"><code>R/unlist_ard_columns.R</code></a></small>
       <div class="d-none name"><code>unlist_ard_columns.Rd</code></div>
     </div>
 
@@ -145,7 +146,7 @@ of retaining the label. Default is <code>TRUE</code>.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a>
 </h2>
-    <p>a data frame</p>
+    <p>a data frame of class <code>'card_unlisted'</code></p>
     </div>
 
     <div class="section level2">
@@ -155,52 +156,42 @@ of retaining the label. Default is <code>TRUE</code>.</p></dd>
 <span class="r-in"><span>  <span class="fu"><a href="ard_tabulate.html">ard_tabulate</a></span><span class="op">(</span>by <span class="op">=</span> <span class="va">ARM</span>, variables <span class="op">=</span> <span class="va">AGEGR1</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="apply_fmt_fun.html">apply_fmt_fun</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">unlist_ard_columns</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #555555;">{cards} data frame: 27 x 12</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    group1 group1_level variable variable_level stat_name stat_label  stat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     ARM      Placebo   AGEGR1          65-80         n          n    42</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     ARM      Placebo   AGEGR1          65-80         N          N    86</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     ARM      Placebo   AGEGR1          65-80         p          % 0.488</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     ARM      Placebo   AGEGR1            &lt;65         n          n    14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     ARM      Placebo   AGEGR1            &lt;65         N          N    86</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     ARM      Placebo   AGEGR1            &lt;65         p          % 0.163</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7     ARM      Placebo   AGEGR1            &gt;80         n          n    30</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8     ARM      Placebo   AGEGR1            &gt;80         N          N    86</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9     ARM      Placebo   AGEGR1            &gt;80         p          % 0.349</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10    ARM    Xanomeli…   AGEGR1          65-80         n          n    55</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    stat_fmt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        42</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        86</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3      48.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5        86</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6      16.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7        30</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8        86</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9      34.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10       55</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> <span style="color: #555555;">17 more rows</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> <span style="color: #555555;">Use `print(n = ...)` to see more rows</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> <span style="color: #555555;">4 more variables: context, fmt_fun, warning, error</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 27 × 12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    group1 group1_level      variable variable_level context stat_name stat_label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> ARM    Placebo           AGEGR1   65-80          tabula… n         n         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> ARM    Placebo           AGEGR1   65-80          tabula… N         N         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> ARM    Placebo           AGEGR1   65-80          tabula… p         %         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> ARM    Placebo           AGEGR1   &lt;65            tabula… n         n         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> ARM    Placebo           AGEGR1   &lt;65            tabula… N         N         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> ARM    Placebo           AGEGR1   &lt;65            tabula… p         %         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> ARM    Placebo           AGEGR1   &gt;80            tabula… n         n         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> ARM    Placebo           AGEGR1   &gt;80            tabula… N         N         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> ARM    Placebo           AGEGR1   &gt;80            tabula… p         %         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> ARM    Xanomeline High … AGEGR1   65-80          tabula… n         n         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 17 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 5 more variables: stat &lt;dbl&gt;, stat_fmt &lt;chr&gt;, fmt_fun &lt;list&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   warning &lt;list&gt;, error &lt;list&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ADSL</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="ard_summary.html">ard_summary</a></span><span class="op">(</span>by <span class="op">=</span> <span class="va">ARM</span>, variables <span class="op">=</span> <span class="va">AGE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="apply_fmt_fun.html">apply_fmt_fun</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">unlist_ard_columns</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #555555;">{cards} data frame: 24 x 11</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    group1 group1_level variable stat_name stat_label   stat stat_fmt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     ARM      Placebo      AGE         N          N     86       86</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     ARM      Placebo      AGE      mean       Mean 75.209     75.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     ARM      Placebo      AGE        sd         SD   8.59      8.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     ARM      Placebo      AGE    median     Median     76     76.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     ARM      Placebo      AGE       p25         Q1     69     69.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     ARM      Placebo      AGE       p75         Q3     82     82.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7     ARM      Placebo      AGE       min        Min     52     52.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8     ARM      Placebo      AGE       max        Max     89     89.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9     ARM    Xanomeli…      AGE         N          N     84       84</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10    ARM    Xanomeli…      AGE      mean       Mean 74.381     74.4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> <span style="color: #555555;">14 more rows</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> <span style="color: #555555;">Use `print(n = ...)` to see more rows</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> <span style="color: #555555;">4 more variables: context, fmt_fun, warning, error</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 24 × 11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    group1 group1_level      variable context stat_name stat_label  stat stat_fmt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> ARM    Placebo           AGE      summary N         N          86    86      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> ARM    Placebo           AGE      summary mean      Mean       75.2  75.2    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> ARM    Placebo           AGE      summary sd        SD          8.59 8.6     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> ARM    Placebo           AGE      summary median    Median     76    76.0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> ARM    Placebo           AGE      summary p25       Q1         69    69.0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> ARM    Placebo           AGE      summary p75       Q3         82    82.0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> ARM    Placebo           AGE      summary min       Min        52    52.0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> ARM    Placebo           AGE      summary max       Max        89    89.0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> ARM    Xanomeline High … AGE      summary N         N          84    84      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> ARM    Xanomeline High … AGE      summary mean      Mean       74.4  74.4    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 14 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3 more variables: fmt_fun &lt;list&gt;, warning &lt;list&gt;, error &lt;list&gt;</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

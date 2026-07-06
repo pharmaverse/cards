@@ -19,7 +19,7 @@ rename_ard_columns(
 - x:
 
   (`data.frame`)\
-  an ARD data frame of class 'card'
+  an ARD data frame of class `'card'` or `'card_unlisted'`
 
 - columns:
 
@@ -55,7 +55,7 @@ rename_ard_columns(
 
 ## Value
 
-data frame
+a data frame of class `'card_renamed'`
 
 ## Examples
 

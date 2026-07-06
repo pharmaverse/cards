@@ -42,7 +42,7 @@ unlist_ard_columns(
 
 ## Value
 
-a data frame
+a data frame of class `'card_unlisted'`
 
 ## Examples
 
@@ -51,50 +51,40 @@ ADSL |>
   ard_tabulate(by = ARM, variables = AGEGR1) |>
   apply_fmt_fun() |>
   unlist_ard_columns()
-#> {cards} data frame: 27 x 12
-#>    group1 group1_level variable variable_level stat_name stat_label  stat
-#> 1     ARM      Placebo   AGEGR1          65-80         n          n    42
-#> 2     ARM      Placebo   AGEGR1          65-80         N          N    86
-#> 3     ARM      Placebo   AGEGR1          65-80         p          % 0.488
-#> 4     ARM      Placebo   AGEGR1            <65         n          n    14
-#> 5     ARM      Placebo   AGEGR1            <65         N          N    86
-#> 6     ARM      Placebo   AGEGR1            <65         p          % 0.163
-#> 7     ARM      Placebo   AGEGR1            >80         n          n    30
-#> 8     ARM      Placebo   AGEGR1            >80         N          N    86
-#> 9     ARM      Placebo   AGEGR1            >80         p          % 0.349
-#> 10    ARM    Xanomeli…   AGEGR1          65-80         n          n    55
-#>    stat_fmt
-#> 1        42
-#> 2        86
-#> 3      48.8
-#> 4        14
-#> 5        86
-#> 6      16.3
-#> 7        30
-#> 8        86
-#> 9      34.9
-#> 10       55
-#> ℹ 17 more rows
-#> ℹ Use `print(n = ...)` to see more rows
-#> ℹ 4 more variables: context, fmt_fun, warning, error
+#> # A tibble: 27 × 12
+#>    group1 group1_level      variable variable_level context stat_name stat_label
+#>    <chr>  <chr>             <chr>    <chr>          <chr>   <chr>     <chr>     
+#>  1 ARM    Placebo           AGEGR1   65-80          tabula… n         n         
+#>  2 ARM    Placebo           AGEGR1   65-80          tabula… N         N         
+#>  3 ARM    Placebo           AGEGR1   65-80          tabula… p         %         
+#>  4 ARM    Placebo           AGEGR1   <65            tabula… n         n         
+#>  5 ARM    Placebo           AGEGR1   <65            tabula… N         N         
+#>  6 ARM    Placebo           AGEGR1   <65            tabula… p         %         
+#>  7 ARM    Placebo           AGEGR1   >80            tabula… n         n         
+#>  8 ARM    Placebo           AGEGR1   >80            tabula… N         N         
+#>  9 ARM    Placebo           AGEGR1   >80            tabula… p         %         
+#> 10 ARM    Xanomeline High … AGEGR1   65-80          tabula… n         n         
+#> # ℹ 17 more rows
+#> # ℹ 5 more variables: stat <dbl>, stat_fmt <chr>, fmt_fun <list>,
+#> #   warning <list>, error <list>
 
 ADSL |>
   ard_summary(by = ARM, variables = AGE) |>
   apply_fmt_fun() |>
   unlist_ard_columns()
-#> {cards} data frame: 24 x 11
-#>    group1 group1_level variable stat_name stat_label   stat stat_fmt
-#> 1     ARM      Placebo      AGE         N          N     86       86
-#> 2     ARM      Placebo      AGE      mean       Mean 75.209     75.2
-#> 3     ARM      Placebo      AGE        sd         SD   8.59      8.6
-#> 4     ARM      Placebo      AGE    median     Median     76     76.0
-#> 5     ARM      Placebo      AGE       p25         Q1     69     69.0
-#> 6     ARM      Placebo      AGE       p75         Q3     82     82.0
-#> 7     ARM      Placebo      AGE       min        Min     52     52.0
-#> 8     ARM      Placebo      AGE       max        Max     89     89.0
-#> 9     ARM    Xanomeli…      AGE         N          N     84       84
-#> 10    ARM    Xanomeli…      AGE      mean       Mean 74.381     74.4
-#> ℹ 14 more rows
-#> ℹ Use `print(n = ...)` to see more rows
-#> ℹ 4 more variables: context, fmt_fun, warning, error
+#> # A tibble: 24 × 11
+#>    group1 group1_level      variable context stat_name stat_label  stat stat_fmt
+#>    <chr>  <chr>             <chr>    <chr>   <chr>     <chr>      <dbl> <chr>   
+#>  1 ARM    Placebo           AGE      summary N         N          86    86      
+#>  2 ARM    Placebo           AGE      summary mean      Mean       75.2  75.2    
+#>  3 ARM    Placebo           AGE      summary sd        SD          8.59 8.6     
+#>  4 ARM    Placebo           AGE      summary median    Median     76    76.0    
+#>  5 ARM    Placebo           AGE      summary p25       Q1         69    69.0    
+#>  6 ARM    Placebo           AGE      summary p75       Q3         82    82.0    
+#>  7 ARM    Placebo           AGE      summary min       Min        52    52.0    
+#>  8 ARM    Placebo           AGE      summary max       Max        89    89.0    
+#>  9 ARM    Xanomeline High … AGE      summary N         N          84    84      
+#> 10 ARM    Xanomeline High … AGE      summary mean      Mean       74.4  74.4    
+#> # ℹ 14 more rows
+#> # ℹ 3 more variables: fmt_fun <list>, warning <list>, error <list>
 ```

@@ -325,23 +325,46 @@ ard_tabulate.data.frame <- function(data,
             tab_stats = tab_stats
           )
 
-        df_result_tabulation |>
-          .nesting_rename_ard_columns(variable = variable, by = by, strata = strata) |>
-          dplyr::mutate(
-            across(any_of(c("...ard_n...", "...ard_N...", "...ard_p...", "...ard_n_cum...", "...ard_p_cum...")), as.list),
-            across(c(matches("^group[0-9]+_level$"), any_of("variable_level")), as.list)
-          ) |>
-          tidyr::pivot_longer(
-            cols = any_of(c("...ard_n...", "...ard_N...", "...ard_p...", "...ard_n_cum...", "...ard_p_cum...")),
-            names_to = "stat_name",
-            values_to = "stat"
-          ) |>
-          dplyr::mutate(
-            stat_name =
-              gsub(pattern = "^...ard_", replacement = "", x = .data$stat_name) %>%
-                gsub(pattern = "...$", replacement = "", x = .)
-          ) |>
-          dplyr::filter(.data$stat_name %in% tab_stats[["tabulation"]])
+        df_res <- .nesting_rename_ard_columns(df_result_tabulation, variable = variable, by = by, strata = strata)
+
+        # Convert grouping columns to list
+        for (col in c(grep("^group[0-9]+_level$", names(df_res), value = TRUE), intersect(names(df_res), "variable_level"))) {
+          if (!is.list(df_res[[col]])) {
+            df_res[[col]] <- as.list(df_res[[col]])
+          }
+        }
+
+        all_pivot_cols <- c("...ard_n...", "...ard_N...", "...ard_p...", "...ard_n_cum...", "...ard_p_cum...")
+        cols_in_df <- all_pivot_cols[all_pivot_cols %in% names(df_res)]
+
+        stat_names_clean <- gsub("...$", "", gsub("^...ard_", "", cols_in_df))
+
+        keep_idx <- stat_names_clean %in% tab_stats[["tabulation"]]
+        cols_to_pivot <- cols_in_df[keep_idx]
+        stat_names_clean <- stat_names_clean[keep_idx]
+
+        if (length(cols_to_pivot) == 0) {
+          return(dplyr::tibble())
+        }
+
+        n_rows <- nrow(df_res)
+        n_cols <- length(cols_to_pivot)
+
+        # We must drop all potential pivot columns that weren't selected to match pivot_longer behavior
+        fixed_cols <- setdiff(names(df_res), cols_in_df)
+        df_out <- df_res[fixed_cols]
+        df_out <- df_out[rep(seq_len(n_rows), each = n_cols), , drop = FALSE]
+
+        df_out$stat_name <- rep(stat_names_clean, times = n_rows)
+
+        stat_list <- vector("list", n_rows * n_cols)
+        for (i in seq_along(cols_to_pivot)) {
+          indices <- seq(i, length(stat_list), by = n_cols)
+          stat_list[indices] <- as.list(df_res[[cols_to_pivot[i]]])
+        }
+        df_out$stat <- stat_list
+
+        dplyr::as_tibble(df_out)
       }
     ) |>
     dplyr::bind_rows()

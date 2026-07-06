@@ -29,13 +29,20 @@ ard_total_n.data.frame <- function(data, ...) {
   check_data_frame(data)
 
   # calculate total N ----------------------------------------------------------
-  data |>
-    dplyr::mutate(..ard_total_n.. = TRUE) |>
-    ard_tabulate_value(
-      variables = "..ard_total_n..",
-      statistic = list(..ard_total_n.. = "N"),
-      value = list(..ard_total_n.. = TRUE)
+  ans <-
+    dplyr::tibble(
+      variable = "..ard_total_n..",
+      context = "total_n",
+      stat_name = "N",
+      stat_label = "N",
+      stat = list(nrow(data)),
+      fmt_fun = list(0L),
+      warning = list(NULL),
+      error = list(NULL)
     ) |>
-    dplyr::mutate(context = "total_n") |>
-    dplyr::select(-all_ard_variables("levels"))
+    as_card()
+
+  attr(ans, "args") <- list(variables = "..ard_total_n..", by = character(0), strata = character(0))
+
+  ans
 }

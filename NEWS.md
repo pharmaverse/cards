@@ -1,6 +1,6 @@
-# cards 0.8.0.9005
+# cards 0.8.1.9000
 
-## Bug Fixes
+# cards 0.8.1
 
 * The output of `bind_ard()` now has a `"bind_ard"` class. (#572; @alanahjonas95).
 
@@ -11,8 +11,6 @@
 ## New Features and Functions
 
 * Added a new argument `sort_level` to `sort_ard_hierarchical()` function to allow sorting based on the values of a particular treatment column useful for adverse event reporting in clinical reports. (#548, @rikoprogrammer)
-
-
 
 # cards 0.8.0
 

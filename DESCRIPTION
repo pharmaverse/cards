@@ -1,12 +1,14 @@
 Package: cards
 Title: Analysis Results Data
-Version: 0.8.0.9005
+Version: 0.8.1.9000
 Authors@R: c(
     person("Daniel D.", "Sjoberg", , "danield.sjoberg@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-0862-2018")),
     person("Becca", "Krouse", , "becca.z.krouse@gsk.com", role = "aut"),
     person("Emily", "de la Rua", , "emily.de_la_rua@contractors.roche.com", role = "aut",
            comment = c(ORCID = "0009-0000-8738-5561")),
+    person("Davide", "Garolini", , "dgarolini@gmail.com", role = "aut",
+           comment = c(ORCID = "0000-0002-1445-1369")),
     person("Malan", "Bosman", , "malanbos@gmail.com", role = "aut",
            comment = c(ORCID = "0000-0002-3020-195X")),
     person("F. Hoffmann-La Roche AG", role = c("cph", "fnd")),

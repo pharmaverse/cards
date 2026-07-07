@@ -27,6 +27,7 @@ Authors:
   \item Daniel D. Sjoberg \email{danield.sjoberg@gmail.com} (\href{https://orcid.org/0000-0003-0862-2018}{ORCID})
   \item Becca Krouse \email{becca.z.krouse@gsk.com}
   \item Emily de la Rua \email{emily.de_la_rua@contractors.roche.com} (\href{https://orcid.org/0009-0000-8738-5561}{ORCID})
+  \item Davide Garolini \email{dgarolini@gmail.com} (\href{https://orcid.org/0000-0002-1445-1369}{ORCID})
   \item Malan Bosman \email{malanbos@gmail.com} (\href{https://orcid.org/0000-0002-3020-195X}{ORCID})
   \item Alanah Jonas \email{alanah.x.jonas@gsk.com}
 }

@@ -51,7 +51,7 @@ devtools::install_github("pharmaverse/cards")
 
 [<img
 src="https://raw.githubusercontent.com/pharmaverse/cardx/main/man/figures/logo.png"
-style="float: right" width="120" alt="cardx website" />](https://github.com/pharmaverse/cardx)
+style="float: right" width="120" alt="cardx website" />](https://pharmaverse.github.io/cardx/)
 
 The {cards} package exports three types of functions:
 

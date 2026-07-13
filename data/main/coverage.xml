@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "https://raw.githubusercontent.com/cobertura/cobertura/master/cobertura/src/site/htdocs/xml/coverage-04.dtd">
-<coverage line-rate="0.955927475592748" branch-rate="0" lines-covered="3427" lines-valid="3585" branches-covered="0" branches-valid="0" complexity="0" version="3.6.5" timestamp="2026-07-06 16:42:42.847957">
+<coverage line-rate="0.955939765755717" branch-rate="0" lines-covered="3428" lines-valid="3586" branches-covered="0" branches-valid="0" complexity="0" version="3.6.5" timestamp="2026-07-13 16:35:24.713826">
   <sources>
     <source>/__w/cards/cards/cards</source>
   </sources>
   <packages>
-    <package name="cards" line-rate="0.955927475592748" branch-rate="0" complexity="0">
+    <package name="cards" line-rate="0.955939765755717" branch-rate="0" complexity="0">
       <classes>
         <class name="add_calculated_row.R" filename="R/add_calculated_row.R" line-rate="0.886792452830189" branch-rate="0" complexity="0">
           <methods>
@@ -1834,38 +1834,39 @@
                 <line number="167" hits="1" branch="false"/>
                 <line number="168" hits="1" branch="false"/>
                 <line number="172" hits="21" branch="false"/>
+                <line number="175" hits="21" branch="false"/>
               </lines>
             </method>
             <method name=".eval_ard_calls" signature="" line-rate="1" branch-rate="0" complexity="0">
               <lines>
-                <line number="197" hits="28" branch="false"/>
-                <line number="201" hits="28" branch="false"/>
-                <line number="202" hits="28" branch="false"/>
-                <line number="203" hits="28" branch="false"/>
+                <line number="200" hits="28" branch="false"/>
                 <line number="204" hits="28" branch="false"/>
-                <line number="205" hits="2" branch="false"/>
-                <line number="206" hits="1" branch="false"/>
-                <line number="207" hits="1" branch="false"/>
-                <line number="208" hits="1" branch="false"/>
+                <line number="205" hits="28" branch="false"/>
+                <line number="206" hits="28" branch="false"/>
+                <line number="207" hits="28" branch="false"/>
+                <line number="208" hits="2" branch="false"/>
                 <line number="209" hits="1" branch="false"/>
                 <line number="210" hits="1" branch="false"/>
                 <line number="211" hits="1" branch="false"/>
-                <line number="212" hits="28" branch="false"/>
+                <line number="212" hits="1" branch="false"/>
+                <line number="213" hits="1" branch="false"/>
                 <line number="214" hits="1" branch="false"/>
-                <line number="215" hits="1" branch="false"/>
-                <line number="216" hits="1" branch="false"/>
+                <line number="215" hits="28" branch="false"/>
                 <line number="217" hits="1" branch="false"/>
                 <line number="218" hits="1" branch="false"/>
-                <line number="219" hits="28" branch="false"/>
-                <line number="220" hits="28" branch="false"/>
-                <line number="221" hits="28" branch="false"/>
+                <line number="219" hits="1" branch="false"/>
+                <line number="220" hits="1" branch="false"/>
+                <line number="221" hits="1" branch="false"/>
                 <line number="222" hits="28" branch="false"/>
-                <line number="226" hits="28" branch="false"/>
-                <line number="227" hits="28" branch="false"/>
-                <line number="228" hits="28" branch="false"/>
+                <line number="223" hits="28" branch="false"/>
+                <line number="224" hits="28" branch="false"/>
+                <line number="225" hits="28" branch="false"/>
+                <line number="229" hits="28" branch="false"/>
+                <line number="230" hits="28" branch="false"/>
                 <line number="231" hits="28" branch="false"/>
-                <line number="232" hits="28" branch="false"/>
-                <line number="233" hits="28" branch="false"/>
+                <line number="234" hits="28" branch="false"/>
+                <line number="235" hits="28" branch="false"/>
+                <line number="236" hits="28" branch="false"/>
               </lines>
             </method>
           </methods>
@@ -1939,34 +1940,35 @@
             <line number="167" hits="1" branch="false"/>
             <line number="168" hits="1" branch="false"/>
             <line number="172" hits="21" branch="false"/>
-            <line number="197" hits="28" branch="false"/>
-            <line number="201" hits="28" branch="false"/>
-            <line number="202" hits="28" branch="false"/>
-            <line number="203" hits="28" branch="false"/>
+            <line number="175" hits="21" branch="false"/>
+            <line number="200" hits="28" branch="false"/>
             <line number="204" hits="28" branch="false"/>
-            <line number="205" hits="2" branch="false"/>
-            <line number="206" hits="1" branch="false"/>
-            <line number="207" hits="1" branch="false"/>
-            <line number="208" hits="1" branch="false"/>
+            <line number="205" hits="28" branch="false"/>
+            <line number="206" hits="28" branch="false"/>
+            <line number="207" hits="28" branch="false"/>
+            <line number="208" hits="2" branch="false"/>
             <line number="209" hits="1" branch="false"/>
             <line number="210" hits="1" branch="false"/>
             <line number="211" hits="1" branch="false"/>
-            <line number="212" hits="28" branch="false"/>
+            <line number="212" hits="1" branch="false"/>
+            <line number="213" hits="1" branch="false"/>
             <line number="214" hits="1" branch="false"/>
-            <line number="215" hits="1" branch="false"/>
-            <line number="216" hits="1" branch="false"/>
+            <line number="215" hits="28" branch="false"/>
             <line number="217" hits="1" branch="false"/>
             <line number="218" hits="1" branch="false"/>
-            <line number="219" hits="28" branch="false"/>
-            <line number="220" hits="28" branch="false"/>
-            <line number="221" hits="28" branch="false"/>
+            <line number="219" hits="1" branch="false"/>
+            <line number="220" hits="1" branch="false"/>
+            <line number="221" hits="1" branch="false"/>
             <line number="222" hits="28" branch="false"/>
-            <line number="226" hits="28" branch="false"/>
-            <line number="227" hits="28" branch="false"/>
-            <line number="228" hits="28" branch="false"/>
+            <line number="223" hits="28" branch="false"/>
+            <line number="224" hits="28" branch="false"/>
+            <line number="225" hits="28" branch="false"/>
+            <line number="229" hits="28" branch="false"/>
+            <line number="230" hits="28" branch="false"/>
             <line number="231" hits="28" branch="false"/>
-            <line number="232" hits="28" branch="false"/>
-            <line number="233" hits="28" branch="false"/>
+            <line number="234" hits="28" branch="false"/>
+            <line number="235" hits="28" branch="false"/>
+            <line number="236" hits="28" branch="false"/>
           </lines>
         </class>
         <class name="ard_strata.R" filename="R/ard_strata.R" line-rate="1" branch-rate="0" complexity="0">

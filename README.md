@@ -1,16 +1,16 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# cards <a href="https://insightsengineering.github.io/cards/"><img src="https://raw.githubusercontent.com/insightsengineering/cards/main/man/figures/logo.png" align="right" height="120" alt="cards website" /></a>
+# cards <a href="https://pharmaverse.github.io/cards/"><img src="https://raw.githubusercontent.com/pharmaverse/cards/main/man/figures/logo.png" align="right" height="120" alt="cards website" /></a>
 
 <!-- badges: start -->
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/cards)](https://CRAN.R-project.org/package=cards)
 [![Codecov test
-coverage](https://codecov.io/gh/insightsengineering/cards/graph/badge.svg)](https://app.codecov.io/gh/insightsengineering/cards)
+coverage](https://codecov.io/gh/pharmaverse/cards/graph/badge.svg)](https://app.codecov.io/gh/pharmaverse/cards)
 [![Downloads](https://cranlogs.r-pkg.org/badges/cards)](https://cran.r-project.org/package=cards)
-[![R-CMD-check](https://github.com/insightsengineering/cards/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/insightsengineering/cards/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/pharmaverse/cards/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pharmaverse/cards/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The [CDISC Analysis Results
@@ -44,14 +44,14 @@ You can install the development version of cards from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("insightsengineering/cards")
+devtools::install_github("pharmaverse/cards")
 ```
 
 ## Extensions
 
 [<img
-src="https://raw.githubusercontent.com/insightsengineering/cardx/main/man/figures/logo.png"
-style="float: right" width="120" alt="cardx website" />](https://insightsengineering.github.io/cardx/)
+src="https://raw.githubusercontent.com/pharmaverse/cardx/main/man/figures/logo.png"
+style="float: right" width="120" alt="cardx website" />](https://pharmaverse.github.io/cardx/)
 
 The {cards} package exports three types of functions:
 
@@ -61,7 +61,7 @@ The {cards} package exports three types of functions:
 
 3.  Functions to work with existing ARD objects.
 
-The [{cardx}](https://github.com/insightsengineering/cardx/) R package
+The [{cardx}](https://github.com/pharmaverse/cardx/) R package
 is an extension to {cards} that uses the utilities from {cards} and
 exports functions for creating additional ARD objects––including
 functions to summarize t-tests, Wilcoxon Rank-Sum tests, regression
@@ -70,7 +70,7 @@ models, and more.
 ## Getting Started
 
 Review the [Getting
-Started](https://insightsengineering.github.io/cards//main/articles/getting-started.html)
+Started](https://pharmaverse.github.io/cards/latest-tag/articles/getting-started.html)
 page for examples using ARDs to calculate statistics to later include in
 tables.
 

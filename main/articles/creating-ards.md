@@ -28,7 +28,7 @@ port of call should be to see if it has already been implemented in
 
 Consider a simple t-test comparing the mean age (`AGE`) across two
 treatments arms (`ARM`). In {cardx} we have the function
-[`cardx::ard_stats_t_test()`](https://insightsengineering.github.io/cardx/latest-tag/reference/ard_stats_t_test.html)
+[`cardx::ard_stats_t_test()`](https://rdrr.io/pkg/cardx/man/ard_stats_t_test.html)
 
 ``` r
 

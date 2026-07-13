@@ -1,6 +1,10 @@
 # Changelog
 
+## cards 0.8.1.9000
+
 ## cards 0.8.1
+
+CRAN release: 2026-07-06
 
 - The output of
   [`bind_ard()`](https://insightsengineering.github.io/cards/reference/bind_ard.md)

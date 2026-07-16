@@ -12,6 +12,17 @@ ard <- ard_stack_hierarchical(
   over_variables = TRUE
 )
 
+ADAE_subset2 <- cards::ADAE |>
+  dplyr::filter(AEDECOD %in% unique(cards::ADAE$AEDECOD)[1:20])
+
+ard_2 <- ard_stack_hierarchical(
+  data = ADAE_subset2,
+  variables = c(AESOC, AEDECOD),
+  by = TRTA,
+  denominator = cards::ADSL,
+  id = USUBJID
+)
+
 test_that("sort_ard_hierarchical() works", {
   withr::local_options(width = 200)
 
@@ -91,6 +102,108 @@ test_that("sort_ard_hierarchical(sort = 'descending') works", {
     )
   )
 })
+
+
+test_that("sort_ard_hierarchical(sort = list(AESOC ~ 'alphanumeric', AEDECOD ~ 'descending'), sort_level = 'Placebo') works", {
+  expect_silent(ard_2 <- sort_ard_hierarchical(ard_2,
+    sort = list(AESOC ~ "alphanumeric", AEDECOD ~ "descending"),
+    sort_level = "Placebo"
+  ))
+
+  expect_equal(
+    ard_2 |>
+      dplyr::filter(
+        group1 == "TRTA", group1_level == "Placebo",
+        group2_level == "GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS", stat_name == "n"
+      ) |>
+      dplyr::select(variable_level, stat) |>
+      dplyr::distinct(variable_level, .keep_all = TRUE) |>
+      dplyr::arrange(desc(as.numeric(stat))) |>
+      dplyr::pull(variable_level) |>
+      unlist(),
+    c(
+      "APPLICATION SITE PRURITUS",
+      "APPLICATION SITE DERMATITIS",
+      "APPLICATION SITE ERYTHEMA",
+      "APPLICATION SITE IRRITATION",
+      "APPLICATION SITE VESICLES",
+      "FATIGUE"
+    )
+  )
+
+  expect_equal(
+    ard_2 |>
+      dplyr::filter(
+        group1 == "TRTA", group1_level == "Xanomeline Low Dose",
+        group2_level == "GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS", stat_name == "n"
+      ) |>
+      dplyr::select(variable_level, stat) |>
+      dplyr::distinct(variable_level, .keep_all = TRUE) |>
+      dplyr::arrange(desc(as.numeric(stat))) |>
+      dplyr::pull(variable_level) |>
+      unlist(),
+    c(
+      "APPLICATION SITE PRURITUS",
+      "APPLICATION SITE ERYTHEMA",
+      "APPLICATION SITE DERMATITIS",
+      "APPLICATION SITE IRRITATION",
+      "FATIGUE",
+      "APPLICATION SITE VESICLES"
+    )
+  )
+
+  expect_equal(
+    ard_2 |>
+      dplyr::filter(
+        group1 == "TRTA", group1_level == "Xanomeline High Dose",
+        group2_level == "GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS", stat_name == "n"
+      ) |>
+      dplyr::select(variable_level, stat) |>
+      dplyr::distinct(variable_level, .keep_all = TRUE) |>
+      dplyr::arrange(desc(as.numeric(stat))) |>
+      dplyr::pull(variable_level) |>
+      unlist(),
+    c(
+      "APPLICATION SITE PRURITUS",
+      "APPLICATION SITE ERYTHEMA",
+      "APPLICATION SITE IRRITATION",
+      "APPLICATION SITE DERMATITIS",
+      "APPLICATION SITE VESICLES",
+      "FATIGUE"
+    )
+  )
+})
+
+
+test_that("sort_ard_hierarchical(sort = AEDECOD ~ 'descending', sort_level = 'Placebo') works", {
+  ard_3 <- ard_stack_hierarchical(
+    data = cards::ADAE |> dplyr::filter(AEDECOD %in% unique(cards::ADAE$AEDECOD)[1:5]),
+    variables = AEDECOD,
+    by = TRTA,
+    denominator = cards::ADSL,
+    id = USUBJID
+  )
+
+  expect_silent(ard_3 <- sort_ard_hierarchical(ard_3, sort = AEDECOD ~ "descending", sort_level = "Placebo"))
+
+  expect_equal(
+    ard_3 |>
+      dplyr::filter(group1 == "TRTA", group1_level == "Placebo", stat_name == "n") |>
+      dplyr::select(variable_level, stat) |>
+      dplyr::distinct(variable_level, .keep_all = TRUE) |>
+      dplyr::arrange(desc(as.numeric(stat))) |>
+      dplyr::pull(variable_level) |>
+      unlist(),
+    c(
+      "DIARRHOEA",
+      "ERYTHEMA",
+      "APPLICATION SITE PRURITUS",
+      "APPLICATION SITE ERYTHEMA",
+      "ATRIOVENTRICULAR BLOCK SECOND DEGREE"
+    )
+  )
+})
+
 
 test_that("sort_ard_hierarchical(sort = 'alphanumeric') works", {
   expect_silent(ard <- sort_ard_hierarchical(ard, sort = "alphanumeric"))
@@ -421,6 +534,8 @@ test_that("sort_ard_hierarchical() works with overall data", {
 })
 
 test_that("sort_ard_hierarchical() warning messaging works", {
+  withr::local_options(width = 200)
+
   # invalid x input
   expect_snapshot(
     r <- sort_ard_hierarchical(ard_tabulate(
@@ -448,6 +563,50 @@ test_that("sort_ard_hierarchical() warning messaging works", {
 
   expect_snapshot(
     sort_ard_hierarchical(ard),
+    error = TRUE
+  )
+
+  # invalid sort_level input
+  expect_snapshot(
+    sort_ard_hierarchical(ard_2, sort_level = "Placebo1"),
+    error = TRUE
+  )
+
+  # sort_level should be a single character not a vector
+  expect_snapshot(
+    sort_ard_hierarchical(ard_2, sort_level = c("Placebo", "Xanomeline Low Dose")),
+    error = TRUE
+  )
+
+  # no by variable specified - this should error.
+
+  ard_no_by <- ard_stack_hierarchical(
+    data = ADAE_subset,
+    variables = c(SEX, RACE, AETERM),
+    denominator = cards::ADSL,
+    id = USUBJID,
+    statistic = everything() ~ "N"
+  )
+
+  expect_snapshot(
+    sort_ard_hierarchical(ard_no_by, sort_level = "F"),
+    error = TRUE
+  )
+
+
+  # if more than two variables in the by statement then sort_level has no useful meaning.
+  ard_by_more <- ard_stack_hierarchical(
+    data = ADAE_subset,
+    variables = c(AESOC, AEDECOD),
+    by = c(TRTA, SEX),
+    denominator = cards::ADSL,
+    id = USUBJID,
+    statistic = everything() ~ "N"
+  )
+
+
+  expect_snapshot(
+    sort_ard_hierarchical(ard_by_more, sort_level = "Placebo"),
     error = TRUE
   )
 })

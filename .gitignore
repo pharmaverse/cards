@@ -1,8 +1,11 @@
 .Rproj.user
-docs
+.Rhistory
+.RData
+.Ruserdata
 .DS_Store
+docs
 tests/testthat/_snaps/**/*.new.md
 tests/testthat/_snaps/**/*.new.svg
 revdep
-.Rhistory
 .positai
+

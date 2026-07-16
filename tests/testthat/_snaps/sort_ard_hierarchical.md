@@ -85,3 +85,20 @@
       Error in `sort_ard_hierarchical()`:
       ! If `sort='descending'` for any variables then either "n" or "p" must be present in `x` for each of these specified variables in order to calculate the count sums used for sorting.
 
+---
+
+    Code
+      sort_ard_hierarchical(ard_2, sort_level = "Placebo1")
+    Condition
+      Error in `sort_ard_hierarchical()`:
+      ! `sort_level` must be one of "Placebo", "Xanomeline High Dose", or "Xanomeline Low Dose", not "Placebo1".
+      i Did you mean "Placebo"?
+
+---
+
+    Code
+      sort_ard_hierarchical(ard_2, sort_level = c("Placebo", "Xanomeline Low Dose"))
+    Condition
+      Error in `sort_ard_hierarchical()`:
+      ! The `sort_level` argument must be a string or empty, not a character vector.
+

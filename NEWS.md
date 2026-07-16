@@ -8,6 +8,10 @@
 
 * Fixed `get_ard_statistics()` to return `NULL` statistics unchanged instead of attempting to attach attributes to `NULL`, which errors as of R 4.5.0.
 
+## New Features and Functions
+
+* Added a new argument `sort_level` to `sort_ard_hierarchical()` function to allow sorting based on the values of a particular treatment column useful for adverse event reporting in clinical reports. (#548, @rikoprogrammer)
+
 # cards 0.8.0
 
 ## New Features and Functions
@@ -29,6 +33,7 @@
 * The following functions now return an object with an `'args'` attribute that contains more contextual information about the objects' creation. `ard_strata()`, `ard_pairwise()`, `ard_summary()`,  `ard_tabulate()`,  `ard_tabulate_value()`,  `ard_hierarchical()`,  `ard_hierarchical_count()`, `ard_missing()`, `ard_mvsummary()` and  `nest_for_ard()` contain an args attribute to retain information about input arguments. (#483, @alanahjonas95)
 
 * Update in `ard_tabulate()` to account for change in `as.data.frame()` being released in R-Devel. (#554)
+
 
 ## Bug Fixes
 

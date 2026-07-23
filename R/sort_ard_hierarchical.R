@@ -70,6 +70,7 @@ NULL
 sort_ard_hierarchical <- function(x, sort = everything() ~ "descending", sort_level = NULL) {
   set_cli_abort_call()
 
+
   # check and process inputs ---------------------------------------------------------------------
   check_string(sort_level, allow_empty = TRUE)
   check_not_missing(x)

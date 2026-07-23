@@ -14,7 +14,7 @@ rename_ard_columns(
 }
 \arguments{
 \item{x}{(\code{data.frame})\cr
-an ARD data frame of class 'card'}
+an ARD data frame of class \code{'card'} or \code{'card_unlisted'}}
 
 \item{columns}{(\code{\link[dplyr:dplyr_tidy_select]{tidy-select}})\cr
 columns to rename, e.g. selecting columns \code{c('group1', 'group2', 'variable')}
@@ -39,7 +39,7 @@ of retaining the label. Default is \code{TRUE}.}
 \item{unlist}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}
 }
 \value{
-data frame
+a data frame of class \code{'card_renamed'}
 }
 \description{
 Rename the grouping and variable columns to their original column names.

@@ -30,7 +30,7 @@ factor elements are often converted to the underlying integer value instead
 of retaining the label. Default is \code{TRUE}.}
 }
 \value{
-a data frame
+a data frame of class \code{'card_unlisted'}
 }
 \description{
 Unlist ARD Columns

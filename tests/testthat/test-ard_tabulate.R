@@ -1454,4 +1454,305 @@ test_that("ard_tabulate() attaches 'args' attribute", {
 
   expect_equal(args$variables, "AGEGR1")
   expect_equal(args$by, "ARM")
+
+  # 'args' includes strata when present
+  res_strata <- ard_tabulate(ADSL, by = "ARM", strata = "SEX", variables = "AGEGR1")
+  expect_identical(
+    attr(res_strata, "args"),
+    list(variables = "AGEGR1", by = "ARM", strata = "SEX")
+  )
+})
+
+# Contract-pinning tests ------------------------------------------------------
+# The tests below pin behaviors of the counting engine that are relied on
+# downstream (row order, storage types, NA handling) but were previously
+# untested. They were generated against the engine in cards 0.8.1.9000 and
+# guard the planned performance rewrite (#176).
+
+test_that("ard_tabulate() row order is stable with by + multiple strata", {
+  withr::local_options(list(width = 200))
+
+  expect_snapshot(
+    ard_tabulate(
+      mtcars,
+      by = am,
+      strata = c(cyl, vs),
+      variables = gear,
+      statistic = ~ c("n", "N", "p", "n_cum", "p_cum")
+    ) |>
+      dplyr::select(all_ard_groups(), all_ard_variables(), "stat_name", "stat") |>
+      as.data.frame()
+  )
+})
+
+test_that("ard_tabulate() stat and level storage types are stable", {
+  ard <-
+    ard_tabulate(
+      ADSL,
+      by = "ARM",
+      variables = "AGEGR1",
+      statistic = ~ c("n", "N", "p", "n_cum", "p_cum")
+    )
+
+  # n, N, n_cum are integers; p, p_cum are doubles
+  stat_types <- vapply(ard$stat, typeof, character(1))
+  expect_true(all(stat_types[ard$stat_name %in% c("n", "N", "n_cum")] == "integer"))
+  expect_true(all(stat_types[ard$stat_name %in% c("p", "p_cum")] == "double"))
+
+  # factor variables keep class 'factor' in variable_level elements;
+  # the 'ordered' class is dropped
+  df_fct <- data.frame(
+    f = factor(c("a", "b", "a"), levels = c("a", "b", "c")),
+    o = factor(c("lo", "hi", "lo"), levels = c("lo", "hi"), ordered = TRUE)
+  )
+  ard_fct <- ard_tabulate(df_fct, variables = c(f, o))
+  expect_identical(
+    unique(lapply(ard_fct$variable_level, class)),
+    list("factor")
+  )
+  # unobserved factor level 'c' is present
+  expect_identical(
+    ard_fct |>
+      dplyr::filter(.data$variable == "f", .data$stat_name == "n") |>
+      dplyr::pull("variable_level") |>
+      unlist(use.names = FALSE) |>
+      as.character(),
+    c("a", "b", "c")
+  )
+
+  # Date variables keep class 'Date'
+  df_date <- data.frame(d = as.Date(c("2024-01-01", "2024-01-02", "2024-01-01")))
+  ard_date <- ard_tabulate(df_date, variables = d)
+  expect_identical(
+    unique(lapply(ard_date$variable_level, class)),
+    list("Date")
+  )
+
+  # N inherits double type from a denominator data frame with double counts
+  ard_dbl_n <-
+    ard_tabulate(
+      ADSL,
+      by = "ARM",
+      variables = "AGEGR1",
+      denominator =
+        data.frame(
+          ARM = unique(ADSL$ARM),
+          "...ard_N..." = c(86, 84, 84),
+          check.names = FALSE
+        )
+    )
+  expect_identical(
+    vapply(ard_dbl_n$stat[ard_dbl_n$stat_name == "N"], typeof, character(1)) |> unique(),
+    "double"
+  )
+
+  # a scalar denominator is coerced to integer
+  ard_scalar_n <- ard_tabulate(ADSL, variables = "AGEGR1", denominator = 1000)
+  expect_identical(
+    vapply(ard_scalar_n$stat[ard_scalar_n$stat_name == "N"], typeof, character(1)) |> unique(),
+    "integer"
+  )
+})
+
+test_that("ard_tabulate() strata combinations containing NA yield a single NA row", {
+  withr::local_options(list(width = 200))
+
+  # 'var' is character (not factor): a list-column of factor scalars renders
+  # its integer codes on some older R versions and its labels on others, which
+  # would make these snapshots R-version dependent. Factor level classes are
+  # pinned separately (and robustly) in the storage-types test above.
+  df_na_strata <- data.frame(
+    trt = c("A", "A", "B", "B", "A"),
+    str = c("s1", "s1", "s2", NA, NA),
+    var = c("x", "y", "x", "y", "x")
+  )
+
+  # column denominator: the NA-strata row has NA for n, N, and p
+  expect_snapshot(
+    ard_tabulate(df_na_strata, variables = var, by = trt, strata = str) |>
+      dplyr::select(all_ard_groups(), all_ard_variables(), "stat_name", "stat") |>
+      as.data.frame()
+  )
+
+  # cell/integer denominators: the NA-strata row keeps the real N (with NA n/p)
+  expect_snapshot(
+    ard_tabulate(df_na_strata, variables = var, by = trt, strata = str, denominator = "cell") |>
+      dplyr::select(all_ard_groups(), all_ard_variables(), "stat_name", "stat") |>
+      as.data.frame()
+  )
+  expect_snapshot(
+    ard_tabulate(df_na_strata, variables = var, by = trt, strata = str, denominator = 100L) |>
+      dplyr::select(all_ard_groups(), all_ard_variables(), "stat_name", "stat") |>
+      as.data.frame()
+  )
+})
+
+test_that("ard_tabulate(denominator) with an integer works with by and strata", {
+  ard <- ard_tabulate(ADSL, by = "ARM", variables = "AGEGR1", denominator = 1000L)
+  expect_true(
+    all(unlist(ard$stat[ard$stat_name == "N"]) == 1000L)
+  )
+  expect_identical(
+    unlist(ard$stat[ard$stat_name == "p"]),
+    unlist(ard$stat[ard$stat_name == "n"]) / 1000L
+  )
+
+  ard_strata <-
+    ard_tabulate(ADSL, by = "ARM", strata = "SEX", variables = "AGEGR1", denominator = 1000L)
+  expect_true(
+    all(unlist(ard_strata$stat[ard_strata$stat_name == "N"]) == 1000L)
+  )
+})
+
+test_that("ard_tabulate(denominator) data frames with extra columns work", {
+  # extra columns not in by/strata are ignored
+  expect_identical(
+    ard_tabulate(ADSL, by = "ARM", variables = "AGEGR1", denominator = ADSL[c("ARM", "AGE", "SEX")]),
+    ard_tabulate(ADSL, by = "ARM", variables = "AGEGR1", denominator = ADSL["ARM"])
+  )
+
+  # extra columns alongside '...ard_N...' are dropped
+  ard <-
+    ard_tabulate(
+      ADSL,
+      by = "ARM",
+      variables = "AGEGR1",
+      denominator =
+        data.frame(
+          ARM = unique(ADSL$ARM),
+          extra_column = "zzz",
+          "...ard_N..." = c(10L, 20L, 30L),
+          check.names = FALSE
+        )
+    )
+  expect_identical(
+    ard |>
+      dplyr::filter(.data$stat_name == "N") |>
+      dplyr::pull("stat") |>
+      unlist() |>
+      unique(),
+    c(10L, 20L, 30L)
+  )
+})
+
+test_that("ard_tabulate() handles NaN and Inf in numeric variables", {
+  withr::local_options(list(width = 200))
+
+  # NaN is treated as missing; Inf is a level
+  expect_snapshot(
+    ard_tabulate(
+      data.frame(x = c(1, 2, NaN, Inf, 2, 1, Inf)),
+      variables = x
+    ) |>
+      dplyr::select(all_ard_groups(), all_ard_variables(), "stat_name", "stat") |>
+      as.data.frame()
+  )
+})
+
+test_that("ard_tabulate() errors when a column is in both variables and by/strata", {
+  expect_snapshot(
+    error = TRUE,
+    ard_tabulate(ADSL, by = "ARM", variables = "ARM")
+  )
+  expect_snapshot(
+    error = TRUE,
+    ard_tabulate(ADSL, strata = "AGEGR1", variables = "AGEGR1")
+  )
+})
+
+test_that("ard_tabulate() with zero-row data keeps factor levels and types", {
+  df_zero <- data.frame(f = factor(character(0), levels = c("a", "b")))
+  ard <- ard_tabulate(df_zero, variables = f)
+
+  expect_identical(nrow(ard), 6L) # 2 levels x (n, N, p)
+  expect_identical(
+    unlist(ard$stat[ard$stat_name == "n"]),
+    c(0L, 0L)
+  )
+  expect_identical(
+    unlist(ard$stat[ard$stat_name == "N"]),
+    c(0L, 0L)
+  )
+  expect_true(all(is.nan(unlist(ard$stat[ard$stat_name == "p"]))))
+  expect_identical(
+    unique(lapply(ard$variable_level, class)),
+    list("factor")
+  )
+})
+
+test_that("ard_tabulate() with NA values in a by column drops the NA group", {
+  withr::local_options(list(width = 200))
+
+  expect_snapshot(
+    ard_tabulate(
+      data.frame(b = c("g1", "g1", NA, "g2"), x = c("u", "v", "u", "u")),
+      variables = x,
+      by = b
+    ) |>
+      dplyr::select(all_ard_groups(), all_ard_variables(), "stat_name", "stat") |>
+      as.data.frame()
+  )
+})
+
+test_that("ard_tabulate(denominator='row') is stable with two by columns", {
+  withr::local_options(list(width = 200))
+
+  expect_snapshot(
+    ard_tabulate(
+      mtcars,
+      by = c(am, vs),
+      variables = gear,
+      denominator = "row"
+    ) |>
+      dplyr::select(all_ard_groups(), all_ard_variables(), "stat_name", "stat") |>
+      as.data.frame()
+  )
+})
+
+test_that("ard_tabulate() cumulative statistics work with strata present", {
+  withr::local_options(list(width = 200))
+
+  # column denominator: cumsum within (by, strata) groups
+  expect_snapshot(
+    ard_tabulate(
+      ADSL,
+      by = "ARM",
+      strata = "SEX",
+      variables = "AGEGR1",
+      statistic = ~ c("n", "n_cum", "p", "p_cum")
+    ) |>
+      dplyr::select(all_ard_groups(), all_ard_variables(), "stat_name", "stat") |>
+      as.data.frame()
+  )
+
+  # row denominator: cumsum within variable levels across groups
+  expect_snapshot(
+    ard_tabulate(
+      ADSL,
+      by = "ARM",
+      strata = "SEX",
+      variables = "AGEGR1",
+      denominator = "row",
+      statistic = ~ c("n", "n_cum", "p", "p_cum")
+    ) |>
+      dplyr::select(all_ard_groups(), all_ard_variables(), "stat_name", "stat") |>
+      as.data.frame()
+  )
+})
+
+test_that("ard_tabulate() level ordering of character columns is stable", {
+  withr::local_options(list(width = 200))
+
+  # locale-sensitive characters (case, spaces, punctuation) as variable and by.
+  # NOTE: this pin documents the base::order() ordering of the current engine;
+  # it is expected to change to vctrs (C-locale) ordering in the #176 rewrite.
+  df_locale <- data.frame(
+    x = c("b", "A", "a B", "a-B", "B", "a"),
+    g = c("z1", "Z1", "z 1", "z-1", "z1", "Z1")
+  )
+  expect_snapshot(
+    ard_tabulate(df_locale, variables = x, by = g, statistic = ~"n") |>
+      dplyr::select(all_ard_groups(), all_ard_variables(), "stat_name", "stat") |>
+      as.data.frame()
+  )
 })

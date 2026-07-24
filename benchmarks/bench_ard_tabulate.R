@@ -4,7 +4,7 @@ suppressPackageStartupMessages({
   library(pkgload)
 })
 
-pkgload::load_all("/home/kpagacz/jnj/gtsummary-perf/cards")
+pkgload::load_all(".")
 library(gtsummary)
 data_big <- trial[rep(seq_len(nrow(trial)), 20), ]
 

@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  gtsummary:
+  cran-revdeps:
     runs-on: ubuntu-latest
 
     steps:
@@ -37,16 +37,24 @@ jobs:
       - name: Check Reverse Dependencies
         shell: Rscript {0}
         run: |
+          # revdeps checked via the CRAN/r-universe baseline
+          revdep_pkgs <- c("gtsummary", "cardx")
+
           g <- checked::plan_rev_dep_checks(
             path = ".",
             repos = c('https://ddsjoberg.r-universe.dev', 'https://cloud.r-project.org')
           )
           vs <- igraph::V(g)
           mt <- vs[checked:::is_meta(vs$task)]
-          nodes_to_skip <- mt[!xor(
-            endsWith(mt$name, "meta-revdep-gtsummary-of-cards"),
-            endsWith(mt$name, "meta-revdeps-of-cards")
-          )]
+          keep <-
+            Reduce(
+              `|`,
+              lapply(
+                c(sprintf("meta-revdep-%s-of-cards", revdep_pkgs), "meta-revdeps-of-cards"),
+                \(suffix) endsWith(mt$name, suffix)
+              )
+            )
+          nodes_to_skip <- mt[!keep]
           g <- igraph::delete_vertices(
             g,
             unlist(igraph::neighborhood(g, order = 1, nodes_to_skip, mode = "out"))
@@ -59,7 +67,7 @@ jobs:
             output = tempdir(),
             lib.loc = .libPaths(),
             repos = c(
-            'https://ddsjoberg.r-universe.dev', 
+            'https://ddsjoberg.r-universe.dev',
             'https://cloud.r-project.org'
             ),
             restore = FALSE
@@ -69,22 +77,83 @@ jobs:
           (r <- checked::results(design))
 
           # Logic to check for errors and abort if found
-          potential_issues <- r[[1]][[1]]$errors$potential_issues
-          issues <- r[[1]][[1]]$errors$issues
+          broken <- character(0)
+          for (pkg_result in r[[1]]) {
+            pkg_name <- if (!is.null(pkg_result$package)) pkg_result$package else "unknown"
+            potential_issues <- pkg_result$errors$potential_issues
+            issues <- pkg_result$errors$issues
 
-          if (!rlang::is_empty(potential_issues)) {
-            cli::cli_warn(
-              c("A potential issue was flagged in {.pkg gtsummary}.",
-                "i" = "This might mean the CRAN baseline is currently unstable, but a manual review is required just in case.")
-            )
+            if (!rlang::is_empty(potential_issues)) {
+              cli::cli_warn(
+                c("A potential issue was flagged in {.pkg {pkg_name}}.",
+                  "i" = "This might mean the CRAN baseline is currently unstable, but a manual review is required just in case.")
+              )
+            }
+            if (!rlang::is_empty(issues)) {
+              broken <- c(broken, pkg_name)
+            }
           }
 
-          if (!rlang::is_empty(issues)) {
+          if (length(broken) > 0) {
             cli::cli_abort(
-              c("This PR newly breaks {.pkg gtsummary}",
-                "!" = "The PR must be updated as to not break {.pkg gtsummary}.",
+              c("This PR newly breaks {.pkg {broken}}",
+                "!" = "The PR must be updated as to not break {.pkg {broken}}.",
                 "i" = "In rare cases where the break is acceptable, the change {.emph MUST} first be approved by Daniel Sjoberg (danieldsjoberg@gmail.com) {.emph before} this PR could potentially be merged."
               )
             )
-          } 
+          }
 
+  # crane is not on CRAN (GitHub: insightsengineering/crane), so it cannot go
+  # through checked's CRAN-baseline graph; run its test suite directly against
+  # this PR's cards.
+  crane:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout cards (this PR)
+        uses: actions/checkout@v4
+        with:
+          path: cards
+
+      - name: Checkout crane
+        uses: actions/checkout@v4
+        with:
+          repository: insightsengineering/crane
+          path: crane
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: 'release'
+          use-public-rspm: true
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
+
+      - name: Install crane dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          working-directory: crane
+          extra-packages: |
+            any::testthat
+            any::pkgload
+          cache-version: 1
+
+      - name: Install cards from this PR
+        shell: Rscript {0}
+        run: install.packages("./cards", repos = NULL, type = "source")
+
+      - name: Run crane tests against PR cards
+        shell: Rscript {0}
+        working-directory: crane
+        run: |
+          res <- testthat::test_local(".", stop_on_failure = FALSE, reporter = "summary")
+          df <- as.data.frame(res)
+          n_failed <- sum(df$failed)
+          cat(sprintf("\ncrane: %d failed, %d passed\n", n_failed, sum(df$passed)))
+          if (n_failed > 0) {
+            print(df[df$failed > 0, c("file", "test")])
+            stop("crane tests failed against this PR's cards")
+          }

@@ -33,7 +33,8 @@ Imports:
     lifecycle (>= 1.0.4),
     rlang (>= 1.1.6),
     tidyr (>= 1.3.1),
-    tidyselect (>= 1.2.1)
+    tidyselect (>= 1.2.1),
+    vctrs (>= 0.6.0)
 Suggests: 
     testthat (>= 3.2.3),
     withr (>= 3.0.0)

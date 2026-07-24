@@ -68,6 +68,29 @@ df_high_card <- data.frame(
   id = sprintf("level_%05d", sample(1:10000, n_s7, replace = TRUE))
 )
 
+# large, high-cardinality AE dataset: the sparse-strata pattern that
+# ard_hierarchical()/ard_stack_hierarchical() are built on. Each PT is nested
+# in exactly one SOC (realistic MedDRA), so the ~2,000 observed SOC x PT
+# combinations are sparse within the 30 x 2,000 full cross that the legacy
+# engine materialized densely (and twice, for counts and denominators).
+n_subj_ae <- 5000L
+n_events <- 200000L
+pt_soc <- data.frame(
+  AEDECOD = sprintf("PT%04d", 1:2000),
+  AESOC = sprintf("SOC%02d", sample(1:30, 2000, replace = TRUE))
+)
+big_adsl <- data.frame(
+  USUBJID = sprintf("S%05d", 1:n_subj_ae),
+  TRTA = sample(c("Placebo", "Drug A", "Drug B"), n_subj_ae, replace = TRUE)
+)
+big_adae <- pt_soc[sample(nrow(pt_soc), n_events, replace = TRUE), ]
+big_adae$USUBJID <- sample(big_adsl$USUBJID, n_events, replace = TRUE)
+# ard_hierarchical(id=) expects one row per subject/leaf (it does not de-event
+# internally the way ard_stack_hierarchical() does), so reduce to distinct
+# subject x SOC x PT records (~196k rows remain)
+big_adae <- dplyr::distinct(big_adae, USUBJID, AESOC, AEDECOD)
+big_adae <- dplyr::left_join(big_adae, big_adsl, by = "USUBJID")
+
 scenarios <- list(
   S1_tiny_overhead = quote(ard_tabulate(mtcars, variables = "am")),
   S2_typical = quote(ard_tabulate(ADSL, by = "ARM", variables = c("AGEGR1", "SEX", "RACE"))),
@@ -75,8 +98,8 @@ scenarios <- list(
   S4_many_by_levels = quote(ard_tabulate(df_many_by, by = c("b1", "b2"), variables = "var")),
   S5_sparse_strata = quote(
     ard_tabulate(
-      dplyr::mutate(ADAE, ...ard_one... = 1L),
-      variables = "...ard_one...",
+      dplyr::mutate(ADAE, dummy_one = 1L),
+      variables = "dummy_one",
       by = "TRTA",
       strata = c("AESOC", "AEDECOD"),
       denominator = ADSL,
@@ -88,13 +111,21 @@ scenarios <- list(
   S7_high_cardinality = quote(ard_tabulate(df_high_card, by = "grp", variables = "id")),
   S8_stack_hierarchical = quote(
     ard_stack_hierarchical(ADAE, variables = c(AESOC, AEDECOD), by = TRTA, denominator = ADSL, id = USUBJID)
+  ),
+  # large-AE hierarchical scenario (the headline improvement): subject-level
+  # incidence over a high-cardinality SOC/PT hierarchy, 200k events / 5k
+  # subjects, where the legacy engine materialized the full 30 x 2,000 SOC/PT
+  # cross densely (and twice) but only ~2,000 combinations are observed
+  S9_hierarchical_large = quote(
+    ard_hierarchical(big_adae, variables = c(AESOC, AEDECOD), by = TRTA, denominator = big_adsl, id = USUBJID)
   )
 )
 # more iterations where each run is fast, fewer where runs are expensive
 iterations <- c(
   S1_tiny_overhead = 200L, S2_typical = 25L, S3_large_n = 5L,
   S4_many_by_levels = 5L, S5_sparse_strata = 5L, S5b_hierarchical = 5L,
-  S6_many_variables = 5L, S7_high_cardinality = 3L, S8_stack_hierarchical = 3L
+  S6_many_variables = 5L, S7_high_cardinality = 3L, S8_stack_hierarchical = 3L,
+  S9_hierarchical_large = 3L
 )
 
 run_engine <- function(engine) {
@@ -135,13 +166,18 @@ results <-
   dplyr::mutate(
     .by = "scenario",
     speedup_vs_legacy = round(as.numeric(median[engine == "legacy"]) / as.numeric(median), 2)
+  ) |>
+  dplyr::mutate(
+    dplyr::across(c("min", "median"), ~ format(.x)),
+    mem_alloc = format(.data$mem_alloc),
+    `itr/sec` = round(.data$`itr/sec`, 2)
   )
 
-print(as.data.frame(results))
+print(as.data.frame(results), width = 200)
 
 # S1 overhead guard: the rewrite must not slow down the tiny-data case > 5%
 s1 <- results[results$scenario == "S1_tiny_overhead", ]
-ratio <- as.numeric(s1$median[s1$engine == "new"]) / as.numeric(s1$median[s1$engine == "legacy"])
+ratio <- 1 / s1$speedup_vs_legacy[s1$engine == "new"]
 cat(sprintf("\nS1 overhead ratio (new/legacy): %.3f (must be <= 1.05)\n", ratio))
 
 dir.create(file.path("benchmarks", "results"), showWarnings = FALSE)
@@ -152,7 +188,6 @@ cat(
   file = out_file
 )
 results |>
-  dplyr::mutate(across(c(min, median), format)) |>
   knitr::kable() |>
   cat(file = out_file, append = TRUE, sep = "\n")
 cat("\nReport written to ", out_file, "\n", sep = "")

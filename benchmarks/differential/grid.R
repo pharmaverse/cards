@@ -8,8 +8,9 @@
 
 build_case_grid <- function() {
   cases <- list()
-  add <- function(name, call, locale_sensitive = FALSE) {
-    cases[[length(cases) + 1L]] <<- list(name = name, call = call, locale_sensitive = locale_sensitive)
+  add <- function(name, call, locale_sensitive = FALSE, expect_fix = FALSE) {
+    cases[[length(cases) + 1L]] <<-
+      list(name = name, call = call, locale_sensitive = locale_sensitive, expect_fix = expect_fix)
   }
 
   # datasets used inside quoted calls (constructed fresh in the eval env) -----
@@ -112,7 +113,9 @@ build_case_grid <- function() {
 
   # 5. structural edge cases ----------------------------------------------------
   add("edge/zero_row_factor", quote(ard_tabulate(df_zero, variables = f)))
-  add("edge/zero_row_strata", quote(ard_tabulate(df_zero, variables = f, by = g, strata = s)))
+  # legacy engine crashes on zero-row data with strata (tibble internal error);
+  # the rewrite returns a 0-row ARD (zero observed strata combinations)
+  add("edge/zero_row_strata", quote(ard_tabulate(df_zero, variables = f, by = g, strata = s)), expect_fix = TRUE)
   add("edge/single_row", quote(ard_tabulate(df_types[1, ], variables = chr, by = grp)))
   add("edge/grouped_input", quote(ard_tabulate(dplyr::group_by(ADSL, ARM), variables = "AGEGR1")))
   add("edge/nonsyntactic", quote(ard_tabulate(df_nonsyn, variables = `Age Group`, by = `Trt Arm`)))
@@ -133,6 +136,10 @@ build_case_grid <- function() {
     ))
   )
   add("edge/empty_variables", quote(ard_tabulate(ADSL, variables = starts_with("xyz_no_match"))))
+  # on main this crashed with an internal error ('stat_name' not found); the
+  # rewrite branch returns an empty ARD (the fix lives in the shared shell of
+  # ard_tabulate.data.frame(), so both engines agree here)
+  add("edge/empty_statistic", quote(ard_tabulate(ADSL, variables = "AGEGR1", statistic = ~ character(0))))
 
   # 6. error paths (identical condition messages required) ---------------------
   add("error/all_na_character", quote(ard_tabulate(df_na, variables = chr_all_na)))

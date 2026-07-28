@@ -37,30 +37,38 @@ tidy_ard_column_order <- function(x, group_order = c("ascending", "descending"))
   set_cli_abort_call()
   group_order <- arg_match(group_order)
 
-  # specify the ordering the grouping variables
-  group_cols <-
-    data.frame(colname = dplyr::select(x, all_ard_groups()) |> names()) |>
-    dplyr::arrange(
-      case_switch(
-        group_order == "ascending" ~ as.integer(unlist(str_extract_all(.data$colname, "\\d+"))),
-        group_order == "descending" ~ dplyr::desc(as.integer(unlist(str_extract_all(.data$colname, "\\d+"))))
-      ),
-      .data$colname
-    ) |>
-    dplyr::pull("colname")
+  nms <- names(x)
+  group_cols <- grep("^group[0-9]+$", nms, value = TRUE)
+  group_level_cols <- grep("^group[0-9]+_level$", nms, value = TRUE)
+  all_group_cols <- c(group_cols, group_level_cols)
 
-  # selecting the columns in the tidy order
-  dplyr::select(
-    x,
-    all_of(group_cols),
-    all_ard_variables(),
-    any_of(c(
-      "context",
-      "stat_name", "stat_label", "stat", "stat_fmt", "fmt_fun",
-      "warning", "error"
-    )),
-    dplyr::everything()
-  )
+  if (length(all_group_cols) > 0) {
+    nums <- as.integer(gsub("[^0-9]", "", all_group_cols))
+    if (group_order == "ascending") {
+      o <- order(nums, all_group_cols)
+    } else {
+      o <- order(-nums, all_group_cols)
+    }
+    ordered_groups <- all_group_cols[o]
+  } else {
+    ordered_groups <- character(0)
+  }
+
+  var_cols <- grep("^variable[0-9]*$", nms, value = TRUE)
+  var_lvl_cols <- grep("^variable[0-9]*_level$", nms, value = TRUE)
+  all_var_cols <- c(var_cols, var_lvl_cols)
+
+  std_cols <- intersect(c(
+    "context",
+    "stat_name", "stat_label", "stat", "stat_fmt", "fmt_fun",
+    "warning", "error"
+  ), nms)
+
+  other_cols <- setdiff(nms, c(ordered_groups, all_var_cols, std_cols))
+
+  new_cols <- c(ordered_groups, all_var_cols, std_cols, other_cols)
+
+  x[, new_cols, drop = FALSE]
 }
 
 
@@ -69,18 +77,28 @@ tidy_ard_column_order <- function(x, group_order = c("ascending", "descending"))
 tidy_ard_row_order <- function(x) {
   set_cli_abort_call()
 
-  # get columns that dictate ordering
-  cols <- x |>
-    dplyr::select(all_ard_groups(c("names", "levels"))) |>
-    names()
-  if (!is_empty(cols)) {
-    max_group_n <- as.integer(unlist(str_extract_all(cols, "\\d+"))) |> max()
-    cols <-
-      map(seq_len(max_group_n), ~ c(paste0("group", .x), paste0("group", .x, "_level"))) |>
-      unlist() |>
-      intersect(cols)
+  nms <- names(x)
+  group_cols <- grep("^group[0-9]+$", nms, value = TRUE)
+  group_lvl_cols <- grep("^group[0-9]+_level$", nms, value = TRUE)
+  cols <- c(group_cols, group_lvl_cols)
+
+  if (length(cols) > 0) {
+    nums <- as.integer(gsub("[^0-9]", "", cols))
+    max_group_n <- max(nums)
+
+    target_cols <- character(0)
+    for (i in seq_len(max_group_n)) {
+      target_cols <- c(target_cols, paste0("group", i), paste0("group", i, "_level"))
+    }
+    cols <- intersect(target_cols, cols)
+
+    if (length(cols) > 0) {
+      order_list <- lapply(cols, function(col) match(x[[col]], unique(x[[col]])))
+      o <- do.call(order, order_list)
+      x <- x[o, , drop = FALSE]
+      rownames(x) <- NULL
+    }
   }
 
-  # perform the ordering
-  x |> dplyr::arrange(across(all_of(cols), .fns = function(x) match(x, unique(x))))
+  x
 }

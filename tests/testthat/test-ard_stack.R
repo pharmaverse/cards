@@ -10,6 +10,10 @@ test_that("ard_stack() works", {
     NA
   )
 
+  # Verify ard_stack class is assigned and ordered correctly
+  expect_s3_class(ard1, "ard_stack")
+  expect_identical(class(ard1)[1], "ard_stack")
+
   expect_equal(
     ard1,
     bind_ard(
@@ -72,7 +76,8 @@ test_that("ard_stack() works", {
   expect_equal(
     ard2,
     ard_match,
-    ignore_function_env = TRUE
+    ignore_function_env = TRUE,
+    ignore_attr = TRUE
   )
 
 
@@ -112,7 +117,8 @@ test_that("ard_stack() adding overalls", {
   )
   expect_equal(
     ard_test,
-    ard_match
+    ard_match,
+    ignore_attr = TRUE
   )
 })
 

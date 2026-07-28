@@ -262,33 +262,36 @@ ard_summary.data.frame <- function(data,
                                     by, strata, data,
                                     new_col_name = "...ard_all_stats...") {
   df_nested[[new_col_name]] <-
-    map(
+    lapply(
       df_nested[["...ard_nested_data..."]],
       function(nested_data) {
-        map(
-          variables,
-          function(variable) {
-            map2(
-              statistic[[variable]], names(statistic[[variable]]),
-              function(fun, fun_name) {
-                .lst_results_as_df(
-                  x = # calculate results, and place in tibble
-                    eval_capture_conditions(
-                      getOption(
-                        "cards.calculate_stats_as_ard.eval_fun",
-                        default = expr(do.call(fun, args = list(stats::na.omit(nested_data[[variable]]))))
-                      )
-                    ),
-                  variable = variable,
-                  fun_name = fun_name,
-                  fun = fun
-                )
-              }
-            ) |>
-              unname()
-          }
-        ) |>
-          dplyr::bind_rows()
+        res_list <- unlist(
+          lapply(
+            variables,
+            function(variable) {
+              lapply(
+                names(statistic[[variable]]),
+                function(fun_name) {
+                  fun <- statistic[[variable]][[fun_name]]
+                  .lst_results_as_df(
+                    x = # calculate results, and place in tibble
+                      eval_capture_conditions(
+                        getOption(
+                          "cards.calculate_stats_as_ard.eval_fun",
+                          default = expr(do.call(fun, args = list(stats::na.omit(nested_data[[variable]]))))
+                        )
+                      ),
+                    variable = variable,
+                    fun_name = fun_name,
+                    fun = fun
+                  )
+                }
+              )
+            }
+          ),
+          recursive = FALSE
+        )
+        dplyr::bind_rows(res_list)
       }
     )
 
@@ -324,33 +327,30 @@ ard_summary.data.frame <- function(data,
   # unnesting results if needed
   if (.is_named_list(x$result, allow_df = TRUE)) {
     if (is.data.frame(x$result)) x$result <- unclass(x$result)
-    df_ard <-
-      dplyr::tibble(
-        stat_name = names(x$result),
-        result = unname(x$result),
-        warning = list(x$warning),
-        error = list(x$error)
-      )
-  }
-  # if result is not a nested list, return a single row tibble
-  else {
-    df_ard <-
-      map(x, list) |>
-      dplyr::as_tibble() |>
-      dplyr::mutate(
-        stat_name =
-        # if the function is a "cards_fn" AND the result is missing, use the provided placeholder stat names
-          case_switch(
-            is_empty(.env$x$result) && is_cards_fn(.env$fun) ~ list(get_cards_fn_stat_names(.env$fun)),
-            .default = .env$fun_name
-          )
-      ) |>
-      tidyr::unnest("stat_name")
+    stat_name <- names(x$result)
+    res_list <- unname(x$result)
+  } else {
+    # if result is not a nested list, return a single row tibble
+    stat_name <- if (is_empty(x$result) && is_cards_fn(fun)) {
+      get_cards_fn_stat_names(fun)
+    } else {
+      fun_name
+    }
+    res_list <- list(x$result)
   }
 
-  df_ard |>
-    dplyr::mutate(variable = .env$variable) |>
-    dplyr::rename(stat = "result")
+  len <- length(stat_name)
+
+  out <- data.frame(
+    stat_name = stat_name,
+    stringsAsFactors = FALSE
+  )
+  out$stat <- res_list
+  out$warning <- rep_len(list(x$warning), len)
+  out$error <- rep_len(list(x$error), len)
+  out$variable <- rep_len(variable, len)
+
+  out
 }
 
 

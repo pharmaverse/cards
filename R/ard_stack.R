@@ -168,6 +168,9 @@ ard_stack <- function(data,
     )
   }
 
+  # assign new class -----------------------------------------------------------
+  class(ard_full) <- c("ard_stack", class(ard_full))
+
   # return final ARD -----------------------------------------------------------
   ard_full
 }

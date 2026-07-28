@@ -605,6 +605,7 @@ test_that("sort_ard_hierarchical() warning messaging works", {
   )
 
 
+
   expect_snapshot(
     sort_ard_hierarchical(ard_by_more, sort_level = "Placebo"),
     error = TRUE

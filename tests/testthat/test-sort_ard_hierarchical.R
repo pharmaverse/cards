@@ -588,10 +588,10 @@ test_that("sort_ard_hierarchical() warning messaging works", {
     statistic = everything() ~ "N"
   )
 
-  # expect_snapshot(
-  #   sort_ard_hierarchical(ard_no_by, sort_level = "F"),
-  #   error = TRUE
-  # )
+  expect_snapshot(
+    sort_ard_hierarchical(ard_no_by, sort_level = "F"),
+    error = TRUE
+  )
 
 
   # if more than two variables in the by statement then sort_level has no useful meaning.
@@ -605,8 +605,8 @@ test_that("sort_ard_hierarchical() warning messaging works", {
   )
 
 
-  # expect_snapshot(
-  #   sort_ard_hierarchical(ard_by_more, sort_level = "Placebo"),
-  #   error = TRUE
-  # )
+  expect_snapshot(
+    sort_ard_hierarchical(ard_by_more, sort_level = "Placebo"),
+    error = TRUE
+  )
 })

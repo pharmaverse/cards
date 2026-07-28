@@ -66,7 +66,7 @@ alias_as_fmt_fun(1)
 #>     # return final formatted vector
 #>     res
 #>   }
-#> <environment: 0x563a6f581670>
+#> <environment: 0x564cd75601e8>
 alias_as_fmt_fun("xx.x")
 #> function(x) {
 #>     # round and scale vector
@@ -91,5 +91,5 @@ alias_as_fmt_fun("xx.x")
 #>     # return final formatted vector
 #>     res
 #>   }
-#> <environment: 0x563a6c7537e0>
+#> <environment: 0x564cd49647c0>
 ```

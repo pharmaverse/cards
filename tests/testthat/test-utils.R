@@ -29,9 +29,17 @@ test_that(".unique_and_sorted() ordering is independent of the session locale", 
   skip_if_not_installed("withr")
 
   differs <- FALSE
-  for (loc in c("en_US.UTF-8", "en_US.utf8", "English_United States.utf8",
-                "English_United States.1252", "English")) {
-    set_ok <- tryCatch({ suppressWarnings(withr::local_collate(loc)); TRUE }, error = function(e) FALSE)
+  for (loc in c(
+    "en_US.UTF-8", "en_US.utf8", "English_United States.utf8",
+    "English_United States.1252", "English"
+  )) {
+    set_ok <- tryCatch(
+      {
+        suppressWarnings(withr::local_collate(loc))
+        TRUE
+      },
+      error = function(e) FALSE
+    )
     if (set_ok && !identical(sort(c("a", "A")), c("A", "a"))) {
       differs <- TRUE
       break

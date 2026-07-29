@@ -188,6 +188,12 @@ ard_tabulate.data.frame <- function(data,
     )
 
 
+  # return empty ARD if there is nothing to tabulate (e.g. zero-row data
+  # where no strata combinations are observed) -----------------------------------
+  if (nrow(df_result_tabulation) == 0L) {
+    return(dplyr::tibble() |> as_card(check = FALSE))
+  }
+
   # final processing of fmt_fun ------------------------------------------------
   df_result_final <-
     df_result_tabulation |>
@@ -264,35 +270,79 @@ ard_tabulate.data.frame <- function(data,
     return(dplyr::tibble())
   }
 
-  # first process the denominator
+  # variables whose requested statistics require a denominator
+  vars_needing_N <-
+    imap(
+      statistics_tabulation,
+      function(x, variable) {
+        if (any(c("N", "p", "p_cum") %in% x[["tabulation"]])) {
+          TRUE
+        } else {
+          NULL
+        }
+      }
+    ) |>
+    compact() |>
+    names()
+
+  # classify the denominator: the common cases (column/row/cell, NULL, scalar
+  # integer) are derived directly from the tabulated counts in
+  # .tab_derive_denominator(); data frame denominators are built by
+  # .process_denominator() and joined to the counts. The denominator is only
+  # inspected when a requested statistic needs it.
+  denom_type <-
+    if (is_empty(vars_needing_N)) {
+      "unused"
+    } else if (is.null(denominator) || isTRUE(denominator %in% "column")) {
+      "column"
+    } else if (is.data.frame(denominator)) {
+      "df"
+    } else if (isTRUE(denominator %in% "cell")) {
+      "cell"
+    } else if (isTRUE(denominator %in% "row")) {
+      "row"
+    } else if (is_scalar_integerish(denominator)) {
+      "integer"
+    } else {
+      cli::cli_abort("The {.arg denominator} argument has been mis-specified.", call = get_cli_abort_call())
+    }
+
+  # process data frame denominators (includes the denominator checks)
   lst_denominator <-
-    .process_denominator(
-      data = data,
-      variables =
-        imap(
-          statistics_tabulation,
-          function(x, variable) {
-            if (any(c("N", "p", "p_cum") %in% x[["tabulation"]])) {
-              TRUE
-            } else {
-              NULL
-            }
-          }
-        ) |>
-          compact() |>
-          names(),
-      denominator = denominator,
-      by = by,
-      strata = strata
-    )
+    if (denom_type == "df") {
+      .process_denominator(
+        data = data,
+        variables = vars_needing_N,
+        denominator = denominator,
+        by = by,
+        strata = strata
+      )
+    } else {
+      list()
+    }
+
+  # pre-compute the by/strata level structure shared by all variables
+  grid_info <- .tab_grid_info(data, by = by, strata = strata)
 
   # perform other counts
   df_result_tabulation <-
     imap(
       statistics_tabulation,
       function(tab_stats, variable) {
-        df_result_tabulation <-
-          .table_as_df(data, variable = variable, by = by, strata = strata, count_column = "...ard_n...")
+        var_info <- .tab_count_variable(data, variable = variable, grid_info = grid_info)
+        N_info <-
+          if (variable %in% vars_needing_N && denom_type %in% c("column", "row", "cell", "integer")) {
+            .tab_derive_denominator(
+              counts = var_info[["counts"]],
+              grid_info = grid_info,
+              K_v = var_info[["K_v"]],
+              denom_type = denom_type,
+              denominator = denominator
+            )
+          } else {
+            NULL
+          }
+        df_result_tabulation <- .tab_assemble_counts(grid_info, var_info, N_info)
         if (!is_empty(lst_denominator[[variable]])) {
           df_result_tabulation <-
             if (is_empty(intersect(names(df_result_tabulation), names(lst_denominator[[variable]])))) {
@@ -352,6 +402,16 @@ ard_tabulate.data.frame <- function(data,
 
         # We must drop all potential pivot columns that weren't selected to match pivot_longer behavior
         fixed_cols <- setdiff(names(df_res), cols_in_df)
+
+        # zero-row input (e.g. zero-row data with strata): return the empty
+        # long structure directly
+        if (n_rows == 0L) {
+          df_out <- df_res[fixed_cols]
+          df_out$stat_name <- character(0)
+          df_out$stat <- list()
+          return(dplyr::as_tibble(df_out))
+        }
+
         df_out <- df_res[fixed_cols]
         df_out <- df_out[rep(seq_len(n_rows), each = n_cols), , drop = FALSE]
 
@@ -435,6 +495,252 @@ ard_tabulate.data.frame <- function(data,
   }
 
   x
+}
+
+# Sparse tabulation engine -----------------------------------------------------
+#
+# The engine tabulates a variable over the by/strata groups in a single pass:
+# each row of `data` is mapped to an integer cell code and counted with
+# base::tabulate(). The cell grid is exactly the output grid — the full cross
+# of the `by` levels times the *observed* `strata` combinations times the
+# variable levels. Because only observed strata combinations enter the grid,
+# its size is bounded by the number of result rows rather than by the product
+# of every strata column's level count. Column/row/cell/integer denominators
+# are grouped sums over these same counts, so the data is tabulated only once.
+#
+# Cell code layout (1-based): by1 varies fastest, then by2, ..., then the
+# variable level, then the strata combination. This is the order in which the
+# count rows are emitted; tidy_ard_row_order() settles the final ARD order
+# downstream. Levels are ordered by .unique_and_sorted() and strata
+# combinations by dplyr::arrange(); both use C-locale (radix) ordering, so the
+# result is independent of the session locale.
+#
+# A strata combination containing NA (a "phantom" combination) contributes a
+# single all-NA row: `n` is NA, `N` is NA for the column/row denominators, and
+# `N` is the real denominator value for the cell/integer denominators.
+
+# per-call structure shared by all tabulated variables
+.tab_grid_info <- function(data, by, strata) {
+  n <- nrow(data)
+
+  # by columns: typed levels (all levels, incl. unobserved factor levels) and
+  # a 1-based mixed-radix code per row with by1 as the least-significant digit.
+  # Codes are doubles: values stay exact well below 2^53, avoiding integer
+  # overflow for wide grids.
+  lst_by_levels <-
+    lapply(by, function(b) .unique_and_sorted(data[[b]])) |>
+    stats::setNames(by)
+  K <- vapply(lst_by_levels, length, integer(1L))
+  K_by <- prod(K) # 1 when no `by` columns
+  by_digit_weights <- double(length(by))
+  code_by <- rep.int(1, n)
+  w <- 1
+  for (j in seq_along(by)) {
+    x <- data[[by[j]]]
+    idx <-
+      if (is.factor(x)) {
+        unclass(x)
+      } else if (is.logical(x)) {
+        x + 1L
+      } # nolint
+      else {
+        vctrs::vec_match(x, lst_by_levels[[j]])
+      }
+    code_by <- code_by + (as.double(idx) - 1) * w # NA propagates
+    by_digit_weights[j] <- w
+    w <- w * K[j]
+  }
+
+  # strata columns: observed combinations only, in dplyr::arrange() order.
+  # Combinations containing NA are tracked as "phantom" rows.
+  if (!is_empty(strata)) {
+    df_strata_all <-
+      dplyr::distinct(data[strata]) |>
+      dplyr::arrange(across(all_of(strata)))
+    phantom <- rowSums(is.na(df_strata_all)) > 0L
+    sid_all <- vctrs::vec_match(data[strata], df_strata_all)
+    map_to_complete <- cumsum(!phantom)
+    map_to_complete[phantom] <- NA_integer_
+    sid_c <- map_to_complete[sid_all]
+    S_c <- sum(!phantom)
+  } else {
+    df_strata_all <- NULL
+    phantom <- logical()
+    sid_c <- rep.int(1L, n)
+    S_c <- 1L
+  }
+
+  list(
+    by = by, strata = strata,
+    lst_by_levels = lst_by_levels, K = K, K_by = K_by,
+    by_digit_weights = by_digit_weights, code_by = code_by,
+    df_strata_all = df_strata_all, phantom = phantom, sid_c = sid_c, S_c = S_c
+  )
+}
+
+# tabulate one variable over the grid: one base::tabulate() pass
+.tab_count_variable <- function(data, variable, grid_info) {
+  # a column used as both `variable` and a by/strata column is unsupported;
+  # defer to .table_as_df(), which raises the error for duplicated columns
+  if (anyDuplicated(c(grid_info$by, grid_info$strata, variable)) > 0L) {
+    .table_as_df(data, variable = variable, by = grid_info$by, strata = grid_info$strata)
+  }
+
+  x <- data[[variable]]
+  lvls_v <- .unique_and_sorted(x)
+  K_v <- length(lvls_v)
+  idx_v <-
+    if (is.factor(x)) {
+      unclass(x)
+    } else if (is.logical(x)) {
+      x + 1L
+    } # nolint
+    else {
+      vctrs::vec_match(x, lvls_v)
+    }
+
+  n_cells <- grid_info$S_c * K_v * grid_info$K_by
+  if (n_cells > .Machine$integer.max) {
+    cli::cli_abort(
+      "The cross of the {.arg by}/{.arg strata} levels and the levels of
+       variable {.val {variable}} has {.val {n_cells}} cells, which exceeds
+       the maximum supported size ({.val {.Machine$integer.max}}).",
+      call = get_cli_abort_call()
+    )
+  }
+
+  # a row with NA in any by/strata/variable value is dropped before counting,
+  # so NA values never contribute to `n`
+  keep <- !is.na(grid_info$code_by) & !is.na(grid_info$sid_c) & !is.na(idx_v)
+  code <-
+    (as.double(grid_info$sid_c[keep]) - 1) * (K_v * grid_info$K_by) +
+    (as.double(idx_v[keep]) - 1) * grid_info$K_by +
+    grid_info$code_by[keep]
+  counts <- tabulate(as.integer(code), nbins = as.integer(n_cells))
+
+  list(variable = variable, lvls_v = lvls_v, K_v = K_v, counts = counts)
+}
+
+# derive the denominator N for every grid cell from the counts themselves.
+# All sums are integer-preserving: `N` must remain an integer because the
+# default formatting branches on is.integer(), formatting counts with no
+# decimal places.
+.tab_derive_denominator <- function(counts, grid_info, K_v, denom_type, denominator) {
+  K_by <- as.integer(grid_info$K_by)
+  S_c <- grid_info$S_c
+  n_cells <- length(counts)
+  cell0 <- as.double(seq_len(n_cells)) - 1
+  block_len <- as.double(K_v) * K_by # cells per strata combination
+
+  # cells of the first variable level: one per (by, strata) combination
+  sel_v1 <-
+    if (n_cells > 0L) {
+      as.integer(outer(seq_len(K_by), (as.double(seq_len(S_c)) - 1) * block_len, `+`))
+    } else {
+      integer()
+    }
+
+  switch(denom_type,
+    "column" = {
+      # N(by, strata) = sum of counts over the variable levels
+      N_bs <- integer(K_by * S_c)
+      for (v in seq_len(K_v)) {
+        N_bs <- N_bs + counts[sel_v1 + as.integer((v - 1) * K_by)]
+      }
+      idx <- as.integer(cell0 %% K_by + (cell0 %/% block_len) * K_by + 1)
+      list(N_cells = N_bs[idx], N_phantom = NA_integer_)
+    },
+    "row" = {
+      # N(variable level) = sum of counts over all by/strata combinations
+      N_v <- vapply(
+        seq_len(K_v),
+        function(v) sum(counts[sel_v1 + as.integer((v - 1) * K_by)]),
+        integer(1L)
+      )
+      idx <- as.integer((cell0 %/% K_by) %% K_v + 1)
+      list(N_cells = N_v[idx], N_phantom = NA_integer_)
+    },
+    "cell" = {
+      N_all <- sum(counts)
+      list(N_cells = rep.int(N_all, n_cells), N_phantom = N_all)
+    },
+    "integer" = {
+      N_int <- as.integer(denominator)
+      list(N_cells = rep.int(N_int, n_cells), N_phantom = N_int)
+    }
+  )
+}
+
+# build the typed count data frame with columns
+# c(by, strata, variable, "...ard_n..."[, "...ard_N..."]); rows are ordered
+# with strata combinations outermost, then variable levels, then by
+# combinations with by1 varying fastest. Typed columns are built exclusively by
+# subsetting the level vectors, so classes (factor, Date, hms, ...) are
+# preserved.
+.tab_assemble_counts <- function(grid_info, var_info, N_info) {
+  by <- grid_info$by
+  strata <- grid_info$strata
+  lvls_v <- var_info$lvls_v
+  K_v <- var_info$K_v
+  counts <- var_info$counts
+  K_by <- as.integer(grid_info$K_by)
+  block_len <- as.integer(as.double(K_v) * K_by)
+
+  # index patterns within one strata block
+  block0 <- seq_len(block_len) - 1L
+  bb <- block0 %% K_by # 0-based by code
+  vidx_block <- block0 %/% K_by + 1L # 1-based variable level index
+  lst_by_idx_block <-
+    lapply(seq_along(by), function(j) {
+      (bb %/% as.integer(grid_info$by_digit_weights[j])) %% grid_info$K[j] + 1L
+    })
+
+  if (is_empty(strata)) {
+    lst_cols <- c(
+      lapply(seq_along(by), function(j) grid_info$lst_by_levels[[j]][lst_by_idx_block[[j]]]),
+      list(lvls_v[vidx_block]),
+      list(counts)
+    ) |>
+      stats::setNames(c(by, var_info$variable, "...ard_n..."))
+    if (!is.null(N_info)) {
+      lst_cols[["...ard_N..."]] <- N_info$N_cells
+    }
+    return(dplyr::as_tibble(lst_cols))
+  }
+
+  # strata present: complete combinations contribute a full block, phantom
+  # (NA-containing) combinations a single NA row, interleaved in arrange order
+  phantom <- grid_info$phantom
+  sizes <- rep.int(block_len, length(phantom))
+  sizes[phantom] <- 1L
+  combo_id <- rep.int(seq_along(sizes), sizes)
+  within <- sequence(sizes)
+  phantom_row <- phantom[combo_id]
+
+  cell_idx <- as.integer((as.double(cumsum(!phantom)[combo_id]) - 1) * block_len + within)
+  cell_idx[phantom_row] <- NA_integer_
+
+  n_col <- counts[cell_idx]
+  vidx <- vidx_block[within]
+  vidx[phantom_row] <- NA_integer_
+
+  lst_cols <- c(
+    lapply(seq_along(by), function(j) {
+      idx <- lst_by_idx_block[[j]][within]
+      idx[phantom_row] <- NA_integer_
+      grid_info$lst_by_levels[[j]][idx]
+    }),
+    lapply(seq_along(strata), function(j) grid_info$df_strata_all[[j]][combo_id]),
+    list(lvls_v[vidx]),
+    list(n_col)
+  ) |>
+    stats::setNames(c(by, strata, var_info$variable, "...ard_n..."))
+  if (!is.null(N_info)) {
+    N_col <- N_info$N_cells[cell_idx]
+    N_col[phantom_row] <- N_info$N_phantom
+    lst_cols[["...ard_N..."]] <- N_col
+  }
+  dplyr::as_tibble(lst_cols)
 }
 
 #' Results from `table()` as Data Frame

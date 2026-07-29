@@ -4,110 +4,26 @@ on:
   pull_request:
     branches: [ main ]
 
+# Each reverse dependency is checked out from its GitHub repo at its most recent
+# final-release tag (pre-releases excluded; falling back to the default branch
+# if it publishes no version tags), the cards from this PR is installed over it,
+# and the revdep's test suite is run against that cards. The job fails if any of
+# the revdep's tests fail.
+#
+# This replaced a `checked`-based CRAN-baseline job whose package source
+# resolution was persistently unstable, and folds the previously separate crane
+# job into the matrix.
 jobs:
-  cran-revdeps:
+  revdep:
     runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up R
-        uses: r-lib/actions/setup-r@v2
-        with:
-          r-version: 'release'
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
-
-      - name: Install and Cache Dependencies
-        uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          # List the packages your script needs here
-          extra-packages: |
-            any::checked
-            any::rlang
-            any::cli
-          # This key ensures that if you change the list above,
-          # it creates a new cache rather than using an old one.
-          cache-version: 1
-
-      - name: Check Reverse Dependencies
-        shell: Rscript {0}
-        run: |
-          # revdeps checked via the CRAN/r-universe baseline
-          revdep_pkgs <- c("gtsummary", "cardx")
-
-          g <- checked::plan_rev_dep_checks(
-            path = ".",
-            repos = c('https://ddsjoberg.r-universe.dev', 'https://cloud.r-project.org')
-          )
-          vs <- igraph::V(g)
-          mt <- vs[checked:::is_meta(vs$task)]
-          keep <-
-            Reduce(
-              `|`,
-              lapply(
-                c(sprintf("meta-revdep-%s-of-cards", revdep_pkgs), "meta-revdeps-of-cards"),
-                \(suffix) endsWith(mt$name, suffix)
-              )
-            )
-          nodes_to_skip <- mt[!keep]
-          g <- igraph::delete_vertices(
-            g,
-            unlist(igraph::neighborhood(g, order = 1, nodes_to_skip, mode = "out"))
-          )
-          g <- checked:::task_graph_class(g)
-
-          design <- checked::checker$new(
-            g,
-            n = 20,
-            output = tempdir(),
-            lib.loc = .libPaths(),
-            repos = c(
-            'https://ddsjoberg.r-universe.dev',
-            'https://cloud.r-project.org'
-            ),
-            restore = FALSE
-          )
-
-          checked::run(design, reporter = NULL)
-          (r <- checked::results(design))
-
-          # Logic to check for errors and abort if found
-          broken <- character(0)
-          for (pkg_result in r[[1]]) {
-            pkg_name <- if (!is.null(pkg_result$package)) pkg_result$package else "unknown"
-            potential_issues <- pkg_result$errors$potential_issues
-            issues <- pkg_result$errors$issues
-
-            if (!rlang::is_empty(potential_issues)) {
-              cli::cli_warn(
-                c("A potential issue was flagged in {.pkg {pkg_name}}.",
-                  "i" = "This might mean the CRAN baseline is currently unstable, but a manual review is required just in case.")
-              )
-            }
-            if (!rlang::is_empty(issues)) {
-              broken <- c(broken, pkg_name)
-            }
-          }
-
-          if (length(broken) > 0) {
-            cli::cli_abort(
-              c("This PR newly breaks {.pkg {broken}}",
-                "!" = "The PR must be updated as to not break {.pkg {broken}}.",
-                "i" = "In rare cases where the break is acceptable, the change {.emph MUST} first be approved by Daniel Sjoberg (danieldsjoberg@gmail.com) {.emph before} this PR could potentially be merged."
-              )
-            )
-          }
-
-  # crane is not on CRAN (GitHub: insightsengineering/crane), so it cannot go
-  # through checked's CRAN-baseline graph; run its test suite directly against
-  # this PR's cards.
-  crane:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        revdep:
+          - ddsjoberg/gtsummary
+          - pharmaverse/cardx
+          - insightsengineering/crane
+    name: ${{ matrix.revdep }}
 
     steps:
       - name: Checkout cards (this PR)
@@ -115,11 +31,25 @@ jobs:
         with:
           path: cards
 
-      - name: Checkout crane
+      - name: Resolve most recent release of ${{ matrix.revdep }}
+        id: rev
+        run: |
+          repo="https://github.com/${{ matrix.revdep }}.git"
+          # highest final-release version tag (exclude pre-releases like -rc1)
+          tag=$(git ls-remote --tags --refs --sort=-v:refname "$repo" \
+                | sed 's#.*refs/tags/##' | grep -E '^v?[0-9]+(\.[0-9]+)+$' | head -n1)
+          if [ -z "$tag" ]; then
+            tag=$(git ls-remote --symref "$repo" HEAD | awk '/ref:/{sub("refs/heads/","",$2); print $2}')
+          fi
+          echo "Using ${{ matrix.revdep }}@$tag"
+          echo "ref=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout ${{ matrix.revdep }}
         uses: actions/checkout@v4
         with:
-          repository: insightsengineering/crane
-          path: crane
+          repository: ${{ matrix.revdep }}
+          ref: ${{ steps.rev.outputs.ref }}
+          path: revdep
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
@@ -132,28 +62,30 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
 
-      - name: Install crane dependencies
+      - name: Install ${{ matrix.revdep }} dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          working-directory: crane
+          working-directory: revdep
           extra-packages: |
             any::testthat
             any::pkgload
+            any::vctrs
           cache-version: 1
 
       - name: Install cards from this PR
         shell: Rscript {0}
         run: install.packages("./cards", repos = NULL, type = "source")
 
-      - name: Run crane tests against PR cards
+      - name: Run ${{ matrix.revdep }} tests against this PR's cards
         shell: Rscript {0}
-        working-directory: crane
+        working-directory: revdep
         run: |
-          res <- testthat::test_local(".", stop_on_failure = FALSE, reporter = "summary")
-          df <- as.data.frame(res)
-          n_failed <- sum(df$failed)
-          cat(sprintf("\ncrane: %d failed, %d passed\n", n_failed, sum(df$passed)))
-          if (n_failed > 0) {
-            print(df[df$failed > 0, c("file", "test")])
-            stop("crane tests failed against this PR's cards")
+          res <- as.data.frame(
+            testthat::test_local(".", stop_on_failure = FALSE, reporter = "summary")
+          )
+          n_failed <- sum(res$failed)
+          cat(sprintf("\n%s: %d failed, %d passed\n", "${{ matrix.revdep }}", n_failed, sum(res$passed)))
+          if (n_failed > 0L) {
+            print(res[res$failed > 0L, c("file", "test", "failed")])
+            stop("Reverse dependency tests failed against this PR's cards")
           }

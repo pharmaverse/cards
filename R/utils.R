@@ -1,9 +1,11 @@
 #' ARD-flavor of unique()
 #'
-#' Essentially a wrapper for `unique(x) |> sort()` with `NA` levels removed.
-#' For factors, all levels are returned even if they are unobserved.
-#' Similarly, logical vectors always return `c(TRUE, FALSE)`, even if
-#' both levels are not observed.
+#' Essentially a wrapper for `unique(x)` sorted in the C locale with `NA` levels
+#' removed. Character values are ordered with `order(method = "radix")`, so the
+#' result is independent of the session locale and matches the ordering
+#' `dplyr::arrange()` applies. For factors, all levels are returned even if they
+#' are unobserved. Similarly, logical vectors always return `c(TRUE, FALSE)`,
+#' even if both levels are not observed.
 #'
 #' @param x (`any`)\cr
 #'   a vector
@@ -35,9 +37,13 @@
     else return(c(FALSE, TRUE, NA))
   }
 
-  # otherwise, return a simple unique and sort of the vector
-  if (useNA == "no") return(unique(x) |> sort())
-  else return(unique(x) |> sort() |> c(NA))
+  # otherwise, return the unique values sorted in the C locale (radix), which is
+  # independent of the session locale and matches dplyr::arrange() ordering.
+  # `na.last = NA` drops NA, matching sort()'s default.
+  ux <- unique(x)
+  ux <- ux[order(ux, method = "radix", na.last = NA)]
+  if (useNA == "no") return(ux)
+  else return(c(ux, NA))
   # styler: on
 }
 

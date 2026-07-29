@@ -1,5 +1,14 @@
 # cards 0.8.1.9000
 
+* `ard_tabulate()` — and the functions built on it (`ard_tabulate_value()`, `ard_tabulate_rows()`, `ard_hierarchical()`, `ard_hierarchical_count()`, `ard_stack()`, `ard_stack_hierarchical()`) — now uses a rewritten sparse single-pass counting engine, substantially reducing run time and memory use for data with many `strata` combinations or high-cardinality variables. The data is tabulated once per variable, and the `column`/`row`/`cell`/integer denominators are derived from the same counts. (#176)
+
+  Results are otherwise unchanged — including value types and row ordering — with these exceptions:
+
+  * The internal message beginning "If you see this message, the order of the sorted variables in the tabulation is unexpected" has been removed along with the code path that triggered it; inputs that previously hit it (e.g. `NaN` in a `by` column) are now handled correctly.
+  * Zero-row data with `strata`, and an empty `statistic` vector, previously errored with internal errors; both now return an empty ARD.
+
+* Character values are now sorted in the C locale throughout the package (via `order(method = "radix")`), so the ordering of `variable` and `group` levels no longer depends on the session locale and is consistent with `dplyr::arrange()`. Previously, character `variable`/`by` levels were sorted in the session locale (`base::sort()`) while `strata` levels already used `dplyr::arrange()`; these now agree. This affects `ard_tabulate()`, `ard_summary()`, `ard_pairwise()`, `ard_tabulate_value()` (via `maximum_variable_value()`), and related functions, and differs from prior releases only for locale-sensitive character values (mixed case, punctuation).
+
 # cards 0.8.1
 
 * The output of `bind_ard()` now has a `"bind_ard"` class. (#572; @alanahjonas95).

@@ -15,7 +15,10 @@ a named list
 }
 \description{
 For each column in the passed data frame, the function returns a named list
-with the value being the largest/last element after a sort.
+with the value being the largest/last element after a sort. Character values
+are ordered in the C locale (via \code{order(method = "radix")}), so the result is
+independent of the session locale and consistent with the ordering used
+elsewhere in the package.
 For factors, the last level is returned, and for logical vectors \code{TRUE} is returned.
 }
 \examples{

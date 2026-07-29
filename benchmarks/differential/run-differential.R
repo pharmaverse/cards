@@ -81,6 +81,9 @@ normalize_fn <- function(f) {
 }
 
 normalize_fns <- function(x) {
+  if (inherits(x, "captured_error")) {
+    return(x)
+  }
   if (is.function(x)) {
     return(normalize_fn(x))
   }
@@ -123,11 +126,16 @@ canonicalize_rows <- function(x) {
   x[order(flat), , drop = FALSE] |> `rownames<-`(NULL)
 }
 
-compare_bundles <- function(old, new, locale_sensitive = FALSE) {
+compare_bundles <- function(old, new, locale_sensitive = FALSE, expect_fix = FALSE) {
   old <- normalize_bundle(old)
   new <- normalize_bundle(new)
   if (identical(old, new)) {
     return(list(status = "identical"))
+  }
+  if (expect_fix &&
+    inherits(old$result, "captured_error") &&
+    !inherits(new$result, "captured_error")) {
+    return(list(status = "fixed-crash"))
   }
   if (locale_sensitive &&
     identical(old[c("messages", "warnings")], new[c("messages", "warnings")]) &&
@@ -152,7 +160,11 @@ run_grid <- function() {
   results <- lapply(cases, function(case) {
     old <- with_legacy_engine(capture_all(case$call, eval_env))
     new <- capture_all(case$call, eval_env)
-    cmp <- compare_bundles(old, new, locale_sensitive = isTRUE(case$locale_sensitive))
+    cmp <- compare_bundles(
+      old, new,
+      locale_sensitive = isTRUE(case$locale_sensitive),
+      expect_fix = isTRUE(case$expect_fix)
+    )
     if (cmp$status == "DIFF") {
       cat("\n== DIFF:", case$name, "==\n")
       cat(deparse(case$call), sep = "\n")

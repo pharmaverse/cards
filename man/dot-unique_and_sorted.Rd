@@ -14,10 +14,12 @@ a vector}
 a vector
 }
 \description{
-Essentially a wrapper for \code{unique(x) |> sort()} with \code{NA} levels removed.
-For factors, all levels are returned even if they are unobserved.
-Similarly, logical vectors always return \code{c(TRUE, FALSE)}, even if
-both levels are not observed.
+Essentially a wrapper for \code{unique(x)} sorted in the C locale with \code{NA} levels
+removed. Character values are ordered with \code{order(method = "radix")}, so the
+result is independent of the session locale and matches the ordering
+\code{dplyr::arrange()} applies. For factors, all levels are returned even if they
+are unobserved. Similarly, logical vectors always return \code{c(TRUE, FALSE)},
+even if both levels are not observed.
 }
 \examples{
 cards:::.unique_and_sorted(factor(letters[c(5, 5:1)], levels = letters))

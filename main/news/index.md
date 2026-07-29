@@ -2,6 +2,52 @@
 
 ## cards 0.8.1.9000
 
+- [`ard_tabulate()`](https://insightsengineering.github.io/cards/reference/ard_tabulate.md)
+  — and the functions built on it
+  ([`ard_tabulate_value()`](https://insightsengineering.github.io/cards/reference/ard_tabulate_value.md),
+  [`ard_tabulate_rows()`](https://insightsengineering.github.io/cards/reference/ard_tabulate_rows.md),
+  [`ard_hierarchical()`](https://insightsengineering.github.io/cards/reference/ard_hierarchical.md),
+  [`ard_hierarchical_count()`](https://insightsengineering.github.io/cards/reference/ard_hierarchical.md),
+  [`ard_stack()`](https://insightsengineering.github.io/cards/reference/ard_stack.md),
+  [`ard_stack_hierarchical()`](https://insightsengineering.github.io/cards/reference/ard_stack_hierarchical.md))
+  — now uses a rewritten sparse single-pass counting engine,
+  substantially reducing run time and memory use for data with many
+  `strata` combinations or high-cardinality variables. The data is
+  tabulated once per variable, and the `column`/`row`/`cell`/integer
+  denominators are derived from the same counts.
+  ([\#176](https://github.com/insightsengineering/cards/issues/176))
+
+  Results are otherwise unchanged — including value types and row
+  ordering — with these exceptions:
+
+  - The internal message beginning “If you see this message, the order
+    of the sorted variables in the tabulation is unexpected” has been
+    removed along with the code path that triggered it; inputs that
+    previously hit it (e.g. `NaN` in a `by` column) are now handled
+    correctly.
+  - Zero-row data with `strata`, and an empty `statistic` vector,
+    previously errored with internal errors; both now return an empty
+    ARD.
+
+- Character values are now sorted in the C locale throughout the package
+  (via `order(method = "radix")`), so the ordering of `variable` and
+  `group` levels no longer depends on the session locale and is
+  consistent with
+  [`dplyr::arrange()`](https://dplyr.tidyverse.org/reference/arrange.html).
+  Previously, character `variable`/`by` levels were sorted in the
+  session locale ([`base::sort()`](https://rdrr.io/r/base/sort.html))
+  while `strata` levels already used
+  [`dplyr::arrange()`](https://dplyr.tidyverse.org/reference/arrange.html);
+  these now agree. This affects
+  [`ard_tabulate()`](https://insightsengineering.github.io/cards/reference/ard_tabulate.md),
+  [`ard_summary()`](https://insightsengineering.github.io/cards/reference/ard_summary.md),
+  [`ard_pairwise()`](https://insightsengineering.github.io/cards/reference/ard_pairwise.md),
+  [`ard_tabulate_value()`](https://insightsengineering.github.io/cards/reference/ard_tabulate_value.md)
+  (via
+  [`maximum_variable_value()`](https://insightsengineering.github.io/cards/reference/maximum_variable_value.md)),
+  and related functions, and differs from prior releases only for
+  locale-sensitive character values (mixed case, punctuation).
+
 ## cards 0.8.1
 
 CRAN release: 2026-07-06

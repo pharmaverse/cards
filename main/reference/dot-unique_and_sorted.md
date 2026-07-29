@@ -1,7 +1,11 @@
 # ARD-flavor of unique()
 
-Essentially a wrapper for `unique(x) |> sort()` with `NA` levels
-removed. For factors, all levels are returned even if they are
+Essentially a wrapper for `unique(x)` sorted in the C locale with `NA`
+levels removed. Character values are ordered with
+`order(method = "radix")`, so the result is independent of the session
+locale and matches the ordering
+[`dplyr::arrange()`](https://dplyr.tidyverse.org/reference/arrange.html)
+applies. For factors, all levels are returned even if they are
 unobserved. Similarly, logical vectors always return `c(TRUE, FALSE)`,
 even if both levels are not observed.
 

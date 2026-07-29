@@ -511,8 +511,9 @@ ard_tabulate.data.frame <- function(data,
 # Cell code layout (1-based): by1 varies fastest, then by2, ..., then the
 # variable level, then the strata combination. This is the order in which the
 # count rows are emitted; tidy_ard_row_order() settles the final ARD order
-# downstream. Level and combination ordering uses vctrs (the ordering
-# dplyr::arrange() applies).
+# downstream. Levels are ordered by .unique_and_sorted() and strata
+# combinations by dplyr::arrange(); both use C-locale (radix) ordering, so the
+# result is independent of the session locale.
 #
 # A strata combination containing NA (a "phantom" combination) contributes a
 # single all-NA row: `n` is NA, `N` is NA for the column/row denominators, and
@@ -527,7 +528,7 @@ ard_tabulate.data.frame <- function(data,
   # Codes are doubles: values stay exact well below 2^53, avoiding integer
   # overflow for wide grids.
   lst_by_levels <-
-    lapply(by, function(b) vctrs::vec_sort(.unique_and_sorted(data[[b]]))) |>
+    lapply(by, function(b) .unique_and_sorted(data[[b]])) |>
     stats::setNames(by)
   K <- vapply(lst_by_levels, length, integer(1L))
   K_by <- prod(K) # 1 when no `by` columns
@@ -586,7 +587,7 @@ ard_tabulate.data.frame <- function(data,
   }
 
   x <- data[[variable]]
-  lvls_v <- vctrs::vec_sort(.unique_and_sorted(x))
+  lvls_v <- .unique_and_sorted(x)
   K_v <- length(lvls_v)
   idx_v <-
     if (is.factor(x)) {

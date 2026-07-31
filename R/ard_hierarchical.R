@@ -105,7 +105,7 @@ ard_hierarchical.data.frame <- function(data,
   )
   data <- dplyr::ungroup(data)
 
-  if (!is_empty(id) && anyDuplicated(data[c(id, by, variables)]) > 0L) {
+  if (!is_empty(id) && vctrs::vec_duplicate_any(data[c(id, by, variables)])) {
     cli::cli_warn(c(
       "Duplicate rows found in data for the {.val {id}} column{?s}.",
       "i" = "Percentages/Denominators are not correct."

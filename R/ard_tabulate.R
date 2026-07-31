@@ -213,9 +213,10 @@ ard_tabulate.data.frame <- function(data,
     ) |>
     dplyr::mutate(
       stat_label =
-        map2_chr(
-          .data$stat_label, .data$stat_name,
-          function(stat_label, stat_name) dplyr::coalesce(stat_label, default_stat_labels()[[stat_name]], stat_name)
+        dplyr::coalesce(
+          .data$stat_label,
+          unname(unlist(default_stat_labels())[.data$stat_name]),
+          .data$stat_name
         )
     )
 
@@ -293,10 +294,12 @@ ard_tabulate.data.frame <- function(data,
   denom_type <-
     if (is_empty(vars_needing_N)) {
       "unused"
+    } else if (is.data.frame(denominator)) {
+      # checked before the string comparisons: `x %in% "column"` coerces a data
+      # frame to character (mtfrm), which is expensive for large denominators
+      "df"
     } else if (is.null(denominator) || isTRUE(denominator %in% "column")) {
       "column"
-    } else if (is.data.frame(denominator)) {
-      "df"
     } else if (isTRUE(denominator %in% "cell")) {
       "cell"
     } else if (isTRUE(denominator %in% "row")) {
@@ -865,8 +868,11 @@ arrange_using_order <- function(data, columns) {
   if (is_empty(variables)) {
     return(list())
   }
+  # a data frame can never match a scalar-string denominator; testing it with
+  # `%in%` would needlessly coerce the whole data frame to character (mtfrm)
+  denom_is_df <- is.data.frame(denominator)
   # if no by/strata and no denominator (or column), then use number of non-missing in variable
-  if ((is.null(denominator) || isTRUE(denominator %in% "column")) && is_empty(c(by, strata))) {
+  if ((is.null(denominator) || (!denom_is_df && isTRUE(denominator %in% "column"))) && is_empty(c(by, strata))) {
     lst_denominator <-
       lapply(
         variables,
@@ -875,7 +881,7 @@ arrange_using_order <- function(data, columns) {
       stats::setNames(variables)
   }
   # if by/strata present and no denominator (or denominator="column"), then use number of non-missing variables
-  else if (is.null(denominator) || isTRUE(denominator %in% "column")) {
+  else if (is.null(denominator) || (!denom_is_df && isTRUE(denominator %in% "column"))) {
     lst_denominator <-
       lapply(
         variables,
@@ -930,7 +936,7 @@ arrange_using_order <- function(data, columns) {
       )
   }
   # if user requested cell percentages
-  else if (isTRUE(denominator %in% "cell")) {
+  else if (!denom_is_df && isTRUE(denominator %in% "cell")) {
     lst_denominator <-
       lapply(
         variables,
@@ -944,7 +950,7 @@ arrange_using_order <- function(data, columns) {
       stats::setNames(variables)
   }
   # if user requested row percentages
-  else if (isTRUE(denominator %in% "row")) {
+  else if (!denom_is_df && isTRUE(denominator %in% "row")) {
     lst_denominator <-
       lapply(
         variables,

@@ -1,5 +1,7 @@
 # cards 0.8.1.9000
 
+* Further reduced the run time and memory use of `ard_stack_hierarchical()` and `ard_stack_hierarchical_count()`, primarily by replacing the per-level `dplyr::slice_tail()` de-duplication with a `vctrs`-based equivalent and by avoiding unnecessary coercions of data frame denominators. Results are unchanged. (#176)
+
 * `ard_tabulate()` — and the functions built on it (`ard_tabulate_value()`, `ard_tabulate_rows()`, `ard_hierarchical()`, `ard_hierarchical_count()`, `ard_stack()`, `ard_stack_hierarchical()`) — now uses a rewritten sparse single-pass counting engine, substantially reducing run time and memory use for data with many `strata` combinations or high-cardinality variables. The data is tabulated once per variable, and the `column`/`row`/`cell`/integer denominators are derived from the same counts. (#176)
 
   Results are otherwise unchanged — including value types and row ordering — with these exceptions:

@@ -237,11 +237,9 @@ sort_ard_hierarchical <- function(x, sort = everything() ~ "descending") {
         )
     }
 
-    x <- x |>
-      dplyr::rowwise() |>
-      # unlist cur_var_lvl column
-      dplyr::mutate(dplyr::across(all_of(cur_var_lvl), ~ as.character(unlist(.x)))) |>
-      dplyr::ungroup()
+    # unlist cur_var_lvl column (vectorized equivalent of the rowwise unlist)
+    x[[cur_var_lvl]] <-
+      vapply(x[[cur_var_lvl]], function(.x) as.character(unlist(.x)), character(1L))
   }
 
   x

@@ -1,5 +1,5 @@
 ---
-url: https://insightsengineering.github.io/cards
+url: https://pharmaverse.github.io/cards
 
 template:
   package: nesttemplate
@@ -22,6 +22,8 @@ navbar:
       href: articles/long_data.html
     - text: "Writing ARD Functions"
       href: articles/creating-ards.html
+    - text: "Updating ARD Objects"
+      href: articles/update-ard.Rmd
     - text: "Other ARD Representations"
       href: articles/structures.html
   - text: News

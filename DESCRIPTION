@@ -21,9 +21,9 @@ Description: Construct CDISC (Clinical Data Interchange Standards
     written reports. The package also exports utilities for working with
     these objects and creating new Analysis Results Data objects.
 License: Apache License 2.0
-URL: https://github.com/insightsengineering/cards,
-    https://insightsengineering.github.io/cards/
-BugReports: https://github.com/insightsengineering/cards/issues
+URL: https://github.com/pharmaverse/cards,
+    https://pharmaverse.github.io/cards/
+BugReports: https://github.com/pharmaverse/cards/issues
 Depends: 
     R (>= 4.1)
 Imports: 
@@ -40,8 +40,7 @@ Suggests:
     withr (>= 3.0.0)
 Config/Needs/coverage: hms
 Config/Needs/website: rmarkdown, jsonlite, yaml, gtsummary, tfrmt, cardx,
-    gt, fontawesome, insightsengineering/crane,
-    insightsengineering/nesttemplate
+    gt, fontawesome, crane, insightsengineering/nesttemplate
 Config/roxygen2/version: 8.0.0
 Config/testthat/edition: 3
 Config/testthat/parallel: true

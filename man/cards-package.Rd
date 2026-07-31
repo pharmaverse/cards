@@ -13,9 +13,9 @@ Construct CDISC (Clinical Data Interchange Standards Consortium) compliant Analy
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/insightsengineering/cards}
-  \item \url{https://insightsengineering.github.io/cards/}
-  \item Report bugs at \url{https://github.com/insightsengineering/cards/issues}
+  \item \url{https://github.com/pharmaverse/cards}
+  \item \url{https://pharmaverse.github.io/cards/}
+  \item Report bugs at \url{https://github.com/pharmaverse/cards/issues}
 }
 
 }

@@ -26,6 +26,7 @@ args
 ata
 cardx
 cli
+coercions
 de
 dplyr
 env
@@ -55,5 +56,4 @@ unlist
 unlists
 unnested
 unnests
-vctrs
 wilcox

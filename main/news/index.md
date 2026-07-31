@@ -2,6 +2,23 @@
 
 ## cards 0.8.1.9000
 
+- Further reduced the run time and memory use of
+  [`ard_stack_hierarchical()`](https://pharmaverse.github.io/cards/reference/ard_stack_hierarchical.md)
+  and
+  [`ard_stack_hierarchical_count()`](https://pharmaverse.github.io/cards/reference/ard_stack_hierarchical.md),
+  primarily by replacing the per-level
+  [`dplyr::slice_tail()`](https://dplyr.tidyverse.org/reference/slice.html)
+  de-duplication with a `vctrs`-based equivalent and by avoiding
+  unnecessary coercions of data frame denominators. Results are
+  unchanged. ([\#176](https://github.com/pharmaverse/cards/issues/176))
+
+- Reduced the run time and memory use of
+  [`ard_tabulate()`](https://pharmaverse.github.io/cards/reference/ard_tabulate.md)
+  (and the functions built on it) for results with many rows, by
+  vectorizing the assignment of the default statistic labels. Results
+  are unchanged.
+  ([\#176](https://github.com/pharmaverse/cards/issues/176))
+
 - [`ard_tabulate()`](https://pharmaverse.github.io/cards/reference/ard_tabulate.md)
   — and the functions built on it
   ([`ard_tabulate_value()`](https://pharmaverse.github.io/cards/reference/ard_tabulate_value.md),

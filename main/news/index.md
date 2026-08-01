@@ -2,6 +2,23 @@
 
 ## cards 0.8.1.9000
 
+- Reduced the run time and memory use of
+  [`sort_ard_hierarchical()`](https://pharmaverse.github.io/cards/reference/sort_ard_hierarchical.md)
+  and
+  [`filter_ard_hierarchical()`](https://pharmaverse.github.io/cards/reference/filter_ard_hierarchical.md),
+  particularly for ARDs with many hierarchy sections. The per-level
+  grouped sums, the group-wise filter loop (including the previously
+  per-group
+  [`tidyr::pivot_wider()`](https://tidyr.tidyverse.org/reference/pivot_wider.html)
+  for column statistics and the per-group join used to derive the
+  `_overall` statistics), the reformatting helper, and the empty-section
+  pruning were all replaced with `vctrs`-based equivalents. Because
+  [`sort_ard_hierarchical()`](https://pharmaverse.github.io/cards/reference/sort_ard_hierarchical.md)
+  also runs inside
+  [`ard_stack_hierarchical()`](https://pharmaverse.github.io/cards/reference/ard_stack_hierarchical.md),
+  this speeds up ARD construction as well. Results are unchanged.
+  ([\#176](https://github.com/pharmaverse/cards/issues/176))
+
 - Further reduced the run time and memory use of
   [`ard_stack_hierarchical()`](https://pharmaverse.github.io/cards/reference/ard_stack_hierarchical.md)
   and

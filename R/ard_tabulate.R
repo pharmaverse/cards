@@ -845,7 +845,11 @@ ard_tabulate.data.frame <- function(data,
   df_table
 }
 
-# like `dplyr::arrange()`, but uses base R's `order()` to keep consistency in some edge cases
+# like `dplyr::arrange()`, but uses base R's `order()` (session-locale collation)
+# to match `base::table()`'s locale-aware factor ordering. This keeps the
+# positional `all_cols_equal` alignment in `.table_as_df()` valid. It is only
+# reached for value-joined denominators, so this locale-dependent ordering never
+# leaks into the final ARD row order (which comes from the C-locale engine).
 arrange_using_order <- function(data, columns) {
   inject(data[with(data, order(!!!syms(columns))), ])
 }

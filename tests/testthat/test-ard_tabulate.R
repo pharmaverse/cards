@@ -1744,8 +1744,9 @@ test_that("ard_tabulate() level ordering of character columns is stable", {
   withr::local_options(list(width = 200))
 
   # locale-sensitive characters (case, spaces, punctuation) as variable and by.
-  # NOTE: this pin documents the base::order() ordering of the current engine;
-  # it is expected to change to vctrs (C-locale) ordering in the #176 rewrite.
+  # This pin documents the C-locale (`order(method = "radix")`) ordering used by
+  # the engine since the #176 rewrite: uppercase sorts before lowercase and the
+  # order is independent of the session locale, matching `dplyr::arrange()`.
   df_locale <- data.frame(
     x = c("b", "A", "a B", "a-B", "B", "a"),
     g = c("z1", "Z1", "z 1", "z-1", "z1", "Z1")
@@ -1755,4 +1756,29 @@ test_that("ard_tabulate() level ordering of character columns is stable", {
       dplyr::select(all_ard_groups(), all_ard_variables(), "stat_name", "stat") |>
       as.data.frame()
   )
+})
+
+test_that("nest_for_ard() and ard_tabulate() order character levels consistently (#589)", {
+  # gtsummary's tbl_strata_nested_stack() pairs these two functions' level order
+  # positionally, so a divergence attaches statistics to the wrong strata label
+  # (ddsjoberg/gtsummary#2443). Both must use C-locale ordering (matching
+  # dplyr::arrange()) for character columns.
+  x <- c("ALT", "AST", "Albumin", "Bilirubin")
+  df <- data.frame(g = rep(x, each = 3))
+
+  tabulate_order <- unique(as.character(unlist(ard_tabulate(df, variables = "g")$variable_level)))
+
+  # nest_for_ard() agrees via both the `strata` and `by` paths
+  expect_identical(
+    as.character(unlist(nest_for_ard(df, strata = "g")$group1_level)),
+    tabulate_order
+  )
+  expect_identical(
+    as.character(unlist(nest_for_ard(df, by = "g")$group1_level)),
+    tabulate_order
+  )
+
+  # and both match dplyr::arrange() / the C locale
+  expect_identical(tabulate_order, unique(dplyr::arrange(df, g)$g))
+  expect_identical(tabulate_order, x[order(x, method = "radix")])
 })

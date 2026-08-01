@@ -208,7 +208,21 @@ filter_ard_hierarchical <- function(x, filter, var = NULL, keep_empty = FALSE, q
   if (is_empty(by)) {
     x_overall <- x
   } else {
-    is_overall <- apply(x, 1, function(x) !isTRUE(any(x %in% by)))
+    # a row is "overall" iff none of its cells hold a `by` variable name. This is
+    # the vectorized equivalent of the per-row `any(x %in% by)` scan: for
+    # character/list columns it reuses the exact `match()` coercion the row-wise
+    # `apply()` triggered, but touches each column once. Rows already matched are
+    # dropped from later columns (an OR reduction is order-independent), so the
+    # expensive list columns are only scanned for the few not-yet-matched rows -
+    # typically none, since `by` rows match on `group1` immediately.
+    is_hit <- logical(nrow(x))
+    for (col in x) {
+      todo <- which(!is_hit)
+      if (length(todo) == 0L) break
+      vals <- col[todo]
+      is_hit[todo[if (is.character(vals) || is.list(vals)) vals %in% by else as.character(vals) %in% by]] <- TRUE
+    }
+    is_overall <- !is_hit
     x_overall <- x[is_overall, ]
     x <- x[!is_overall, ]
   }
@@ -271,103 +285,118 @@ filter_ard_hierarchical <- function(x, filter, var = NULL, keep_empty = FALSE, q
     )
 
   # apply filter ---------------------------------------------------------------------------------
-  f_idx <- x_f |>
-    dplyr::group_by(across(c(
-      all_ard_groups(),
-      all_ard_variables(),
-      -all_of(by_cols)
-    ))) |>
-    dplyr::group_map(\(.df, .g) {
-      # only filter rows for variable `var`
-      if (.g$variable == var) {
-        .df_all <- .df
-        # allow filtering on values from a specific column
-        if (!is_empty(by)) {
-          # use `by` variable name as `group1_level` column name
-          names(.df_all)[names(.df_all) == by_cols[c(FALSE, TRUE)]] <- by
+  # group the reshaped ARD by hierarchy path (all group/variable columns except
+  # the `by` columns). Only groups for variable `var` are filtered; every other
+  # group is kept unchanged.
+  key_cols <- setdiff(
+    c(
+      grep("^group[0-9]+(_level)?$", names(x_f), value = TRUE),
+      intersect(c("variable", "variable_level"), names(x_f))
+    ),
+    by_cols
+  )
+  grp <- vctrs::vec_group_loc(x_f[key_cols])
+  is_var_group <- grp$key$variable == var
+  var_gis <- which(is_var_group)
 
-          # process any column-wise or overall filters present
-          if (any(c(col_stat_vars, overall_stat_vars) %in% filter_vars)) {
-            # if specified, add column-wise statistics to filter on
-            .df_col_stats <- if (any(col_stat_vars %in% filter_vars)) {
-              .df_all |>
-                dplyr::mutate(id_num = dplyr::row_number()) |>
-                tidyr::pivot_wider(
-                  id_cols = c(all_ard_groups(), all_ard_variables()),
-                  names_from = "id_num",
-                  values_from = any_of(c("n", "N", "p"))
-                )
-            } else {
-              dplyr::tibble(group1 = by)
-            }
+  stat_present <- intersect(c("n", "N", "p"), names(x_f))
+  multi_stat <- length(stat_present) > 1L
+  use_col_stats <- !is_empty(by) && any(col_stat_vars %in% filter_vars)
+  use_overall <- !is_empty(by) && any(overall_stat_vars %in% filter_vars)
+  need_extra <- use_col_stats || use_overall
 
-            # add overall stats - derive values if overall=FALSE
-            if (!no_overall) {
-              .df_overall <- .g |>
-                as_card(check = FALSE) |>
-                cards::rename_ard_groups_shift()
-              .df_overall <- dplyr::left_join(.df_overall, x_overall, by = names(.df_overall))
-            }
-            if ("n_overall" %in% filter_vars) {
-              .df_col_stats$n_overall <-
-                if (!no_overall) .df_overall$stat[.df_overall$stat_name == "n"][[1]] else sum(.df[["n"]])
-            }
-            if ("N_overall" %in% filter_vars) {
-              .df_col_stats$N_overall <-
-                if (!no_overall) .df_overall$stat[.df_overall$stat_name == "N"][[1]] else sum(.df[["N"]])
-            }
-            if ("p_overall" %in% filter_vars) {
-              .df_col_stats$p_overall <-
-                if (!no_overall) {
-                  .df_overall$stat[.df_overall$stat_name == "p"][[1]]
-                } else {
-                  sum(.df[["n"]]) / sum(.df[["N"]])
-                }
-            }
-            .df_all <- dplyr::bind_rows(.df_all, .df_col_stats)
+  # precompute the overall statistics for every filtered group in a single pass,
+  # replacing the per-group rename + left_join against `x_overall`. `vec_match()`
+  # takes the first matching overall row, exactly as the legacy `[[1]]` did.
+  ov <- list()
+  if (use_overall && !no_overall) {
+    shifted <- grp$key |>
+      vctrs::vec_slice(is_var_group) |>
+      as_card(check = FALSE) |>
+      cards::rename_ard_groups_shift()
+    jc <- names(shifted)
+    lookup_overall <- function(s) {
+      xo <- x_overall[x_overall$stat_name == s, , drop = FALSE]
+      xo$stat[vctrs::vec_match(shifted[jc], xo[jc])]
+    }
+    if ("n_overall" %in% filter_vars) ov$n <- lookup_overall("n")
+    if ("N_overall" %in% filter_vars) ov$N <- lookup_overall("N")
+    if ("p_overall" %in% filter_vars) ov$p <- lookup_overall("p")
+  }
+
+  keep_group <- !is_var_group
+  for (j in seq_along(var_gis)) {
+    gi <- var_gis[j]
+    ii <- grp$loc[[gi]]
+    k <- length(ii)
+    dat <- as.list(vctrs::vec_slice(x_f, ii))
+    if (!is_empty(by)) names(dat)[names(dat) == "group1_level"] <- by
+
+    if (need_extra) {
+      # append one summary row carrying the column-wise / overall statistics,
+      # mirroring the legacy bind_rows(.df_all, .df_col_stats): grouping columns
+      # present in `.df_col_stats` keep their (constant) value in the new row,
+      # every other original column is padded with NA / NULL.
+      for (nm in names(dat)) {
+        v <- dat[[nm]]
+        real <- nm == "group1" ||
+          (use_col_stats && nm %in% c("group2", "group2_level", "variable", "variable_level"))
+        dat[[nm]] <-
+          if (is.list(v)) {
+            c(v, if (real) v[1L] else list(NULL))
+          } else {
+            c(v, if (real) v[1L] else if (is.character(v)) NA_character_ else NA_real_)
+          }
+      }
+      if (use_col_stats) {
+        for (s in stat_present) {
+          vals <- x_f[[s]][ii]
+          for (pos in seq_len(k)) {
+            nm <- if (multi_stat) paste0(s, "_", pos) else as.character(pos)
+            dat[[nm]] <- c(rep(NA_real_, k), vals[pos])
           }
         }
-
-        # apply filter
-        .df[["idx"]][any(eval_tidy(filter, data = .df_all), na.rm = TRUE)]
-      } else {
-        .df[["idx"]]
       }
-    }) |>
-    unlist() |>
-    sort()
+      if ("n_overall" %in% filter_vars) {
+        dat$n_overall <- c(rep(NA_real_, k), if (!no_overall) ov$n[[j]] else sum(x_f[["n"]][ii]))
+      }
+      if ("N_overall" %in% filter_vars) {
+        dat$N_overall <- c(rep(NA_real_, k), if (!no_overall) ov$N[[j]] else sum(x_f[["N"]][ii]))
+      }
+      if ("p_overall" %in% filter_vars) {
+        dat$p_overall <- c(
+          rep(NA_real_, k),
+          if (!no_overall) ov$p[[j]] else sum(x_f[["n"]][ii]) / sum(x_f[["N"]][ii])
+        )
+      }
+    }
+
+    keep_group[gi] <- any(eval_tidy(filter, data = dat), na.rm = TRUE)
+  }
+
+  f_idx <- sort(unlist(x_f$idx[unlist(grp$loc[keep_group])]))
   x <- x[f_idx, ]
 
   # remove inner variable rows if `var` is an outer variable that does not meet the filter criteria
   if (which_var < length(ard_args$variables)) {
     var_gp_nm <- paste0("group", length(by) + which_var) # get `var` group variable name
+    var_lvl_nm <- paste0(var_gp_nm, "_level")
+    # group name/level columns identifying the hierarchy path down to `var`
+    join_gp <- paste0("group", seq_len(which_var) + length(by))
+    join_cols <- as.vector(rbind(join_gp, paste0(join_gp, "_level")))
 
-    # get all combos of variables kept after filtering
-    # keep only unique combos up to `var` group variable
-    var_keep <- x |>
-      dplyr::filter(.data$variable == var) |>
-      dplyr::mutate(
-        !!var_gp_nm := .data$variable,
-        !!paste0(var_gp_nm, "_level") := .data$variable_level
-      )
-    var_keep <- dplyr::distinct(var_keep[(1 + length(by) * 2):((length(by) + which_var) * 2)])
+    # unique hierarchy paths (down to `var`) that survived filtering on `var`;
+    # the `var` name/level come from the variable/variable_level columns
+    surv <- which(x$variable == var)
+    keep_keys <- x[surv, join_cols]
+    keep_keys[[var_gp_nm]] <- x$variable[surv]
+    keep_keys[[var_lvl_nm]] <- x$variable_level[surv]
+    keep_keys <- vctrs::vec_unique(keep_keys)
 
-    # track row indices
-    x <- x |> dplyr::mutate(idx = dplyr::row_number())
-
-    # get row indices to exclude - all rows within `var` sections that have been removed
-    f_idx_inner <-
-      dplyr::anti_join(
-        x[x[[var_gp_nm]] == var & !is.na(x[[var_gp_nm]]), ],
-        var_keep,
-        by = names(var_keep)
-      ) |>
-      dplyr::pull("idx")
-
-    # filter out inner rows
-    x <- x |>
-      dplyr::filter(!.data$idx %in% f_idx_inner) |>
-      dplyr::select(-"idx")
+    # drop all rows nested within `var` sections that were filtered out
+    inner <- which(x[[var_gp_nm]] == var & !is.na(x[[var_gp_nm]]))
+    drop_inner <- inner[is.na(vctrs::vec_match(x[inner, join_cols], keep_keys))]
+    if (length(drop_inner)) x <- x[-drop_inner, ]
   }
 
   # remove summary rows from empty sections if requested
@@ -392,27 +421,19 @@ filter_ard_hierarchical <- function(x, filter, var = NULL, keep_empty = FALSE, q
 
       # check if each hierarchy section (from innermost to outermost) is empty and if so remove its summary row
       for (i in rev(seq_along(outer_cols))) {
-        # get group keys of all non-empty sections
-        x_gps <- x_sum |>
-          # group by current and all previous grouping columns
-          dplyr::group_by(dplyr::pick(
-            any_of(cards::all_ard_group_n((1:i) + length(by))),
-            any_of(cards::all_ard_variables())
-          )) |>
-          dplyr::group_keys() |>
-          dplyr::filter(!.data$variable %in% "..overall..") |>
-          dplyr::select(any_of(cards::all_ard_group_n((1:i) + length(by)))) |>
-          dplyr::distinct()
+        gk_i <- sort(c(
+          paste0("group", seq_len(i) + length(by)),
+          paste0("group", seq_len(i) + length(by), "_level")
+        ))
+        gk_i <- gk_i[gk_i %in% names(x_sum)]
+        keys_i <- x_sum[gk_i]
 
-        # get indices of rows to remove (summary rows from empty sections)
-        idx_rm <- x_sum |>
-          dplyr::filter(.data[[names(cols)[i]]] %in% cols[i]) |>
-          dplyr::anti_join(x_gps, by = names(x_gps)) |>
-          dplyr::pull("idx")
+        # hierarchy paths (down to level `i`) that still hold a non-summary row
+        nonempty <- vctrs::vec_unique(vctrs::vec_slice(keys_i, !x_sum$variable %in% "..overall.."))
 
-        # remove summary rows from empty sections
-        x_sum <- x_sum |>
-          dplyr::filter(!.data$idx %in% idx_rm)
+        # remove level `i` summary rows whose section is now empty
+        drop <- x_sum[[names(cols)[i]]] %in% cols[i] & is.na(vctrs::vec_match(keys_i, nonempty))
+        x_sum <- vctrs::vec_slice(x_sum, !drop)
       }
       # filter out all empty summary rows
       idx_keep <- sort(x_sum$idx)

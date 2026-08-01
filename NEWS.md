@@ -1,5 +1,7 @@
 # cards 0.8.1.9000
 
+* Reduced the run time and memory use of `sort_ard_hierarchical()` and `filter_ard_hierarchical()`, particularly for ARDs with many hierarchy sections. The per-level grouped sums, the group-wise filter loop (including the previously per-group `tidyr::pivot_wider()` for column statistics and the per-group join used to derive the `_overall` statistics), the reformatting helper, and the empty-section pruning were all replaced with `vctrs`-based equivalents. Because `sort_ard_hierarchical()` also runs inside `ard_stack_hierarchical()`, this speeds up ARD construction as well. Results are unchanged. (#176)
+
 * Further reduced the run time and memory use of `ard_stack_hierarchical()` and `ard_stack_hierarchical_count()`, primarily by replacing the per-level `dplyr::slice_tail()` de-duplication with a `vctrs`-based equivalent and by avoiding unnecessary coercions of data frame denominators. Results are unchanged. (#176)
 
 * Reduced the run time and memory use of `ard_tabulate()` (and the functions built on it) for results with many rows, by vectorizing the assignment of the default statistic labels. Results are unchanged. (#176)

@@ -53,6 +53,14 @@ run_benchmarks <- function(version = "main", n_rounds = 5L) {
         id = sprintf("level_%05d", sample(1:5000, 2e5, replace = TRUE))
       )
 
+      # a stacked hierarchical ARD, built once, for the sort/filter benchmarks
+      # (`overall = TRUE` so the `n_overall` filter path is exercised)
+      ard_hier <- suppressMessages(ard_stack_hierarchical(
+        adae_big,
+        variables = c(AESOC, AEDECOD), by = TRTA,
+        denominator = adsl_big, id = USUBJID, overall = TRUE
+      ))
+
       res_list <- lapply(seq_len(n_rounds), function(r) {
         message("  Round ", r)
 
@@ -88,7 +96,17 @@ run_benchmarks <- function(version = "main", n_rounds = 5L) {
           iterations = 5, check = FALSE, filter_gc = FALSE
         )
 
-        all_res <- rbind(core_res, hier_res, highcard_res)
+        # hierarchical post-processing (sort + representative filters)
+        sortfilter_res <- bench::mark(
+          sort_ard_hierarchical = sort_ard_hierarchical(ard_hier),
+          `filter_ard_hierarchical n` = filter_ard_hierarchical(ard_hier, n > 2),
+          `filter_ard_hierarchical n_1` = suppressMessages(filter_ard_hierarchical(ard_hier, n_1 > 2)),
+          `filter_ard_hierarchical n_overall` = filter_ard_hierarchical(ard_hier, n_overall > 2),
+          `filter_ard_hierarchical var` = filter_ard_hierarchical(ard_hier, p > 0.05, var = AESOC),
+          iterations = 5, check = FALSE, filter_gc = FALSE
+        )
+
+        all_res <- rbind(core_res, hier_res, highcard_res, sortfilter_res)
         data.frame(
           expression = as.character(all_res$expression),
           median_s = as.numeric(all_res$median),
@@ -187,10 +205,15 @@ names(tab)[names(tab) == "mem_delta"] <- "mem \U0394"
 core_names <- c("ard_summary", "ard_tabulate")
 hier_names <- c("ard_stack_hierarchical", "ard_stack_hierarchical_count", "ard_hierarchical")
 highcard_names <- c("ard_tabulate high-card")
+sortfilter_names <- c(
+  "sort_ard_hierarchical", "filter_ard_hierarchical n", "filter_ard_hierarchical n_1",
+  "filter_ard_hierarchical n_overall", "filter_ard_hierarchical var"
+)
 
 core_tab <- tab[tab$expression %in% core_names, ]
 hier_tab <- tab[tab$expression %in% hier_names, ]
 highcard_tab <- tab[tab$expression %in% highcard_names, ]
+sortfilter_tab <- tab[tab$expression %in% sortfilter_names, ]
 
 header <- paste0(
   "## Performance Benchmark\n\n",
@@ -219,9 +242,14 @@ hier_section <- paste0(
 highcard_section <- paste0(
   "### High-cardinality tabulation (200k rows, 5k levels)\n\n",
   paste(knitr::kable(highcard_tab, format = "markdown", row.names = FALSE), collapse = "\n"),
+  "\n\n"
+)
+sortfilter_section <- paste0(
+  "### Hierarchical sort / filter (10x replicated `ADAE`, `overall = TRUE`)\n\n",
+  paste(knitr::kable(sortfilter_tab, format = "markdown", row.names = FALSE), collapse = "\n"),
   "\n"
 )
 
-report <- paste0(header, core_section, hier_section, highcard_section)
+report <- paste0(header, core_section, hier_section, highcard_section, sortfilter_section)
 writeLines(report, "bench_report.md")
 cat(report)

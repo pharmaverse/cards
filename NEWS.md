@@ -1,5 +1,7 @@
 # cards 0.8.1.9000
 
+* Added the `by_level` argument to `sort_ard_hierarchical()`, allowing `"descending"` sorting to rank variable groups by the counts observed within specific `by` variable levels (e.g. `by_level = list(TRTA = "Placebo")`) rather than the sums across all `by` variable levels. The argument accepts a named list, so any combination of `by` variables may be used. (#548, @rikoprogrammer)
+
 * Reduced the run time and memory use of `sort_ard_hierarchical()` and `filter_ard_hierarchical()`, particularly for ARDs with many hierarchy sections. The per-level grouped sums, the group-wise filter loop (including the previously per-group `tidyr::pivot_wider()` for column statistics and the per-group join used to derive the `_overall` statistics), the reformatting helper, and the empty-section pruning were all replaced with `vctrs`-based equivalents. Because `sort_ard_hierarchical()` also runs inside `ard_stack_hierarchical()`, this speeds up ARD construction as well. Results are unchanged. (#176)
 
 * Further reduced the run time and memory use of `ard_stack_hierarchical()` and `ard_stack_hierarchical_count()`, primarily by replacing the per-level `dplyr::slice_tail()` de-duplication with a `vctrs`-based equivalent and by avoiding unnecessary coercions of data frame denominators. Results are unchanged. (#176)

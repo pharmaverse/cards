@@ -80,8 +80,49 @@
 ---
 
     Code
-      sort_ard_hierarchical(ard)
+      sort_ard_hierarchical(ard_no_np)
     Condition
       Error in `sort_ard_hierarchical()`:
       ! If `sort='descending'` for any variables then either "n" or "p" must be present in `x` for each of these specified variables in order to calculate the count sums used for sorting.
+
+---
+
+    Code
+      sort_ard_hierarchical(ard, by_level = list(TRTA = "not-a-level"))
+    Condition
+      Error in `sort_ard_hierarchical()`:
+      ! The `by_level` element `TRTA` must be one of "Placebo", "Xanomeline High Dose", and "Xanomeline Low Dose", not "not-a-level".
+
+---
+
+    Code
+      sort_ard_hierarchical(ard, by_level = list(not_a_by_var = "Placebo"))
+    Condition
+      Error in `sort_ard_hierarchical()`:
+      ! The names of `by_level` must be `by` variables used to create `x`.
+      i The `by` variable "TRTA" is available.
+
+---
+
+    Code
+      sort_ard_hierarchical(ard, by_level = list("Placebo"))
+    Condition
+      Error in `sort_ard_hierarchical()`:
+      ! The `by_level` argument must be a fully named list, e.g. `list(TRTA = "Placebo")`.
+
+---
+
+    Code
+      sort_ard_hierarchical(ard, by_level = list(TRTA = c("Placebo", "Xanomeline Low Dose")))
+    Condition
+      Error in `sort_ard_hierarchical()`:
+      ! Each element of `by_level` must be a single `by` variable level.
+
+---
+
+    Code
+      sort_ard_hierarchical(ard_no_by, by_level = list(TRTA = "Placebo"))
+    Condition
+      Error in `sort_ard_hierarchical()`:
+      ! The `by_level` argument cannot be used because `x` was created without a `by` argument.
 

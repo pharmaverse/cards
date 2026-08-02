@@ -4,7 +4,7 @@
 \alias{sort_ard_hierarchical}
 \title{Sort Stacked Hierarchical ARDs}
 \usage{
-sort_ard_hierarchical(x, sort = everything() ~ "descending")
+sort_ard_hierarchical(x, sort = everything() ~ "descending", by_level = NULL)
 }
 \arguments{
 \item{x}{(\code{card})\cr
@@ -27,6 +27,16 @@ sums, otherwise \code{p} is used. If neither \code{n} nor \code{p} are present i
 }
 
 Defaults to \code{everything() ~ "descending"}.}
+
+\item{by_level}{(named \code{list})\cr
+a named list used to restrict the counts used for \code{"descending"} sorting to one or more specific \code{by} variable
+levels. Each name must be one of the \code{by} variables used to create \code{x}, and each element must be a single level of
+that \code{by} variable. When supplied, \code{"descending"} sorts rank variable groups by the count sums calculated only from
+the rows matching every specified \code{by} variable level (e.g. \code{list(TRTA = "Placebo")} sorts by the counts observed
+in the \code{"Placebo"} arm), rather than the sums across all \code{by} variable levels. Any \code{by} variable not named in the
+list is not restricted. This argument has no effect on variables sorted \code{"alphanumeric"}.
+
+Defaults to \code{NULL}, in which case count sums are calculated across all \code{by} variable levels.}
 }
 \value{
 an ARD data frame of class 'card'
@@ -62,6 +72,16 @@ ard_stack_hierarchical_count(
   denominator = ADSL
 ) |>
   sort_ard_hierarchical(sort = list(AESOC ~ "alphanumeric", AEDECOD ~ "descending"))
+
+# sort by the counts observed in the "Placebo" arm only
+ard_stack_hierarchical(
+  ADAE,
+  variables = c(AESOC, AEDECOD),
+  by = TRTA,
+  denominator = ADSL,
+  id = USUBJID
+) |>
+  sort_ard_hierarchical(by_level = list(TRTA = "Placebo"))
 \dontshow{\}) # examplesIf}
 }
 \seealso{

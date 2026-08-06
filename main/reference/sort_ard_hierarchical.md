@@ -11,7 +11,7 @@ levels, but excluding any `by` variables.
 ## Usage
 
 ``` r
-sort_ard_hierarchical(x, sort = everything() ~ "descending")
+sort_ard_hierarchical(x, sort = everything() ~ "descending", by_level = NULL)
 ```
 
 ## Arguments
@@ -49,6 +49,23 @@ sort_ard_hierarchical(x, sort = everything() ~ "descending")
     present in `x` for the variable, an error will occur.
 
   Defaults to `everything() ~ "descending"`.
+
+- by_level:
+
+  (named `list`)\
+  a named list used to restrict the counts used for `"descending"`
+  sorting to one or more specific `by` variable levels. Each name must
+  be one of the `by` variables used to create `x`, and each element must
+  be a single level of that `by` variable. When supplied, `"descending"`
+  sorts rank variable groups by the count sums calculated only from the
+  rows matching every specified `by` variable level (e.g.
+  `list(TRTA = "Placebo")` sorts by the counts observed in the
+  `"Placebo"` arm), rather than the sums across all `by` variable
+  levels. Any `by` variable not named in the list is not restricted.
+  This argument has no effect on variables sorted `"alphanumeric"`.
+
+  Defaults to `NULL`, in which case count sums are calculated across all
+  `by` variable levels.
 
 ## Value
 
@@ -134,6 +151,42 @@ ard_stack_hierarchical_count(
 #> 9           % 0.331
 #> 10          n    27
 #> ℹ 794 more rows
+#> ℹ Use `print(n = ...)` to see more rows
+#> ℹ 4 more variables: context, fmt_fun, warning, error
+
+# sort by the counts observed in the "Placebo" arm only
+ard_stack_hierarchical(
+  ADAE,
+  variables = c(AESOC, AEDECOD),
+  by = TRTA,
+  denominator = ADSL,
+  id = USUBJID
+) |>
+  sort_ard_hierarchical(by_level = list(TRTA = "Placebo"))
+#> {cards} data frame: 2394 x 13
+#>    group1 group1_level group2 group2_level variable variable_level stat_name
+#> 1    <NA>                <NA>                  TRTA        Placebo         n
+#> 2    <NA>                <NA>                  TRTA        Placebo         N
+#> 3    <NA>                <NA>                  TRTA        Placebo         p
+#> 4    <NA>                <NA>                  TRTA      Xanomeli…         n
+#> 5    <NA>                <NA>                  TRTA      Xanomeli…         N
+#> 6    <NA>                <NA>                  TRTA      Xanomeli…         p
+#> 7    <NA>                <NA>                  TRTA      Xanomeli…         n
+#> 8    <NA>                <NA>                  TRTA      Xanomeli…         N
+#> 9    <NA>                <NA>                  TRTA      Xanomeli…         p
+#> 10   TRTA      Placebo   <NA>                 AESOC      GENERAL …         n
+#>    stat_label  stat
+#> 1           n    86
+#> 2           N   254
+#> 3           % 0.339
+#> 4           n    84
+#> 5           N   254
+#> 6           % 0.331
+#> 7           n    84
+#> 8           N   254
+#> 9           % 0.331
+#> 10          n    21
+#> ℹ 2384 more rows
 #> ℹ Use `print(n = ...)` to see more rows
 #> ℹ 4 more variables: context, fmt_fun, warning, error
 ```

@@ -2,6 +2,16 @@
 
 ## cards 0.8.1.9000
 
+- Added the `by_level` argument to
+  [`sort_ard_hierarchical()`](https://pharmaverse.github.io/cards/reference/sort_ard_hierarchical.md),
+  allowing `"descending"` sorting to rank variable groups by the counts
+  observed within specific `by` variable levels
+  (e.g. `by_level = list(TRTA = "Placebo")`) rather than the sums across
+  all `by` variable levels. The argument accepts a named list, so any
+  combination of `by` variables may be used.
+  ([\#548](https://github.com/pharmaverse/cards/issues/548),
+  [@rikoprogrammer](https://github.com/rikoprogrammer))
+
 - Reduced the run time and memory use of
   [`sort_ard_hierarchical()`](https://pharmaverse.github.io/cards/reference/sort_ard_hierarchical.md)
   and

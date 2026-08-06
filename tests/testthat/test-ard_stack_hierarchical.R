@@ -266,6 +266,19 @@ test_that("ard_stack_hierarchical(by) with columns not in `denominator`", {
     'Denominator set by number of rows in.*denominator.*data frame.' # styler: off
   )
 
+  # message advises that subjects with multiple `by` levels not in `denominator`
+  # are only counted once
+  expect_message(
+    ard_stack_hierarchical(
+      ADAE_small,
+      variables = c(AESOC, AEDECOD),
+      by = c(TRTA, AESEV),
+      id = USUBJID,
+      denominator = ADSL
+    ),
+    'Column.*"AESEV".*in the `by` argument.*not present in `denominator`' # styler: off
+  )
+
   expect_message(
     ard <- ard_stack_hierarchical(
       ADAE_small,

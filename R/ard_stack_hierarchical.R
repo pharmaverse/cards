@@ -357,7 +357,16 @@ internal_stack_hierarchical <- function(
           "Denominator set by number of rows in {.arg denominator} data frame.",
           "Denominator set by {.val {denom_cols}} column{?s} in {.arg denominator} data frame."
         )
-      cli::cli_inform(c("i" = msg))
+
+      # advise that subjects appearing at multiple levels of a `by` column not
+      # in `denominator` will only be counted once (in the last-sorted level)
+      by_not_in_denom <- setdiff(by, denom_cols)
+      cli::cli_inform(c(
+        "i" = msg,
+        "i" = "{cli::qty(by_not_in_denom)} Column{?s} {.val {by_not_in_denom}} in the {.arg by} argument {?is/are} not present in {.arg denominator}.",
+        "*" = "Subjects with multiple {.val {by_not_in_denom}} value{?s} will only be counted once, in the last level after sorting.",
+        "*" = "See {.help [cards::ard_stack_hierarchical()](cards::ard_stack_hierarchical)} for details."
+      ))
     }
   }
 

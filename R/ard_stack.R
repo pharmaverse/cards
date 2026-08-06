@@ -108,7 +108,7 @@ ard_stack <- function(data,
 
   # compute Ns by group / combine main calls -----------------------------------
   if (!is_empty(by) && isTRUE(.by_stats)) {
-    ard_full <- bind_ard(
+    ard_full <- dplyr::bind_rows(
       ard_list,
       ard_tabulate(
         data = data,
@@ -116,7 +116,7 @@ ard_stack <- function(data,
       )
     )
   } else {
-    ard_full <- bind_ard(ard_list, .update = TRUE)
+    ard_full <- dplyr::bind_rows(ard_list, .update = TRUE)
   }
 
   # get all variables represented ----------------------------------------------
@@ -124,12 +124,12 @@ ard_stack <- function(data,
 
   # missingness ----------------------------------------------------------------
   if (isTRUE(.missing)) {
-    ard_full <- bind_ard(
+    ard_full <- dplyr::bind_rows(
       ard_full,
       ard_missing(data = data, by = any_of(.by), variables = all_of(variables))
     )
     if (!is_empty(by) && isTRUE(.overall)) {
-      ard_full <- bind_ard(
+      ard_full <- dplyr::bind_rows(
         ard_full,
         ard_missing(data = data, by = character(0L), variables = all_of(variables))
       )
@@ -138,7 +138,7 @@ ard_stack <- function(data,
 
   # attributes -----------------------------------------------------------------
   if (isTRUE(.attributes)) {
-    ard_full <- bind_ard(
+    ard_full <- dplyr::bind_rows(
       ard_full,
       ard_attributes(data, variables = all_of(c(variables, .by)))
     )
@@ -146,7 +146,7 @@ ard_stack <- function(data,
 
   # total n --------------------------------------------------------------------
   if (isTRUE(.total_n)) {
-    ard_full <- bind_ard(
+    ard_full <- dplyr::bind_rows(
       ard_full,
       ard_total_n(data)
     )

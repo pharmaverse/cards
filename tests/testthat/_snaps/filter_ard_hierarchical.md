@@ -2,24 +2,21 @@
 
     Code
       ard_f
-    Message
-      {cards} data frame: 45 x 15
     Output
-         group1 group1_level group2 group2_level group3 group3_level                     variable variable_level stat_name stat_label  stat
-      1    <NA>                <NA>                <NA>                                      TRTA        Placebo         n          n    86
-      2    <NA>                <NA>                <NA>                                      TRTA        Placebo         N          N   254
-      3    <NA>                <NA>                <NA>                                      TRTA        Placebo         p          % 0.339
-      4    <NA>                <NA>                <NA>                                      TRTA      Xanomeli…         n          n    84
-      5    <NA>                <NA>                <NA>                                      TRTA      Xanomeli…         N          N   254
-      6    <NA>                <NA>                <NA>                                      TRTA      Xanomeli…         p          % 0.331
-      7    <NA>                <NA>                <NA>                                      TRTA      Xanomeli…         n          n    84
-      8    <NA>                <NA>                <NA>                                      TRTA      Xanomeli…         N          N   254
-      9    <NA>                <NA>                <NA>                                      TRTA      Xanomeli…         p          % 0.331
-      10   TRTA      Placebo   <NA>                <NA>              ..ard_hierarchical_overall..           TRUE         n          n    26
-    Message
-      i 35 more rows
-      i Use `print(n = ...)` to see more rows
-      i 4 more variables: context, fmt_fun, warning, error
+      # An ARD data frame: 45 x 15
+         group1 group1_level group2 group2_level group3 group3_level variable                     variable_level       context      stat_name stat_label    stat fmt_fun warning error 
+         <chr>  <list>       <chr>  <list>       <chr>  <list>       <chr>                        <list>               <chr>        <chr>     <chr>       <list> <list>  <list>  <list>
+       1 <NA>   <NULL>       <NA>   <NULL>       <NA>   <NULL>       TRTA                         Placebo              tabulate     n         n           86     0       <NULL>  <NULL>
+       2 <NA>   <NULL>       <NA>   <NULL>       <NA>   <NULL>       TRTA                         Placebo              tabulate     N         N          254     0       <NULL>  <NULL>
+       3 <NA>   <NULL>       <NA>   <NULL>       <NA>   <NULL>       TRTA                         Placebo              tabulate     p         %            0.339 <fn>    <NULL>  <NULL>
+       4 <NA>   <NULL>       <NA>   <NULL>       <NA>   <NULL>       TRTA                         Xanomeline High Dose tabulate     n         n           84     0       <NULL>  <NULL>
+       5 <NA>   <NULL>       <NA>   <NULL>       <NA>   <NULL>       TRTA                         Xanomeline High Dose tabulate     N         N          254     0       <NULL>  <NULL>
+       6 <NA>   <NULL>       <NA>   <NULL>       <NA>   <NULL>       TRTA                         Xanomeline High Dose tabulate     p         %            0.331 <fn>    <NULL>  <NULL>
+       7 <NA>   <NULL>       <NA>   <NULL>       <NA>   <NULL>       TRTA                         Xanomeline Low Dose  tabulate     n         n           84     0       <NULL>  <NULL>
+       8 <NA>   <NULL>       <NA>   <NULL>       <NA>   <NULL>       TRTA                         Xanomeline Low Dose  tabulate     N         N          254     0       <NULL>  <NULL>
+       9 <NA>   <NULL>       <NA>   <NULL>       <NA>   <NULL>       TRTA                         Xanomeline Low Dose  tabulate     p         %            0.331 <fn>    <NULL>  <NULL>
+      10 TRTA   Placebo      <NA>   <NULL>       <NA>   <NULL>       ..ard_hierarchical_overall.. TRUE                 hierarchical n         n           26     0       <NULL>  <NULL>
+      # i 35 more rows
 
 # filter_ard_hierarchical() error messaging works
 

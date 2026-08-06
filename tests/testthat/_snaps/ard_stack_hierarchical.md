@@ -108,30 +108,28 @@
 
     Code
       dplyr::filter(ard_stack_hierarchical_count(ADAE_small, variables = c(AESOC, AEDECOD), by = c(TRTA, AESEV), denominator = ADSL, overall = TRUE), !group1 %in% "TRTA" & !group2 %in% "TRTA" & !group3 %in% "TRTA" & !variable %in% "TRTA")
-    Message
-      {cards} data frame: 18 x 15
     Output
-         group1 group1_level group2 group2_level group3 group3_level variable variable_level stat_name stat_label stat
-      1   AESEV         MILD   <NA>                <NA>                 AESOC      GENERAL …         n          n    4
-      2   AESEV     MODERATE   <NA>                <NA>                 AESOC      GENERAL …         n          n    0
-      3    <NA>                <NA>                <NA>                 AESOC      GENERAL …         n          n    4
-      4   AESEV         MILD  AESOC    GENERAL …   <NA>               AEDECOD      APPLICAT…         n          n    2
-      5   AESEV     MODERATE  AESOC    GENERAL …   <NA>               AEDECOD      APPLICAT…         n          n    0
-      6   AESOC    GENERAL …   <NA>                <NA>               AEDECOD      APPLICAT…         n          n    2
-      7   AESEV         MILD  AESOC    GENERAL …   <NA>               AEDECOD      APPLICAT…         n          n    2
-      8   AESEV     MODERATE  AESOC    GENERAL …   <NA>               AEDECOD      APPLICAT…         n          n    0
-      9   AESOC    GENERAL …   <NA>                <NA>               AEDECOD      APPLICAT…         n          n    2
-      10  AESEV         MILD   <NA>                <NA>                 AESOC      SKIN AND…         n          n    1
-      11  AESEV     MODERATE   <NA>                <NA>                 AESOC      SKIN AND…         n          n    1
-      12   <NA>                <NA>                <NA>                 AESOC      SKIN AND…         n          n    2
-      13  AESEV         MILD  AESOC    SKIN AND…   <NA>               AEDECOD       ERYTHEMA         n          n    1
-      14  AESEV     MODERATE  AESOC    SKIN AND…   <NA>               AEDECOD       ERYTHEMA         n          n    0
-      15  AESOC    SKIN AND…   <NA>                <NA>               AEDECOD       ERYTHEMA         n          n    1
-      16  AESEV         MILD  AESOC    SKIN AND…   <NA>               AEDECOD      PRURITUS…         n          n    0
-      17  AESEV     MODERATE  AESOC    SKIN AND…   <NA>               AEDECOD      PRURITUS…         n          n    1
-      18  AESOC    SKIN AND…   <NA>                <NA>               AEDECOD      PRURITUS…         n          n    1
-    Message
-      i 4 more variables: context, fmt_fun, warning, error
+      # An ARD data frame: 18 x 15
+         group1 group1_level                                         group2 group2_level                                         group3 group3_level variable variable_level                           context stat_name stat_label  stat fmt_fun warning error 
+         <chr>  <list>                                               <chr>  <list>                                               <chr>  <list>       <chr>    <list>                                   <chr>   <chr>     <chr>      <lis>  <list> <list>  <list>
+       1 AESEV  MILD                                                 <NA>   <NULL>                                               <NA>   <NULL>       AESOC    GENERAL DISORDERS AND ADMINISTRATION SI~ hierar~ n         n              4       0 <NULL>  <NULL>
+       2 AESEV  MODERATE                                             <NA>   <NULL>                                               <NA>   <NULL>       AESOC    GENERAL DISORDERS AND ADMINISTRATION SI~ hierar~ n         n              0       0 <NULL>  <NULL>
+       3 <NA>   <NULL>                                               <NA>   <NULL>                                               <NA>   <NULL>       AESOC    GENERAL DISORDERS AND ADMINISTRATION SI~ hierar~ n         n              4       0 <NULL>  <NULL>
+       4 AESEV  MILD                                                 AESOC  GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS <NA>   <NULL>       AEDECOD  APPLICATION SITE ERYTHEMA                hierar~ n         n              2       0 <NULL>  <NULL>
+       5 AESEV  MODERATE                                             AESOC  GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS <NA>   <NULL>       AEDECOD  APPLICATION SITE ERYTHEMA                hierar~ n         n              0       0 <NULL>  <NULL>
+       6 AESOC  GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS <NA>   <NULL>                                               <NA>   <NULL>       AEDECOD  APPLICATION SITE ERYTHEMA                hierar~ n         n              2       0 <NULL>  <NULL>
+       7 AESEV  MILD                                                 AESOC  GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS <NA>   <NULL>       AEDECOD  APPLICATION SITE PRURITUS                hierar~ n         n              2       0 <NULL>  <NULL>
+       8 AESEV  MODERATE                                             AESOC  GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS <NA>   <NULL>       AEDECOD  APPLICATION SITE PRURITUS                hierar~ n         n              0       0 <NULL>  <NULL>
+       9 AESOC  GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS <NA>   <NULL>                                               <NA>   <NULL>       AEDECOD  APPLICATION SITE PRURITUS                hierar~ n         n              2       0 <NULL>  <NULL>
+      10 AESEV  MILD                                                 <NA>   <NULL>                                               <NA>   <NULL>       AESOC    SKIN AND SUBCUTANEOUS TISSUE DISORDERS   hierar~ n         n              1       0 <NULL>  <NULL>
+      11 AESEV  MODERATE                                             <NA>   <NULL>                                               <NA>   <NULL>       AESOC    SKIN AND SUBCUTANEOUS TISSUE DISORDERS   hierar~ n         n              1       0 <NULL>  <NULL>
+      12 <NA>   <NULL>                                               <NA>   <NULL>                                               <NA>   <NULL>       AESOC    SKIN AND SUBCUTANEOUS TISSUE DISORDERS   hierar~ n         n              2       0 <NULL>  <NULL>
+      13 AESEV  MILD                                                 AESOC  SKIN AND SUBCUTANEOUS TISSUE DISORDERS               <NA>   <NULL>       AEDECOD  ERYTHEMA                                 hierar~ n         n              1       0 <NULL>  <NULL>
+      14 AESEV  MODERATE                                             AESOC  SKIN AND SUBCUTANEOUS TISSUE DISORDERS               <NA>   <NULL>       AEDECOD  ERYTHEMA                                 hierar~ n         n              0       0 <NULL>  <NULL>
+      15 AESOC  SKIN AND SUBCUTANEOUS TISSUE DISORDERS               <NA>   <NULL>                                               <NA>   <NULL>       AEDECOD  ERYTHEMA                                 hierar~ n         n              1       0 <NULL>  <NULL>
+      16 AESEV  MILD                                                 AESOC  SKIN AND SUBCUTANEOUS TISSUE DISORDERS               <NA>   <NULL>       AEDECOD  PRURITUS GENERALISED                     hierar~ n         n              0       0 <NULL>  <NULL>
+      17 AESEV  MODERATE                                             AESOC  SKIN AND SUBCUTANEOUS TISSUE DISORDERS               <NA>   <NULL>       AEDECOD  PRURITUS GENERALISED                     hierar~ n         n              1       0 <NULL>  <NULL>
+      18 AESOC  SKIN AND SUBCUTANEOUS TISSUE DISORDERS               <NA>   <NULL>                                               <NA>   <NULL>       AEDECOD  PRURITUS GENERALISED                     hierar~ n         n              1       0 <NULL>  <NULL>
 
 # ard_stack_hierarchical_count(overall,over_variables)
 
@@ -150,22 +148,20 @@
     Code
       dplyr::filter(ard_stack_hierarchical_count(ADAE_small, variables = c(AESOC, AEDECOD), by = c(TRTA, AESEV), denominator = ADSL, overall = TRUE, over_variables = TRUE), !group1 %in% "TRTA" & !group2 %in% "TRTA" & !group3 %in% "TRTA" & !variable %in%
         "TRTA")
-    Message
-      {cards} data frame: 21 x 15
     Output
-         group1 group1_level group2 group2_level group3 group3_level                     variable variable_level stat_name stat_label stat
-      1   AESEV         MILD   <NA>                <NA>              ..ard_hierarchical_overall..           TRUE         n          n    5
-      2   AESEV     MODERATE   <NA>                <NA>              ..ard_hierarchical_overall..           TRUE         n          n    1
-      3    <NA>                <NA>                <NA>              ..ard_hierarchical_overall..           TRUE         n          n    6
-      4   AESEV         MILD   <NA>                <NA>                                     AESOC      GENERAL …         n          n    4
-      5   AESEV     MODERATE   <NA>                <NA>                                     AESOC      GENERAL …         n          n    0
-      6    <NA>                <NA>                <NA>                                     AESOC      GENERAL …         n          n    4
-      7   AESEV         MILD  AESOC    GENERAL …   <NA>                                   AEDECOD      APPLICAT…         n          n    2
-      8   AESEV     MODERATE  AESOC    GENERAL …   <NA>                                   AEDECOD      APPLICAT…         n          n    0
-      9   AESOC    GENERAL …   <NA>                <NA>                                   AEDECOD      APPLICAT…         n          n    2
-      10  AESEV         MILD  AESOC    GENERAL …   <NA>                                   AEDECOD      APPLICAT…         n          n    2
-    Message
-      i 11 more rows
-      i Use `print(n = ...)` to see more rows
-      i 4 more variables: context, fmt_fun, warning, error
+      # An ARD data frame: 21 x 15
+         group1 group1_level                                         group2 group2_level                                         group3 group3_level variable    variable_level                                       context stat_name stat_label  stat fmt_fun
+         <chr>  <list>                                               <chr>  <list>                                               <chr>  <list>       <chr>       <list>                                               <chr>   <chr>     <chr>      <lis>  <list>
+       1 AESEV  MILD                                                 <NA>   <NULL>                                               <NA>   <NULL>       ..ard_hier~ TRUE                                                 hierar~ n         n              5       0
+       2 AESEV  MODERATE                                             <NA>   <NULL>                                               <NA>   <NULL>       ..ard_hier~ TRUE                                                 hierar~ n         n              1       0
+       3 <NA>   <NULL>                                               <NA>   <NULL>                                               <NA>   <NULL>       ..ard_hier~ TRUE                                                 hierar~ n         n              6       0
+       4 AESEV  MILD                                                 <NA>   <NULL>                                               <NA>   <NULL>       AESOC       GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS hierar~ n         n              4       0
+       5 AESEV  MODERATE                                             <NA>   <NULL>                                               <NA>   <NULL>       AESOC       GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS hierar~ n         n              0       0
+       6 <NA>   <NULL>                                               <NA>   <NULL>                                               <NA>   <NULL>       AESOC       GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS hierar~ n         n              4       0
+       7 AESEV  MILD                                                 AESOC  GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS <NA>   <NULL>       AEDECOD     APPLICATION SITE ERYTHEMA                            hierar~ n         n              2       0
+       8 AESEV  MODERATE                                             AESOC  GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS <NA>   <NULL>       AEDECOD     APPLICATION SITE ERYTHEMA                            hierar~ n         n              0       0
+       9 AESOC  GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS <NA>   <NULL>                                               <NA>   <NULL>       AEDECOD     APPLICATION SITE ERYTHEMA                            hierar~ n         n              2       0
+      10 AESEV  MILD                                                 AESOC  GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS <NA>   <NULL>       AEDECOD     APPLICATION SITE PRURITUS                            hierar~ n         n              2       0
+      # i 11 more rows
+      # i 2 more variables: warning <list>, error <list>
 

@@ -35,6 +35,11 @@ as_card <- function(x, check = TRUE) {
   check_scalar_logical(check)
 
   # convert to class "card" ----------------------------------------------------
+  # ensure the ARD is always a tibble, so it prints via the pillar/tibble
+  # machinery (a plain data.frame would otherwise print as a base data frame)
+  if (!inherits(x, "tbl")) {
+    x <- tibble::as_tibble(x)
+  }
   if (inherits(x, "card")) {
     out <- x
   } else {

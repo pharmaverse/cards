@@ -123,11 +123,3 @@ test_that("compute_formula_selector() selects the last assignment when multiple 
   )
   # styler: on
 })
-
-# This check for `vars()` usage can be removed after Jan 1, 2025
-test_that("cards_select() deprecation error with vars()", {
-  expect_error(
-    cards_select(vars(mpg), data = mtcars),
-    class = "deprecated"
-  )
-})

@@ -120,15 +120,13 @@
 
     Code
       ard_date
-    Message
-      {cards} data frame: 3 x 8
     Output
-        variable context stat_name stat_label      stat fmt_fun
-      1 DISONSDT summary       min        Min 1998-06-…    <fn>
-      2 DISONSDT summary       max        Max 2013-09-…    <fn>
-      3 DISONSDT summary        sd         SD   878.558       1
-    Message
-      i 2 more variables: warning, error
+      # An ARD data frame: 3 x 8
+        variable context stat_name stat_label stat       fmt_fun warning error 
+      * <chr>    <chr>   <chr>     <chr>      <list>     <list>  <list>  <list>
+      1 DISONSDT summary min       Min        1998-06-13 <fn>    <NULL>  <NULL>
+      2 DISONSDT summary max       Max        2013-09-16 <fn>    <NULL>  <NULL>
+      3 DISONSDT summary sd        SD         878.5575   1       <NULL>  <NULL>
 
 # ard_summary() works with non-syntactic names
 

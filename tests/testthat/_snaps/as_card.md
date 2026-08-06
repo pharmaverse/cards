@@ -3,12 +3,12 @@
     Code
       as_card(data.frame(stat_name = c("N", "mean"), stat_label = c("N", "Mean"),
       stat = c(10, 0.5)), check = FALSE)
-    Message
-      {cards} data frame: 2 x 3
     Output
-        stat_name stat_label stat
-      1         N          N   10
-      2      mean       Mean  0.5
+      # An ARD data frame: 2 x 3
+        stat_name stat_label  stat
+      * <chr>     <chr>      <dbl>
+      1 N         N           10  
+      2 mean      Mean         0.5
 
 # as_card() error catching works correctly
 

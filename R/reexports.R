@@ -46,7 +46,3 @@ dplyr::last_col
 #' @importFrom dplyr one_of
 #' @export
 dplyr::one_of
-
-#' @importFrom dplyr vars
-#' @export
-dplyr::vars

@@ -296,24 +296,10 @@ check_list_elements <- function(x,
 cards_select <- function(expr, data, ...,
                          arg_name = NULL) {
   set_cli_abort_call()
-  enexpr <- enexpr(expr) # this can be removed when `vars()` check removed
-  # a quosure (e.g. injected via `{{ }}`) must be reduced to a bare expression
-  # before subsetting below, as `[[` on a quosure is deprecated
-  if (is_quosure(enexpr)) enexpr <- quo_get_expr(enexpr)
 
   tryCatch(
     tidyselect::eval_select(expr = expr, data = data, ...) |> names(),
     error = function(e) {
-      # This check for `vars()` usage can be removed after Jan 1, 2025
-      if (tryCatch(identical(eval(as.list(enexpr)[[1]]), dplyr::vars), error = \(x) FALSE)) {
-        cli::cli_abort(
-          c("Use of {.fun dplyr::vars} in selecting environments is deprecated.",
-            i = "Use {.fun c} instead. See {.help dplyr::dplyr_tidy_select} for details."
-          ),
-          call = get_cli_abort_call(),
-          class = "deprecated"
-        )
-      }
       cli::cli_abort(
         message = c(
           switch(!is.null(arg_name),

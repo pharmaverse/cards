@@ -2,63 +2,61 @@
 
     Code
       print(dplyr::select(ard_s, all_ard_groups(), all_ard_variables()), n = 50)
-    Message
-      {cards} data frame: 234 x 8
     Output
-         group1 group1_level group2 group2_level group3 group3_level                     variable variable_level
-      1    <NA>                <NA>                <NA>                                      TRTA        Placebo
-      2    <NA>                <NA>                <NA>                                      TRTA        Placebo
-      3    <NA>                <NA>                <NA>                                      TRTA        Placebo
-      4    <NA>                <NA>                <NA>                                      TRTA      Xanomeli…
-      5    <NA>                <NA>                <NA>                                      TRTA      Xanomeli…
-      6    <NA>                <NA>                <NA>                                      TRTA      Xanomeli…
-      7    <NA>                <NA>                <NA>                                      TRTA      Xanomeli…
-      8    <NA>                <NA>                <NA>                                      TRTA      Xanomeli…
-      9    <NA>                <NA>                <NA>                                      TRTA      Xanomeli…
-      10   TRTA      Placebo   <NA>                <NA>              ..ard_hierarchical_overall..           TRUE
-      11   TRTA      Placebo   <NA>                <NA>              ..ard_hierarchical_overall..           TRUE
-      12   TRTA      Placebo   <NA>                <NA>              ..ard_hierarchical_overall..           TRUE
-      13   TRTA    Xanomeli…   <NA>                <NA>              ..ard_hierarchical_overall..           TRUE
-      14   TRTA    Xanomeli…   <NA>                <NA>              ..ard_hierarchical_overall..           TRUE
-      15   TRTA    Xanomeli…   <NA>                <NA>              ..ard_hierarchical_overall..           TRUE
-      16   TRTA    Xanomeli…   <NA>                <NA>              ..ard_hierarchical_overall..           TRUE
-      17   TRTA    Xanomeli…   <NA>                <NA>              ..ard_hierarchical_overall..           TRUE
-      18   TRTA    Xanomeli…   <NA>                <NA>              ..ard_hierarchical_overall..           TRUE
-      19   TRTA      Placebo   <NA>                <NA>                                       SEX              F
-      20   TRTA      Placebo   <NA>                <NA>                                       SEX              F
-      21   TRTA      Placebo   <NA>                <NA>                                       SEX              F
-      22   TRTA    Xanomeli…   <NA>                <NA>                                       SEX              F
-      23   TRTA    Xanomeli…   <NA>                <NA>                                       SEX              F
-      24   TRTA    Xanomeli…   <NA>                <NA>                                       SEX              F
-      25   TRTA    Xanomeli…   <NA>                <NA>                                       SEX              F
-      26   TRTA    Xanomeli…   <NA>                <NA>                                       SEX              F
-      27   TRTA    Xanomeli…   <NA>                <NA>                                       SEX              F
-      28   TRTA      Placebo    SEX            F   <NA>                                      RACE          WHITE
-      29   TRTA      Placebo    SEX            F   <NA>                                      RACE          WHITE
-      30   TRTA      Placebo    SEX            F   <NA>                                      RACE          WHITE
-      31   TRTA    Xanomeli…    SEX            F   <NA>                                      RACE          WHITE
-      32   TRTA    Xanomeli…    SEX            F   <NA>                                      RACE          WHITE
-      33   TRTA    Xanomeli…    SEX            F   <NA>                                      RACE          WHITE
-      34   TRTA    Xanomeli…    SEX            F   <NA>                                      RACE          WHITE
-      35   TRTA    Xanomeli…    SEX            F   <NA>                                      RACE          WHITE
-      36   TRTA    Xanomeli…    SEX            F   <NA>                                      RACE          WHITE
-      37   TRTA      Placebo    SEX            F   RACE        WHITE                       AETERM      APPLICAT…
-      38   TRTA      Placebo    SEX            F   RACE        WHITE                       AETERM      APPLICAT…
-      39   TRTA      Placebo    SEX            F   RACE        WHITE                       AETERM      APPLICAT…
-      40   TRTA    Xanomeli…    SEX            F   RACE        WHITE                       AETERM      APPLICAT…
-      41   TRTA    Xanomeli…    SEX            F   RACE        WHITE                       AETERM      APPLICAT…
-      42   TRTA    Xanomeli…    SEX            F   RACE        WHITE                       AETERM      APPLICAT…
-      43   TRTA    Xanomeli…    SEX            F   RACE        WHITE                       AETERM      APPLICAT…
-      44   TRTA    Xanomeli…    SEX            F   RACE        WHITE                       AETERM      APPLICAT…
-      45   TRTA    Xanomeli…    SEX            F   RACE        WHITE                       AETERM      APPLICAT…
-      46   TRTA      Placebo    SEX            F   RACE        WHITE                       AETERM       ERYTHEMA
-      47   TRTA      Placebo    SEX            F   RACE        WHITE                       AETERM       ERYTHEMA
-      48   TRTA      Placebo    SEX            F   RACE        WHITE                       AETERM       ERYTHEMA
-      49   TRTA    Xanomeli…    SEX            F   RACE        WHITE                       AETERM       ERYTHEMA
-      50   TRTA    Xanomeli…    SEX            F   RACE        WHITE                       AETERM       ERYTHEMA
-    Message
-      i 184 more rows
-      i Use `print(n = ...)` to see more rows
+      # An ARD data frame: 234 x 8
+         group1 group1_level         group2 group2_level group3 group3_level variable                     variable_level           
+         <chr>  <list>               <chr>  <list>       <chr>  <list>       <chr>                        <list>                   
+       1 <NA>   <NULL>               <NA>   <NULL>       <NA>   <NULL>       TRTA                         Placebo                  
+       2 <NA>   <NULL>               <NA>   <NULL>       <NA>   <NULL>       TRTA                         Placebo                  
+       3 <NA>   <NULL>               <NA>   <NULL>       <NA>   <NULL>       TRTA                         Placebo                  
+       4 <NA>   <NULL>               <NA>   <NULL>       <NA>   <NULL>       TRTA                         Xanomeline High Dose     
+       5 <NA>   <NULL>               <NA>   <NULL>       <NA>   <NULL>       TRTA                         Xanomeline High Dose     
+       6 <NA>   <NULL>               <NA>   <NULL>       <NA>   <NULL>       TRTA                         Xanomeline High Dose     
+       7 <NA>   <NULL>               <NA>   <NULL>       <NA>   <NULL>       TRTA                         Xanomeline Low Dose      
+       8 <NA>   <NULL>               <NA>   <NULL>       <NA>   <NULL>       TRTA                         Xanomeline Low Dose      
+       9 <NA>   <NULL>               <NA>   <NULL>       <NA>   <NULL>       TRTA                         Xanomeline Low Dose      
+      10 TRTA   Placebo              <NA>   <NULL>       <NA>   <NULL>       ..ard_hierarchical_overall.. TRUE                     
+      11 TRTA   Placebo              <NA>   <NULL>       <NA>   <NULL>       ..ard_hierarchical_overall.. TRUE                     
+      12 TRTA   Placebo              <NA>   <NULL>       <NA>   <NULL>       ..ard_hierarchical_overall.. TRUE                     
+      13 TRTA   Xanomeline High Dose <NA>   <NULL>       <NA>   <NULL>       ..ard_hierarchical_overall.. TRUE                     
+      14 TRTA   Xanomeline High Dose <NA>   <NULL>       <NA>   <NULL>       ..ard_hierarchical_overall.. TRUE                     
+      15 TRTA   Xanomeline High Dose <NA>   <NULL>       <NA>   <NULL>       ..ard_hierarchical_overall.. TRUE                     
+      16 TRTA   Xanomeline Low Dose  <NA>   <NULL>       <NA>   <NULL>       ..ard_hierarchical_overall.. TRUE                     
+      17 TRTA   Xanomeline Low Dose  <NA>   <NULL>       <NA>   <NULL>       ..ard_hierarchical_overall.. TRUE                     
+      18 TRTA   Xanomeline Low Dose  <NA>   <NULL>       <NA>   <NULL>       ..ard_hierarchical_overall.. TRUE                     
+      19 TRTA   Placebo              <NA>   <NULL>       <NA>   <NULL>       SEX                          F                        
+      20 TRTA   Placebo              <NA>   <NULL>       <NA>   <NULL>       SEX                          F                        
+      21 TRTA   Placebo              <NA>   <NULL>       <NA>   <NULL>       SEX                          F                        
+      22 TRTA   Xanomeline High Dose <NA>   <NULL>       <NA>   <NULL>       SEX                          F                        
+      23 TRTA   Xanomeline High Dose <NA>   <NULL>       <NA>   <NULL>       SEX                          F                        
+      24 TRTA   Xanomeline High Dose <NA>   <NULL>       <NA>   <NULL>       SEX                          F                        
+      25 TRTA   Xanomeline Low Dose  <NA>   <NULL>       <NA>   <NULL>       SEX                          F                        
+      26 TRTA   Xanomeline Low Dose  <NA>   <NULL>       <NA>   <NULL>       SEX                          F                        
+      27 TRTA   Xanomeline Low Dose  <NA>   <NULL>       <NA>   <NULL>       SEX                          F                        
+      28 TRTA   Placebo              SEX    F            <NA>   <NULL>       RACE                         WHITE                    
+      29 TRTA   Placebo              SEX    F            <NA>   <NULL>       RACE                         WHITE                    
+      30 TRTA   Placebo              SEX    F            <NA>   <NULL>       RACE                         WHITE                    
+      31 TRTA   Xanomeline High Dose SEX    F            <NA>   <NULL>       RACE                         WHITE                    
+      32 TRTA   Xanomeline High Dose SEX    F            <NA>   <NULL>       RACE                         WHITE                    
+      33 TRTA   Xanomeline High Dose SEX    F            <NA>   <NULL>       RACE                         WHITE                    
+      34 TRTA   Xanomeline Low Dose  SEX    F            <NA>   <NULL>       RACE                         WHITE                    
+      35 TRTA   Xanomeline Low Dose  SEX    F            <NA>   <NULL>       RACE                         WHITE                    
+      36 TRTA   Xanomeline Low Dose  SEX    F            <NA>   <NULL>       RACE                         WHITE                    
+      37 TRTA   Placebo              SEX    F            RACE   WHITE        AETERM                       APPLICATION SITE PRURITUS
+      38 TRTA   Placebo              SEX    F            RACE   WHITE        AETERM                       APPLICATION SITE PRURITUS
+      39 TRTA   Placebo              SEX    F            RACE   WHITE        AETERM                       APPLICATION SITE PRURITUS
+      40 TRTA   Xanomeline High Dose SEX    F            RACE   WHITE        AETERM                       APPLICATION SITE PRURITUS
+      41 TRTA   Xanomeline High Dose SEX    F            RACE   WHITE        AETERM                       APPLICATION SITE PRURITUS
+      42 TRTA   Xanomeline High Dose SEX    F            RACE   WHITE        AETERM                       APPLICATION SITE PRURITUS
+      43 TRTA   Xanomeline Low Dose  SEX    F            RACE   WHITE        AETERM                       APPLICATION SITE PRURITUS
+      44 TRTA   Xanomeline Low Dose  SEX    F            RACE   WHITE        AETERM                       APPLICATION SITE PRURITUS
+      45 TRTA   Xanomeline Low Dose  SEX    F            RACE   WHITE        AETERM                       APPLICATION SITE PRURITUS
+      46 TRTA   Placebo              SEX    F            RACE   WHITE        AETERM                       ERYTHEMA                 
+      47 TRTA   Placebo              SEX    F            RACE   WHITE        AETERM                       ERYTHEMA                 
+      48 TRTA   Placebo              SEX    F            RACE   WHITE        AETERM                       ERYTHEMA                 
+      49 TRTA   Xanomeline High Dose SEX    F            RACE   WHITE        AETERM                       ERYTHEMA                 
+      50 TRTA   Xanomeline High Dose SEX    F            RACE   WHITE        AETERM                       ERYTHEMA                 
+      # i 184 more rows
 
 # sort_ard_hierarchical() warning messaging works
 

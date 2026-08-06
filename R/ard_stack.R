@@ -116,7 +116,7 @@ ard_stack <- function(data,
       )
     )
   } else {
-    ard_full <- dplyr::bind_rows(ard_list, .update = TRUE)
+    ard_full <- dplyr::bind_rows(ard_list)
   }
 
   # get all variables represented ----------------------------------------------
@@ -153,6 +153,7 @@ ard_stack <- function(data,
   }
 
   # order ----------------------------------------------------------------------
+  ard_full <- tidy_ard_column_order(ard_full)
   ard_full <- tidy_ard_row_order(ard_full)
 
   # append attributes ----------------------------------------------------------
@@ -167,9 +168,6 @@ ard_stack <- function(data,
       what = "cards::ard_stack(.shuffle)"
     )
   }
-
-  # assign new class -----------------------------------------------------------
-  class(ard_full) <- c("ard_stack", class(ard_full))
 
   # return final ARD -----------------------------------------------------------
   ard_full

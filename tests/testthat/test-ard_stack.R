@@ -10,9 +10,6 @@ test_that("ard_stack() works", {
     NA
   )
 
-  # Verify ard_stack class is assigned and ordered correctly
-  expect_s3_class(ard1, "ard_stack")
-  expect_identical(class(ard1)[1], "ard_stack")
 
   expect_equal(
     ard1,

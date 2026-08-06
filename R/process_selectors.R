@@ -297,6 +297,9 @@ cards_select <- function(expr, data, ...,
                          arg_name = NULL) {
   set_cli_abort_call()
   enexpr <- enexpr(expr) # this can be removed when `vars()` check removed
+  # a quosure (e.g. injected via `{{ }}`) must be reduced to a bare expression
+  # before subsetting below, as `[[` on a quosure is deprecated
+  if (is_quosure(enexpr)) enexpr <- quo_get_expr(enexpr)
 
   tryCatch(
     tidyselect::eval_select(expr = expr, data = data, ...) |> names(),

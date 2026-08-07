@@ -1,8 +1,8 @@
 ---
 url: https://pharmaverse.github.io/cards
 
-template:
-  package: nesttemplate
+# template:
+#   package: nesttemplate
 
 navbar:
   structure:
@@ -30,7 +30,7 @@ navbar:
     href: news/index.html
   github:
     icon: fa-github
-    href: https://github.com/insightsengineering/cards
+    href: https://github.com/pharmaverse/cards
 
 # development:
 #   mode: auto

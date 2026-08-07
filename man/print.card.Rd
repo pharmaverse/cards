@@ -2,10 +2,23 @@
 % Please edit documentation in R/print.R
 \name{print.card}
 \alias{print.card}
+\alias{ctl_new_pillar.card}
+\alias{tbl_format_setup.card}
 \alias{print.compare_ard}
 \title{Print}
 \usage{
-\method{print}{card}(x, n = NULL, columns = c("auto", "all"), n_col = 6L, ...)
+\method{print}{card}(
+  x,
+  width = NULL,
+  ...,
+  n = NULL,
+  max_extra_cols = NULL,
+  max_footer_lines = NULL
+)
+
+\method{ctl_new_pillar}{card}(controller, x, width, ..., title = NULL)
+
+\method{tbl_format_setup}{card}(x, width = NULL, ...)
 
 \method{print}{compare_ard}(x, ...)
 }
@@ -13,29 +26,42 @@
 \item{x}{(\code{data.frame})\cr
 object of class 'card'}
 
-\item{n}{(\code{integer})\cr
-integer specifying the number of rows to print}
-
-\item{columns}{(\code{string})\cr
-string indicating whether to print a selected number of columns or all.}
-
-\item{n_col}{(\code{integer})\cr
-some columns are removed when there are more than a threshold of
-columns present. This argument sets that threshold. This is only used
-when \code{columns='auto'} and default is \code{6L}.
-Columns \code{'error'}, \code{'warning'}, \code{'context'}, and \code{'fmt_fun'} \emph{may} be removed
-from the print. All other columns will be printed, even if more than \code{n_col}
-columns are present.}
+\item{width}{(\code{integer})\cr
+width of the printed output}
 
 \item{...}{(\code{\link[rlang:dyn-dots]{dynamic-dots}})\cr
-not used}
+passed to the underlying \pkg{pillar}/\pkg{tibble} methods}
+
+\item{n}{(\code{integer})\cr
+number of rows to print}
+
+\item{max_extra_cols, max_footer_lines}{(\code{integer})\cr
+passed to \code{\link[tibble:print.tbl]{tibble::print.tbl()}}; control the number of columns and footer
+lines listed in the footer}
+
+\item{controller, setup, title}{arguments passed by the \pkg{pillar} print machinery; not called directly}
 }
 \value{
 an ARD data frame of class 'card' (invisibly)
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}\cr
-Print method for objects of class 'card'
+Print method for objects of class 'card'.
+}
+\details{
+ARD tibbles print like a typical tibble (via the \pkg{pillar} package) with
+a few ARD-specific adaptations:
+\itemize{
+\item the header reads \verb{An ARD data frame} instead of \verb{A tibble}
+\item list-columns whose elements are scalars print the \emph{value} of the element,
+falling back to the standard tibble summary (e.g. \verb{<chr [2]>}, \verb{<fn>}) for
+non-scalar elements
+\item when the tibble is too wide for the console, all-\code{NULL} \code{error} and
+\code{warning} columns are suppressed first, then (after the usual column
+shrinking) the \code{fmt_fun}, \code{stat_label}, \code{stat_fmt}, and \code{context} columns
+are dropped in that order before falling back to the standard tibble
+behaviour. Suppressed columns are reported in the footer.
+}
 }
 \examples{
 ard_tabulate(ADSL, variables = AGEGR1) |>

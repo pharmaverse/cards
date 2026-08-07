@@ -43,8 +43,8 @@ You can install the development version of cards from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("pharmaverse/cards")
+# install.packages("pak")
+pak::pak("pharmaverse/cards")
 ```
 
 ## Extensions
@@ -61,16 +61,15 @@ The {cards} package exports three types of functions:
 
 3.  Functions to work with existing ARD objects.
 
-The [{cardx}](https://github.com/pharmaverse/cardx/) R package
-is an extension to {cards} that uses the utilities from {cards} and
-exports functions for creating additional ARD objects––including
-functions to summarize t-tests, Wilcoxon Rank-Sum tests, regression
-models, and more.
+The [{cardx}](https://github.com/pharmaverse/cardx/) R package is an
+extension to {cards} that uses the utilities from {cards} and exports
+functions for creating additional ARD objects––including functions to
+summarize t-tests, Wilcoxon Rank-Sum tests, regression models, and more.
 
 ## Getting Started
 
 Review the [Getting
-Started](https://pharmaverse.github.io/cards/latest-tag/articles/getting-started.html)
+Started](https://pharmaverse.github.io/cards//main/articles/getting-started.html)
 page for examples using ARDs to calculate statistics to later include in
 tables.
 
@@ -78,19 +77,19 @@ tables.
 library(cards)
 
 ard_summary(ADSL, by = "ARM", variables = "AGE")
-#> {cards} data frame: 24 x 10
-#>    group1 group1_level variable stat_name stat_label   stat
-#> 1     ARM      Placebo      AGE         N          N     86
-#> 2     ARM      Placebo      AGE      mean       Mean 75.209
-#> 3     ARM      Placebo      AGE        sd         SD   8.59
-#> 4     ARM      Placebo      AGE    median     Median     76
-#> 5     ARM      Placebo      AGE       p25         Q1     69
-#> 6     ARM      Placebo      AGE       p75         Q3     82
-#> 7     ARM      Placebo      AGE       min        Min     52
-#> 8     ARM      Placebo      AGE       max        Max     89
-#> 9     ARM    Xanomeli…      AGE         N          N     84
-#> 10    ARM    Xanomeli…      AGE      mean       Mean 74.381
-#> ℹ 14 more rows
-#> ℹ Use `print(n = ...)` to see more rows
-#> ℹ 4 more variables: context, fmt_fun, warning, error
+#> # An ARD data frame: 24 × 10
+#>    group1 group1_level       variable context stat_name stat_label  stat fmt_fun
+#>    <chr>  <list>             <chr>    <chr>   <chr>     <chr>      <lis>  <list>
+#>  1 ARM    Placebo            AGE      summary N         N          86          0
+#>  2 ARM    Placebo            AGE      summary mean      Mean       75.2        1
+#>  3 ARM    Placebo            AGE      summary sd        SD          8.59       1
+#>  4 ARM    Placebo            AGE      summary median    Median     76          1
+#>  5 ARM    Placebo            AGE      summary p25       Q1         69          1
+#>  6 ARM    Placebo            AGE      summary p75       Q3         82          1
+#>  7 ARM    Placebo            AGE      summary min       Min        52          1
+#>  8 ARM    Placebo            AGE      summary max       Max        89          1
+#>  9 ARM    Xanomeline High D… AGE      summary N         N          84          0
+#> 10 ARM    Xanomeline High D… AGE      summary mean      Mean       74.4        1
+#> # ℹ 14 more rows
+#> # ℹ 2 more variables: warning <list>, error <list>
 ```

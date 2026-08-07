@@ -5,12 +5,11 @@
     Message
       The `.by` argument should be specified when using `.overall=TRUE`.
       i Setting `ard_stack(.overall=FALSE)`.
-      {cards} data frame: 1 x 8
     Output
-        variable context stat_name stat_label stat fmt_fun
-      1      mpg summary         N          N   32       0
-    Message
-      i 2 more variables: warning, error
+      # An ARD data frame: 1 x 8
+        variable context stat_name stat_label   stat fmt_fun warning error 
+        <chr>    <chr>   <chr>     <chr>      <list>  <list> <list>  <list>
+      1 mpg      summary N         N              32       0 <NULL>  <NULL>
 
 ---
 
@@ -38,21 +37,20 @@
       .overall = TRUE), stat_name %in% "N")
     Message
       * Removing 1 row with NA or NaN values in "am" and "vs" columns.
-      {cards} data frame: 10 x 13
     Output
-         group1 group1_level group2 group2_level        variable variable_level stat_name stat_label stat
-      1      am            0     vs            0             mpg                        N          N   12
-      2      am            0     vs            1             mpg                        N          N    7
-      3      am            1     vs            0             mpg                        N          N    5
-      4      am            1     vs            1             mpg                        N          N    7
-      5    <NA>                <NA>                          mpg                        N          N   31
-      6    <NA>                <NA>                           am              0         N          N   31
-      7    <NA>                <NA>                           am              1         N          N   31
-      8    <NA>                <NA>                           vs              0         N          N   31
-      9    <NA>                <NA>                           vs              1         N          N   31
-      10   <NA>                <NA>              ..ard_total_n..                        N          N   31
-    Message
-      i 4 more variables: context, fmt_fun, warning, error
+      # An ARD data frame: 10 x 13
+         group1 group1_level group2 group2_level variable        variable_level context  stat_name stat_label   stat fmt_fun warning error 
+         <chr>  <list>       <chr>  <list>       <chr>           <list>         <chr>    <chr>     <chr>      <list>  <list> <list>  <list>
+       1 am     0            vs     0            mpg             <NULL>         summary  N         N              12       0 <NULL>  <NULL>
+       2 am     0            vs     1            mpg             <NULL>         summary  N         N               7       0 <NULL>  <NULL>
+       3 am     1            vs     0            mpg             <NULL>         summary  N         N               5       0 <NULL>  <NULL>
+       4 am     1            vs     1            mpg             <NULL>         summary  N         N               7       0 <NULL>  <NULL>
+       5 <NA>   <NULL>       <NA>   <NULL>       mpg             <NULL>         summary  N         N              31       0 <NULL>  <NULL>
+       6 <NA>   <NULL>       <NA>   <NULL>       am              0              tabulate N         N              31       0 <NULL>  <NULL>
+       7 <NA>   <NULL>       <NA>   <NULL>       am              1              tabulate N         N              31       0 <NULL>  <NULL>
+       8 <NA>   <NULL>       <NA>   <NULL>       vs              0              tabulate N         N              31       0 <NULL>  <NULL>
+       9 <NA>   <NULL>       <NA>   <NULL>       vs              1              tabulate N         N              31       0 <NULL>  <NULL>
+      10 <NA>   <NULL>       <NA>   <NULL>       ..ard_total_n.. <NULL>         total_n  N         N              31       0 <NULL>  <NULL>
 
 ---
 
@@ -61,19 +59,18 @@
       .overall = TRUE), stat_name %in% "N")
     Message
       * Removing 2 rows with NA or NaN values in "am" and "vs" columns.
-      {cards} data frame: 10 x 13
     Output
-         group1 group1_level group2 group2_level        variable variable_level stat_name stat_label stat
-      1      am            0     vs            0             mpg                        N          N   12
-      2      am            0     vs            1             mpg                        N          N    7
-      3      am            1     vs            0             mpg                        N          N    4
-      4      am            1     vs            1             mpg                        N          N    7
-      5    <NA>                <NA>                          mpg                        N          N   30
-      6    <NA>                <NA>                           am              0         N          N   30
-      7    <NA>                <NA>                           am              1         N          N   30
-      8    <NA>                <NA>                           vs              0         N          N   30
-      9    <NA>                <NA>                           vs              1         N          N   30
-      10   <NA>                <NA>              ..ard_total_n..                        N          N   30
-    Message
-      i 4 more variables: context, fmt_fun, warning, error
+      # An ARD data frame: 10 x 13
+         group1 group1_level group2 group2_level variable        variable_level context  stat_name stat_label   stat fmt_fun warning error 
+         <chr>  <list>       <chr>  <list>       <chr>           <list>         <chr>    <chr>     <chr>      <list>  <list> <list>  <list>
+       1 am     0            vs     0            mpg             <NULL>         summary  N         N              12       0 <NULL>  <NULL>
+       2 am     0            vs     1            mpg             <NULL>         summary  N         N               7       0 <NULL>  <NULL>
+       3 am     1            vs     0            mpg             <NULL>         summary  N         N               4       0 <NULL>  <NULL>
+       4 am     1            vs     1            mpg             <NULL>         summary  N         N               7       0 <NULL>  <NULL>
+       5 <NA>   <NULL>       <NA>   <NULL>       mpg             <NULL>         summary  N         N              30       0 <NULL>  <NULL>
+       6 <NA>   <NULL>       <NA>   <NULL>       am              0              tabulate N         N              30       0 <NULL>  <NULL>
+       7 <NA>   <NULL>       <NA>   <NULL>       am              1              tabulate N         N              30       0 <NULL>  <NULL>
+       8 <NA>   <NULL>       <NA>   <NULL>       vs              0              tabulate N         N              30       0 <NULL>  <NULL>
+       9 <NA>   <NULL>       <NA>   <NULL>       vs              1              tabulate N         N              30       0 <NULL>  <NULL>
+      10 <NA>   <NULL>       <NA>   <NULL>       ..ard_total_n.. <NULL>         total_n  N         N              30       0 <NULL>  <NULL>
 

@@ -78,17 +78,16 @@
     Message
       i 8 rows with duplicated statistic values have been removed.
       * See cards::bind_ard(.distinct) (`?cards::bind_ard()`) for details.
-      {cards} data frame: 8 x 8
     Output
-        variable context stat_name stat_label   stat fmt_fun
-      1      AGE summary         N          N    254       0
-      2      AGE summary      mean       Mean 75.087       1
-      3      AGE summary        sd         SD  8.246       1
-      4      AGE summary    median     Median     77       1
-      5      AGE summary       p25         Q1     70       1
-      6      AGE summary       p75         Q3     81       1
-      7      AGE summary       min        Min     51       1
-      8      AGE summary       max        Max     89       1
-    Message
-      i 2 more variables: warning, error
+      # An ARD data frame: 8 x 8
+        variable context stat_name stat_label   stat fmt_fun warning error 
+        <chr>    <chr>   <chr>     <chr>      <list>  <list> <list>  <list>
+      1 AGE      summary N         N          254          0 <NULL>  <NULL>
+      2 AGE      summary mean      Mean        75.1        1 <NULL>  <NULL>
+      3 AGE      summary sd        SD           8.25       1 <NULL>  <NULL>
+      4 AGE      summary median    Median      77          1 <NULL>  <NULL>
+      5 AGE      summary p25       Q1          70          1 <NULL>  <NULL>
+      6 AGE      summary p75       Q3          81          1 <NULL>  <NULL>
+      7 AGE      summary min       Min         51          1 <NULL>  <NULL>
+      8 AGE      summary max       Max         89          1 <NULL>  <NULL>
 

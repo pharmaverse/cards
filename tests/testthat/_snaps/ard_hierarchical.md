@@ -10,10 +10,8 @@
     Code
       ard_hierarchical(data = ADAE, variables = starts_with("xxxx"), by = c(TRTA,
         AESEV))
-    Message
-      {cards} data frame: 0 x 0
     Output
-      data frame with 0 columns and 0 rows
+      # An ARD data frame: 0 x 0
 
 # ard_hierarchical(id) argument works
 
@@ -24,15 +22,13 @@
       Warning:
       Duplicate rows found in data for the "USUBJID" column.
       i Percentages/Denominators are not correct.
-    Message
-      {cards} data frame: 1 x 15
     Output
-        group1 group1_level group2 group2_level group3 group3_level variable
-      1   TRTA      Placebo  AESEV         MILD  AESOC    CARDIAC …  AEDECOD
-        variable_level stat_name stat_label stat
-      1      ATRIAL F…         n          n    0
-    Message
-      i 4 more variables: context, fmt_fun, warning, error
+      # An ARD data frame: 1 x 15
+        group1 group1_level group2 group2_level group3 group3_level      variable
+        <chr>  <list>       <chr>  <list>       <chr>  <list>            <chr>   
+      1 TRTA   Placebo      AESEV  MILD         AESOC  CARDIAC DISORDERS AEDECOD 
+      # i 8 more variables: variable_level <list>, context <chr>, stat_name <chr>,
+      #   stat_label <chr>, stat <list>, fmt_fun <list>, warning <list>, error <list>
 
 ---
 
@@ -43,15 +39,13 @@
       Warning:
       Duplicate rows found in data for the "USUBJID" and "SITEID" columns.
       i Percentages/Denominators are not correct.
-    Message
-      {cards} data frame: 1 x 15
     Output
-        group1 group1_level group2 group2_level group3 group3_level variable
-      1   TRTA      Placebo  AESEV         MILD  AESOC    CARDIAC …  AEDECOD
-        variable_level stat_name stat_label stat
-      1      ATRIAL F…         n          n    0
-    Message
-      i 4 more variables: context, fmt_fun, warning, error
+      # An ARD data frame: 1 x 15
+        group1 group1_level group2 group2_level group3 group3_level      variable
+        <chr>  <list>       <chr>  <list>       <chr>  <list>            <chr>   
+      1 TRTA   Placebo      AESEV  MILD         AESOC  CARDIAC DISORDERS AEDECOD 
+      # i 8 more variables: variable_level <list>, context <chr>, stat_name <chr>,
+      #   stat_label <chr>, stat <list>, fmt_fun <list>, warning <list>, error <list>
 
 # ard_hierarchical_count() works without by variables
 
@@ -65,10 +59,8 @@
     Code
       ard_hierarchical_count(data = ADAE, variables = starts_with("xxxx"), by = c(
         TRTA, AESEV))
-    Message
-      {cards} data frame: 0 x 0
     Output
-      data frame with 0 columns and 0 rows
+      # An ARD data frame: 0 x 0
 
 # ard_hierarchical() errors with incomplete factor columns
 

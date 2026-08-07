@@ -13,8 +13,8 @@
 
 revdeps <- c(
   "ddsjoberg/gtsummary",
-  "insightsengineering/cardx",
-  "insightsengineering/crane"
+  "pharmaverse/cardx",
+  "pharmaverse/crane"
 )
 
 work_dir <- file.path(tempdir(), "cards-revdep")
@@ -26,7 +26,7 @@ for (lib in c(lib_new, lib_old)) dir.create(lib, showWarnings = FALSE)
 cat("Installing branch cards into", lib_new, "\n")
 pak::pkg_install("local::.", lib = lib_new, ask = FALSE)
 cat("Installing main cards into", lib_old, "\n")
-pak::pkg_install("insightsengineering/cards@main", lib = lib_old, ask = FALSE)
+pak::pkg_install("pharmaverse/cards@main", lib = lib_old, ask = FALSE)
 
 run_suite <- function(src, lib) {
   callr::r(

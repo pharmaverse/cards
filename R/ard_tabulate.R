@@ -818,7 +818,7 @@ ard_tabulate.data.frame <- function(data,
   else {
     cli::cli_inform(c(
       "If you see this message, the order of the sorted variables in the tabulaton is unexpected, which could cause downstream issues.",
-      "*" = "Please post a reproducible example to {.url https://github.com/insightsengineering/cards/issues/new}, so we can address in the next release.",
+      "*" = "Please post a reproducible example to {.url https://github.com/pharmaverse/cards/issues/new}, so we can address in the next release.",
       "i" = "You can create a minimal reproducible example with {.fun reprex::reprex}."
     ))
   }

@@ -1,5 +1,9 @@
 # cards 0.8.1.9000
 
+* ARDs now print through the pillar/tibble machinery: the header reads `An ARD data frame`, columns show their names and classes, and scalar list-column elements print their value (falling back to the standard tibble summary such as `<chr [2]>`, `<fn>`, and `<NULL>` for non-scalars). When the output is too wide for the console, all-`NULL` `error` and `warning` columns are dropped first, then `fmt_fun`, `stat_label`, `stat_fmt`, and `context`, before the standard tibble column shrinking; suppressed columns are listed in the footer. `as_card()` now always returns a tibble so that every ARD prints this way.
+
+* Removed the deprecated handling of `dplyr::vars()` in selecting environments (`cards_select()`), along with the `vars()` re-export. Use `c()` instead.
+
 * Added the `by_level` argument to `sort_ard_hierarchical()`, allowing `"descending"` sorting to rank variable groups by the counts observed within specific `by` variable levels (e.g. `by_level = list(TRTA = "Placebo")`) rather than the sums across all `by` variable levels. The argument accepts a named list, so any combination of `by` variables may be used. (#548, @rikoprogrammer)
 
 * Reduced the run time and memory use of `sort_ard_hierarchical()` and `filter_ard_hierarchical()`, particularly for ARDs with many hierarchy sections. The per-level grouped sums, the group-wise filter loop (including the previously per-group `tidyr::pivot_wider()` for column statistics and the per-group join used to derive the `_overall` statistics), the reformatting helper, and the empty-section pruning were all replaced with `vctrs`-based equivalents. Because `sort_ard_hierarchical()` also runs inside `ard_stack_hierarchical()`, this speeds up ARD construction as well. Results are unchanged. (#176)

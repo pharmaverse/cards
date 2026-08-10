@@ -71,11 +71,7 @@ test_that("ard_strata computes stats for parameter specific strata", {
     }
   )
 
-  ## line added to fix failing snapshot test on ubuntu-latest (devel)
-  ## TODO: resolve after release of R-devel
-  skip_if_not(package_version(paste(R.version$major, R.version$minor, sep = ".")) <= package_version("4.5.0"))
-
-  expect_snapshot(as.data.frame(tbl))
+  expect_snapshot(print(tbl, n = Inf))
 })
 
 

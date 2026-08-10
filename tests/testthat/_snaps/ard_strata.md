@@ -41,3 +41,30 @@
       # i 4 more variables: stat_label <chr>, fmt_fun <list>, warning <list>,
       #   error <list>
 
+# ard_strata computes stats for parameter specific strata
+
+    Code
+      print(tbl, n = Inf)
+    Output
+      # An ARD data frame: 18 x 11
+         group1  group1_level variable variable_level context  stat_name stat_label   stat fmt_fun warning error 
+         <chr>   <list>       <chr>    <list>         <chr>    <chr>     <chr>      <list> <list>  <list>  <list>
+       1 PARAMCD PARAM1       AVALC    Yes            tabulate n         n           4     0       <NULL>  <NULL>
+       2 PARAMCD PARAM1       AVALC    Yes            tabulate N         N           6     0       <NULL>  <NULL>
+       3 PARAMCD PARAM1       AVALC    Yes            tabulate p         %           0.667 <fn>    <NULL>  <NULL>
+       4 PARAMCD PARAM1       AVALC    No             tabulate n         n           2     0       <NULL>  <NULL>
+       5 PARAMCD PARAM1       AVALC    No             tabulate N         N           6     0       <NULL>  <NULL>
+       6 PARAMCD PARAM1       AVALC    No             tabulate p         %           0.333 <fn>    <NULL>  <NULL>
+       7 PARAMCD PARAM2       AVALC    Zero           tabulate n         n           0     0       <NULL>  <NULL>
+       8 PARAMCD PARAM2       AVALC    Zero           tabulate N         N           6     0       <NULL>  <NULL>
+       9 PARAMCD PARAM2       AVALC    Zero           tabulate p         %           0     <fn>    <NULL>  <NULL>
+      10 PARAMCD PARAM2       AVALC    Low            tabulate n         n           3     0       <NULL>  <NULL>
+      11 PARAMCD PARAM2       AVALC    Low            tabulate N         N           6     0       <NULL>  <NULL>
+      12 PARAMCD PARAM2       AVALC    Low            tabulate p         %           0.5   <fn>    <NULL>  <NULL>
+      13 PARAMCD PARAM2       AVALC    Medium         tabulate n         n           2     0       <NULL>  <NULL>
+      14 PARAMCD PARAM2       AVALC    Medium         tabulate N         N           6     0       <NULL>  <NULL>
+      15 PARAMCD PARAM2       AVALC    Medium         tabulate p         %           0.333 <fn>    <NULL>  <NULL>
+      16 PARAMCD PARAM2       AVALC    High           tabulate n         n           1     0       <NULL>  <NULL>
+      17 PARAMCD PARAM2       AVALC    High           tabulate N         N           6     0       <NULL>  <NULL>
+      18 PARAMCD PARAM2       AVALC    High           tabulate p         %           0.167 <fn>    <NULL>  <NULL>
+

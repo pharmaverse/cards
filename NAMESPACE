@@ -112,17 +112,19 @@ export(update_ard_fmt_fun)
 export(update_ard_stat_label)
 export(where)
 import(rlang)
-importFrom(dplyr,"%>%")
-importFrom(dplyr,across)
-importFrom(dplyr,all_of)
-importFrom(dplyr,any_of)
-importFrom(dplyr,contains)
-importFrom(dplyr,ends_with)
-importFrom(dplyr,everything)
-importFrom(dplyr,last_col)
-importFrom(dplyr,matches)
-importFrom(dplyr,num_range)
-importFrom(dplyr,one_of)
-importFrom(dplyr,starts_with)
-importFrom(dplyr,where)
+importFrom(dplyr,
+  "%>%",
+  across,
+  all_of,
+  any_of,
+  contains,
+  ends_with,
+  everything,
+  last_col,
+  matches,
+  num_range,
+  one_of,
+  starts_with,
+  where
+)
 importFrom(lifecycle,deprecated)

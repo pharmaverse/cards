@@ -1,6 +1,6 @@
 Package: cards
 Title: Analysis Results Data
-Version: 0.8.1.9000
+Version: 0.8.1.9001
 Authors@R: c(
     person("Daniel D.", "Sjoberg", , "danield.sjoberg@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-0862-2018")),
@@ -43,7 +43,7 @@ Suggests:
 Config/Needs/coverage: hms
 Config/Needs/website: rmarkdown, jsonlite, yaml, gtsummary, tfrmt, cardx,
     gt, fontawesome, crane, insightsengineering/nesttemplate
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 Encoding: UTF-8

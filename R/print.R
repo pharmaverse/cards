@@ -24,7 +24,7 @@
 #' @param max_extra_cols,max_footer_lines (`integer`)\cr
 #'   passed to [tibble::print.tbl()]; control the number of columns and footer
 #'   lines listed in the footer
-#' @param controller,setup,title
+#' @param controller,title
 #'   arguments passed by the \pkg{pillar} print machinery; not called directly
 #' @param ... ([`dynamic-dots`][rlang::dyn-dots])\cr
 #'   passed to the underlying \pkg{pillar}/\pkg{tibble} methods

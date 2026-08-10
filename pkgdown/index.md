@@ -1,16 +1,16 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# cards <a href="https://insightsengineering.github.io/cards/"><img src="https://raw.githubusercontent.com/insightsengineering/cards/main/man/figures/logo.png" align="right" height="120" alt="cards website" /></a>
+# cards <a href="https://pharmaverse.github.io/cards/"><img src="https://raw.githubusercontent.com/pharmaverse/cards/main/man/figures/logo.png" align="right" height="120" alt="cards website" /></a>
 
 <!-- badges: start -->
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/cards)](https://CRAN.R-project.org/package=cards)
 [![Codecov test
-coverage](https://codecov.io/gh/insightsengineering/cards/graph/badge.svg)](https://app.codecov.io/gh/insightsengineering/cards)
+coverage](https://codecov.io/gh/pharmaverse/cards/graph/badge.svg)](https://app.codecov.io/gh/insightsengineering/cards)
 [![Downloads](https://cranlogs.r-pkg.org/badges/cards)](https://cran.r-project.org/package=cards)
-[![R-CMD-check](https://github.com/insightsengineering/cards/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/insightsengineering/cards/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/pharmaverse/cards/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/insightsengineering/cards/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The [CDISC Analysis Results
@@ -43,15 +43,15 @@ You can install the development version of cards from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("insightsengineering/cards")
+# install.packages("pak")
+pak::pak("pharmaverse/cards")
 ```
 
 ## Extensions
 
 [<img
-src="https://raw.githubusercontent.com/insightsengineering/cardx/main/man/figures/logo.png"
-style="float: right" width="120" alt="cardx website" />](https://insightsengineering.github.io/cardx/)
+src="https://raw.githubusercontent.com/pharmaverse/cardx/main/man/figures/logo.png"
+style="float: right" width="120" alt="cardx website" />](https://pharmaverse.github.io/cardx/)
 
 The {cards} package exports three types of functions:
 
@@ -61,16 +61,15 @@ The {cards} package exports three types of functions:
 
 3.  Functions to work with existing ARD objects.
 
-The [{cardx}](https://github.com/insightsengineering/cardx/) R package
-is an extension to {cards} that uses the utilities from {cards} and
-exports functions for creating additional ARD objects––including
-functions to summarize t-tests, Wilcoxon Rank-Sum tests, regression
-models, and more.
+The [{cardx}](https://github.com/pharmaverse/cardx/) R package is an
+extension to {cards} that uses the utilities from {cards} and exports
+functions for creating additional ARD objects––including functions to
+summarize t-tests, Wilcoxon Rank-Sum tests, regression models, and more.
 
 ## Getting Started
 
 Review the [Getting
-Started](https://insightsengineering.github.io/cards//main/articles/getting-started.html)
+Started](https://pharmaverse.github.io/cards//main/articles/getting-started.html)
 page for examples using ARDs to calculate statistics to later include in
 tables.
 
@@ -78,39 +77,39 @@ tables.
 library(cards)
 
 ard_summary(ADSL, by = "ARM", variables = "AGE")
-#> {cards} data frame: 24 x 10
-#>    group1 group1_level variable stat_name stat_label   stat
-#> 1     ARM      Placebo      AGE         N          N     86
-#> 2     ARM      Placebo      AGE      mean       Mean 75.209
-#> 3     ARM      Placebo      AGE        sd         SD   8.59
-#> 4     ARM      Placebo      AGE    median     Median     76
-#> 5     ARM      Placebo      AGE       p25         Q1     69
-#> 6     ARM      Placebo      AGE       p75         Q3     82
-#> 7     ARM      Placebo      AGE       min        Min     52
-#> 8     ARM      Placebo      AGE       max        Max     89
-#> 9     ARM    Xanomeli…      AGE         N          N     84
-#> 10    ARM    Xanomeli…      AGE      mean       Mean 74.381
-#> ℹ 14 more rows
-#> ℹ Use `print(n = ...)` to see more rows
-#> ℹ 4 more variables: context, fmt_fun, warning, error
+#> # An ARD data frame: 24 × 10
+#>    group1 group1_level       variable context stat_name stat_label  stat fmt_fun
+#>    <chr>  <list>             <chr>    <chr>   <chr>     <chr>      <lis>  <list>
+#>  1 ARM    Placebo            AGE      summary N         N          86          0
+#>  2 ARM    Placebo            AGE      summary mean      Mean       75.2        1
+#>  3 ARM    Placebo            AGE      summary sd        SD          8.59       1
+#>  4 ARM    Placebo            AGE      summary median    Median     76          1
+#>  5 ARM    Placebo            AGE      summary p25       Q1         69          1
+#>  6 ARM    Placebo            AGE      summary p75       Q3         82          1
+#>  7 ARM    Placebo            AGE      summary min       Min        52          1
+#>  8 ARM    Placebo            AGE      summary max       Max        89          1
+#>  9 ARM    Xanomeline High D… AGE      summary N         N          84          0
+#> 10 ARM    Xanomeline High D… AGE      summary mean      Mean       74.4        1
+#> # ℹ 14 more rows
+#> # ℹ 2 more variables: warning <list>, error <list>
 ```
 
 ## Other Resources
 
-<div id="amrcdcgofg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#amrcdcgofg table {
+<div id="jzhsrfqqko" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jzhsrfqqko table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-&#10;#amrcdcgofg thead, #amrcdcgofg tbody, #amrcdcgofg tfoot, #amrcdcgofg tr, #amrcdcgofg td, #amrcdcgofg th {
+&#10;#jzhsrfqqko thead, #jzhsrfqqko tbody, #jzhsrfqqko tfoot, #jzhsrfqqko tr, #jzhsrfqqko td, #jzhsrfqqko th {
   border-style: none;
 }
-&#10;#amrcdcgofg p {
+&#10;#jzhsrfqqko p {
   margin: 0;
   padding: 0;
 }
-&#10;#amrcdcgofg .gt_table {
+&#10;#jzhsrfqqko .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -135,11 +134,11 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   border-left-width: 2px;
   border-left-color: #D3D3D3;
 }
-&#10;#amrcdcgofg .gt_caption {
+&#10;#jzhsrfqqko .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
-&#10;#amrcdcgofg .gt_title {
+&#10;#jzhsrfqqko .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -150,7 +149,7 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   border-bottom-color: #FFFFFF;
   border-bottom-width: 0;
 }
-&#10;#amrcdcgofg .gt_subtitle {
+&#10;#jzhsrfqqko .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -161,7 +160,7 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   border-top-color: #FFFFFF;
   border-top-width: 0;
 }
-&#10;#amrcdcgofg .gt_heading {
+&#10;#jzhsrfqqko .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -172,12 +171,12 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#amrcdcgofg .gt_bottom_border {
+&#10;#jzhsrfqqko .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
-&#10;#amrcdcgofg .gt_col_headings {
+&#10;#jzhsrfqqko .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -191,7 +190,7 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#amrcdcgofg .gt_col_heading {
+&#10;#jzhsrfqqko .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -210,7 +209,7 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   padding-right: 5px;
   overflow-x: hidden;
 }
-&#10;#amrcdcgofg .gt_column_spanner_outer {
+&#10;#jzhsrfqqko .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -221,13 +220,13 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   padding-left: 4px;
   padding-right: 4px;
 }
-&#10;#amrcdcgofg .gt_column_spanner_outer:first-child {
+&#10;#jzhsrfqqko .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
-&#10;#amrcdcgofg .gt_column_spanner_outer:last-child {
+&#10;#jzhsrfqqko .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
-&#10;#amrcdcgofg .gt_column_spanner {
+&#10;#jzhsrfqqko .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -238,10 +237,10 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   display: inline-block;
   width: 100%;
 }
-&#10;#amrcdcgofg .gt_spanner_row {
+&#10;#jzhsrfqqko .gt_spanner_row {
   border-bottom-style: hidden;
 }
-&#10;#amrcdcgofg .gt_group_heading {
+&#10;#jzhsrfqqko .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -266,7 +265,7 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   vertical-align: middle;
   text-align: left;
 }
-&#10;#amrcdcgofg .gt_empty_group_heading {
+&#10;#jzhsrfqqko .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -280,13 +279,13 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   border-bottom-color: #D3D3D3;
   vertical-align: middle;
 }
-&#10;#amrcdcgofg .gt_from_md > :first-child {
+&#10;#jzhsrfqqko .gt_from_md > :first-child {
   margin-top: 0;
 }
-&#10;#amrcdcgofg .gt_from_md > :last-child {
+&#10;#jzhsrfqqko .gt_from_md > :last-child {
   margin-bottom: 0;
 }
-&#10;#amrcdcgofg .gt_row {
+&#10;#jzhsrfqqko .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -304,7 +303,7 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   vertical-align: middle;
   overflow-x: hidden;
 }
-&#10;#amrcdcgofg .gt_stub {
+&#10;#jzhsrfqqko .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -316,7 +315,7 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#amrcdcgofg .gt_stub_row_group {
+&#10;#jzhsrfqqko .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -329,13 +328,13 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   padding-right: 5px;
   vertical-align: top;
 }
-&#10;#amrcdcgofg .gt_row_group_first td {
+&#10;#jzhsrfqqko .gt_row_group_first td {
   border-top-width: 2px;
 }
-&#10;#amrcdcgofg .gt_row_group_first th {
+&#10;#jzhsrfqqko .gt_row_group_first th {
   border-top-width: 2px;
 }
-&#10;#amrcdcgofg .gt_summary_row {
+&#10;#jzhsrfqqko .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -344,14 +343,14 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#amrcdcgofg .gt_first_summary_row {
+&#10;#jzhsrfqqko .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
-&#10;#amrcdcgofg .gt_first_summary_row.thick {
+&#10;#jzhsrfqqko .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
-&#10;#amrcdcgofg .gt_last_summary_row {
+&#10;#jzhsrfqqko .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -360,7 +359,7 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
-&#10;#amrcdcgofg .gt_grand_summary_row {
+&#10;#jzhsrfqqko .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -369,7 +368,7 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#amrcdcgofg .gt_first_grand_summary_row {
+&#10;#jzhsrfqqko .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -378,7 +377,7 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   border-top-width: 6px;
   border-top-color: #D3D3D3;
 }
-&#10;#amrcdcgofg .gt_last_grand_summary_row_top {
+&#10;#jzhsrfqqko .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -387,10 +386,10 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   border-bottom-width: 6px;
   border-bottom-color: #D3D3D3;
 }
-&#10;#amrcdcgofg .gt_striped {
+&#10;#jzhsrfqqko .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
-&#10;#amrcdcgofg .gt_table_body {
+&#10;#jzhsrfqqko .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -398,7 +397,7 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
-&#10;#amrcdcgofg .gt_footnotes {
+&#10;#jzhsrfqqko .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -411,7 +410,7 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#amrcdcgofg .gt_footnote {
+&#10;#jzhsrfqqko .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -419,7 +418,7 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#amrcdcgofg .gt_sourcenotes {
+&#10;#jzhsrfqqko .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -432,64 +431,64 @@ ard_summary(ADSL, by = "ARM", variables = "AGE")
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#amrcdcgofg .gt_sourcenote {
+&#10;#jzhsrfqqko .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#amrcdcgofg .gt_left {
+&#10;#jzhsrfqqko .gt_left {
   text-align: left;
 }
-&#10;#amrcdcgofg .gt_center {
+&#10;#jzhsrfqqko .gt_center {
   text-align: center;
 }
-&#10;#amrcdcgofg .gt_right {
+&#10;#jzhsrfqqko .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-&#10;#amrcdcgofg .gt_font_normal {
+&#10;#jzhsrfqqko .gt_font_normal {
   font-weight: normal;
 }
-&#10;#amrcdcgofg .gt_font_bold {
+&#10;#jzhsrfqqko .gt_font_bold {
   font-weight: bold;
 }
-&#10;#amrcdcgofg .gt_font_italic {
+&#10;#jzhsrfqqko .gt_font_italic {
   font-style: italic;
 }
-&#10;#amrcdcgofg .gt_super {
+&#10;#jzhsrfqqko .gt_super {
   font-size: 65%;
 }
-&#10;#amrcdcgofg .gt_footnote_marks {
+&#10;#jzhsrfqqko .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
-&#10;#amrcdcgofg .gt_asterisk {
+&#10;#jzhsrfqqko .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
-&#10;#amrcdcgofg .gt_indent_1 {
+&#10;#jzhsrfqqko .gt_indent_1 {
   text-indent: 5px;
 }
-&#10;#amrcdcgofg .gt_indent_2 {
+&#10;#jzhsrfqqko .gt_indent_2 {
   text-indent: 10px;
 }
-&#10;#amrcdcgofg .gt_indent_3 {
+&#10;#jzhsrfqqko .gt_indent_3 {
   text-indent: 15px;
 }
-&#10;#amrcdcgofg .gt_indent_4 {
+&#10;#jzhsrfqqko .gt_indent_4 {
   text-indent: 20px;
 }
-&#10;#amrcdcgofg .gt_indent_5 {
+&#10;#jzhsrfqqko .gt_indent_5 {
   text-indent: 25px;
 }
-&#10;#amrcdcgofg .katex-display {
+&#10;#jzhsrfqqko .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
-&#10;#amrcdcgofg div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+&#10;#jzhsrfqqko div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>

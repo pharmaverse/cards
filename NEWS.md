@@ -1,4 +1,4 @@
-# cards 0.8.1.9000
+# cards 0.8.1.9001
 
 * ARDs now print through the pillar/tibble machinery: the header reads `An ARD data frame`, columns show their names and classes, and scalar list-column elements print their value (falling back to the standard tibble summary such as `<chr [2]>`, `<fn>`, and `<NULL>` for non-scalars). When the output is too wide for the console, all-`NULL` `error` and `warning` columns are dropped first, then `fmt_fun`, `stat_label`, `stat_fmt`, and `context`, before the standard tibble column shrinking; suppressed columns are listed in the footer. `as_card()` now always returns a tibble so that every ARD prints this way.
 

@@ -39,7 +39,7 @@ number of rows to print}
 passed to \code{\link[tibble:print.tbl]{tibble::print.tbl()}}; control the number of columns and footer
 lines listed in the footer}
 
-\item{controller, setup, title}{arguments passed by the \pkg{pillar} print machinery; not called directly}
+\item{controller, title}{arguments passed by the \pkg{pillar} print machinery; not called directly}
 }
 \value{
 an ARD data frame of class 'card' (invisibly)

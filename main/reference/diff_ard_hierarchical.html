@@ -4,9 +4,9 @@ Calculate the difference in event rates between two groups of a stacked
 hierarchical ARD created with ard_stack_hierarchical(). For every node in
 the hierarchy (e.g. each system organ class and each preferred term), the
 rate (p statistic) of a second group is subtracted from the rate of a first
-group and returned under a new statistic named "p_diff".
+group and returned under a new statistic named "estimate".
 The input ARD must contain the p statistic and at least one by variable.
-The by (grouping) dimension is collapsed in the result—only the p_diff
+The by (grouping) dimension is collapsed in the result—only the estimate
 rows are returned.'><meta property="og:image" content="https://pharmaverse.github.io/cards/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -25,7 +25,7 @@ rows are returned.'><meta property="og:image" content="https://pharmaverse.githu
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cards</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.1.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.1.9003</span>
       </span>
     </div>
 
@@ -90,9 +90,9 @@ rows are returned.'><meta property="og:image" content="https://pharmaverse.githu
 hierarchical ARD created with <code><a href="ard_stack_hierarchical.html">ard_stack_hierarchical()</a></code>. For every node in
 the hierarchy (e.g. each system organ class and each preferred term), the
 rate (<code>p</code> statistic) of a second group is subtracted from the rate of a first
-group and returned under a new statistic named <code>"p_diff"</code>.</p>
+group and returned under a new statistic named <code>"estimate"</code>.</p>
 <p>The input ARD must contain the <code>p</code> statistic and at least one <code>by</code> variable.
-The <code>by</code> (grouping) dimension is collapsed in the result—only the <code>p_diff</code>
+The <code>by</code> (grouping) dimension is collapsed in the result—only the <code>estimate</code>
 rows are returned.</p>
     </div>
 
@@ -136,7 +136,7 @@ This form is required when <code>x</code> has more than one <code>by</code> vari
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>Rates are stored on the <code>[0, 1]</code> scale (as <code>p</code> is), so the returned <code>p_diff</code>
+    <p>Rates are stored on the <code>[0, 1]</code> scale (as <code>p</code> is), so the returned <code>estimate</code>
 values lie in <code>[-1, 1]</code>. A hierarchy node observed in only one of the two
 groups is treated as a rate of <code>0</code> in the group where it is absent.</p>
     </div>
@@ -160,16 +160,16 @@ groups is treated as a rate of <code>0</code> in the group where it is absent.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># An ARD data frame: 265 × 11</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    group1 group1_level      variable variable_level    context stat_name    stat</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;list&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>            AESOC    CARDIAC DISORDERS diff_h… p_diff     0.063<span style="text-decoration: underline;">1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIAL FIBRILLAT… diff_h… p_diff     0.024<span style="text-decoration: underline;">1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIAL FLUTTER    diff_h… p_diff     0.011<span style="text-decoration: underline;">9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIAL HYPERTROP… diff_h… p_diff    -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIOVENTRICULAR… diff_h… p_diff    -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIOVENTRICULAR… diff_h… p_diff     0.012<span style="text-decoration: underline;">5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> AESOC  CARDIAC DISORDERS AEDECOD  BRADYCARDIA       diff_h… p_diff    -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> AESOC  CARDIAC DISORDERS AEDECOD  BUNDLE BRANCH BL… diff_h… p_diff    -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> AESOC  CARDIAC DISORDERS AEDECOD  BUNDLE BRANCH BL… diff_h… p_diff    -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> AESOC  CARDIAC DISORDERS AEDECOD  CARDIAC DISORDER  diff_h… p_diff     0.011<span style="text-decoration: underline;">9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>            AESOC    CARDIAC DISORDERS diff_h… estimate   0.063<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIAL FIBRILLAT… diff_h… estimate   0.024<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIAL FLUTTER    diff_h… estimate   0.011<span style="text-decoration: underline;">9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIAL HYPERTROP… diff_h… estimate  -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIOVENTRICULAR… diff_h… estimate  -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIOVENTRICULAR… diff_h… estimate   0.012<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> AESOC  CARDIAC DISORDERS AEDECOD  BRADYCARDIA       diff_h… estimate  -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> AESOC  CARDIAC DISORDERS AEDECOD  BUNDLE BRANCH BL… diff_h… estimate  -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> AESOC  CARDIAC DISORDERS AEDECOD  BUNDLE BRANCH BL… diff_h… estimate  -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> AESOC  CARDIAC DISORDERS AEDECOD  CARDIAC DISORDER  diff_h… estimate   0.011<span style="text-decoration: underline;">9</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 255 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: stat_label &lt;chr&gt;, fmt_fun &lt;list&gt;, warning &lt;list&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   error &lt;list&gt;</span></span>
@@ -182,16 +182,16 @@ groups is treated as a rate of <code>0</code> in the group where it is absent.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># An ARD data frame: 265 × 11</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    group1 group1_level      variable variable_level    context stat_name    stat</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;list&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>            AESOC    CARDIAC DISORDERS diff_h… p_diff     0.063<span style="text-decoration: underline;">1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIAL FIBRILLAT… diff_h… p_diff     0.024<span style="text-decoration: underline;">1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIAL FLUTTER    diff_h… p_diff     0.011<span style="text-decoration: underline;">9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIAL HYPERTROP… diff_h… p_diff    -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIOVENTRICULAR… diff_h… p_diff    -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIOVENTRICULAR… diff_h… p_diff     0.012<span style="text-decoration: underline;">5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> AESOC  CARDIAC DISORDERS AEDECOD  BRADYCARDIA       diff_h… p_diff    -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> AESOC  CARDIAC DISORDERS AEDECOD  BUNDLE BRANCH BL… diff_h… p_diff    -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> AESOC  CARDIAC DISORDERS AEDECOD  BUNDLE BRANCH BL… diff_h… p_diff    -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> AESOC  CARDIAC DISORDERS AEDECOD  CARDIAC DISORDER  diff_h… p_diff     0.011<span style="text-decoration: underline;">9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>            AESOC    CARDIAC DISORDERS diff_h… estimate   0.063<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIAL FIBRILLAT… diff_h… estimate   0.024<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIAL FLUTTER    diff_h… estimate   0.011<span style="text-decoration: underline;">9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIAL HYPERTROP… diff_h… estimate  -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIOVENTRICULAR… diff_h… estimate  -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> AESOC  CARDIAC DISORDERS AEDECOD  ATRIOVENTRICULAR… diff_h… estimate   0.012<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> AESOC  CARDIAC DISORDERS AEDECOD  BRADYCARDIA       diff_h… estimate  -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> AESOC  CARDIAC DISORDERS AEDECOD  BUNDLE BRANCH BL… diff_h… estimate  -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> AESOC  CARDIAC DISORDERS AEDECOD  BUNDLE BRANCH BL… diff_h… estimate  -<span style="color: #BB0000;">0.011</span><span style="color: #BB0000; text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> AESOC  CARDIAC DISORDERS AEDECOD  CARDIAC DISORDER  diff_h… estimate   0.011<span style="text-decoration: underline;">9</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 255 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: stat_label &lt;chr&gt;, fmt_fun &lt;list&gt;, warning &lt;list&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   error &lt;list&gt;</span></span>

@@ -171,3 +171,111 @@ test_that("diff_ard_hierarchical() input checks", {
     error = TRUE
   )
 })
+
+test_that("diff_ard_hierarchical() warns when input is not a stacked hierarchical ARD", {
+  ard_noclass <- ard
+  class(ard_noclass) <- setdiff(class(ard_noclass), c("ard_stack_hierarchical", "ard_stack_hierarchical_count"))
+  expect_warning(
+    diff_ard_hierarchical(ard_noclass, levels = list(TRTA = "Xanomeline High Dose", TRTA = "Placebo")),
+    "stacked hierarchical ARDs"
+  )
+})
+
+test_that("diff_ard_hierarchical() handles a node present in only one group", {
+  gv <- function(col) vapply(col, function(z) if (length(z) == 0) NA_character_ else as.character(z[[1]]), "")
+
+  # drop the High Dose `p` rows for one AE term so it exists only in the Placebo group
+  term_rows <- ard[ard$stat_name == "p" & ard$context == "hierarchical" & ard$variable == "AEDECOD", ]
+  term <- gv(term_rows$variable_level)[1]
+  drop <- ard$variable == "AEDECOD" &
+    gv(ard$variable_level) == term &
+    gv(ard$group1_level) == "Xanomeline High Dose"
+  ard_missing <- ard[!drop, ]
+
+  d <- diff_ard_hierarchical(ard_missing, levels = list(TRTA = "Xanomeline High Dose", TRTA = "Placebo"))
+  dr <- d[which(d$variable == "AEDECOD" & gv(d$variable_level) == term), ]
+  p_placebo <- .p_at(ard, "Placebo", gv(dr$group1_level)[1], term)
+  # absent High Dose rate treated as 0: difference is 0 - p(Placebo)
+  expect_equal(as.numeric(dr$stat[[1]]), 0 - p_placebo)
+})
+
+test_that("diff_ard_hierarchical() default level order falls back without `by` tabulation rows", {
+  keep <- c("Placebo", "Xanomeline High Dose")
+  ard_2lvl_nobystat <- ard_stack_hierarchical(
+    data = dplyr::filter(ADAE_subset, TRTA %in% keep),
+    variables = c(AESOC, AEDECOD),
+    by = TRTA,
+    denominator = dplyr::filter(cards::ADSL, TRTA %in% keep),
+    id = USUBJID,
+    by_stats = FALSE
+  )
+  expect_false(any(ard_2lvl_nobystat$variable == "TRTA"))
+  expect_silent(d <- diff_ard_hierarchical(ard_2lvl_nobystat))
+  expect_setequal(d$stat_name, "p_diff")
+})
+
+test_that("diff_ard_hierarchical() input checks with multiple `by` variables", {
+  ard2 <- ard_stack_hierarchical(
+    data = ADAE_subset,
+    variables = c(AESOC, AEDECOD),
+    by = c(TRTA, SEX),
+    denominator = cards::ADSL,
+    id = USUBJID
+  )
+
+  # more than one `by` variable and no `levels`
+  expect_snapshot(diff_ard_hierarchical(ard2), error = TRUE)
+
+  # flat form with no repeated (difference) variable
+  expect_snapshot(diff_ard_hierarchical(ard2, levels = list(TRTA = "Placebo", SEX = "F")), error = TRUE)
+
+  # flat form missing another `by` variable
+  expect_snapshot(
+    diff_ard_hierarchical(ard2, levels = list(TRTA = "Placebo", TRTA = "Xanomeline High Dose")),
+    error = TRUE
+  )
+
+  # two-cell form: a cell missing a `by` variable
+  expect_snapshot(
+    diff_ard_hierarchical(ard2, levels = list(list(TRTA = "Placebo"), list(TRTA = "Xanomeline High Dose"))),
+    error = TRUE
+  )
+})
+
+test_that("diff_ard_hierarchical() input checks on `levels` structure", {
+  # flat form not fully named
+  expect_snapshot(diff_ard_hierarchical(ard, levels = list("Placebo", "Xanomeline High Dose")), error = TRUE)
+
+  # flat element is not a single level
+  expect_snapshot(diff_ard_hierarchical(ard, levels = list(TRTA = c("Placebo", "Xanomeline High Dose"))), error = TRUE)
+
+  # flat form repeats a level (two identical levels)
+  expect_snapshot(diff_ard_hierarchical(ard, levels = list(TRTA = "Placebo", TRTA = "Placebo")), error = TRUE)
+
+  # two-cell form with an unnamed cell element
+  expect_snapshot(
+    diff_ard_hierarchical(ard, levels = list(list("Placebo"), list(TRTA = "Placebo"))),
+    error = TRUE
+  )
+
+  # two-cell form repeating a `by` variable within a cell
+  expect_snapshot(
+    diff_ard_hierarchical(
+      ard,
+      levels = list(list(TRTA = "Placebo", TRTA = "Xanomeline High Dose"), list(TRTA = "Placebo"))
+    ),
+    error = TRUE
+  )
+
+  # two-cell form with a cell element that is not a single level
+  expect_snapshot(
+    diff_ard_hierarchical(ard, levels = list(list(TRTA = c("Placebo", "Xanomeline High Dose")), list(TRTA = "Placebo"))),
+    error = TRUE
+  )
+
+  # two-cell form with a level not present in the data
+  expect_snapshot(
+    diff_ard_hierarchical(ard, levels = list(list(TRTA = "Nope"), list(TRTA = "Placebo"))),
+    error = TRUE
+  )
+})

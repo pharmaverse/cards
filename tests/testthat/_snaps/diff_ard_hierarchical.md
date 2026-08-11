@@ -120,3 +120,98 @@
       Error in `diff_ard_hierarchical()`:
       ! The two groups specified in `levels` must differ.
 
+# diff_ard_hierarchical() input checks with multiple `by` variables
+
+    Code
+      diff_ard_hierarchical(ard2)
+    Condition
+      Error in `diff_ard_hierarchical()`:
+      ! The `levels` argument must be specified when `x` has more than one `by` variable.
+      i Specify the two groups as two named lists, e.g. `levels = list(list(...), list(...))`.
+
+---
+
+    Code
+      diff_ard_hierarchical(ard2, levels = list(TRTA = "Placebo", SEX = "F"))
+    Condition
+      Error in `diff_ard_hierarchical()`:
+      ! Exactly one `by` variable must be repeated in `levels` to define the two groups being differenced.
+      i With more than one `by` variable, specify the two groups as two named lists, e.g. `list(list(...), list(...))`.
+
+---
+
+    Code
+      diff_ard_hierarchical(ard2, levels = list(TRTA = "Placebo", TRTA = "Xanomeline High Dose"))
+    Condition
+      Error in `diff_ard_hierarchical()`:
+      ! Every `by` variable other than the difference variable must be specified exactly once in `levels`.
+      i The `by` variables "TRTA" and "SEX" must each appear (the difference variable twice).
+
+---
+
+    Code
+      diff_ard_hierarchical(ard2, levels = list(list(TRTA = "Placebo"), list(TRTA = "Xanomeline High Dose")))
+    Condition
+      Error in `diff_ard_hierarchical()`:
+      ! Each group in `levels` must specify a level for every `by` variable.
+      i The `by` variables "TRTA" and "SEX" must each appear once.
+
+# diff_ard_hierarchical() input checks on `levels` structure
+
+    Code
+      diff_ard_hierarchical(ard, levels = list("Placebo", "Xanomeline High Dose"))
+    Condition
+      Error in `diff_ard_hierarchical()`:
+      ! The `levels` argument must be a fully named list, e.g. `list(TRTA = "Placebo", TRTA = "Low Dose")`.
+
+---
+
+    Code
+      diff_ard_hierarchical(ard, levels = list(TRTA = c("Placebo",
+        "Xanomeline High Dose")))
+    Condition
+      Error in `diff_ard_hierarchical()`:
+      ! Each element of `levels` must be a single `by` variable level.
+
+---
+
+    Code
+      diff_ard_hierarchical(ard, levels = list(TRTA = "Placebo", TRTA = "Placebo"))
+    Condition
+      Error in `diff_ard_hierarchical()`:
+      ! The two levels of the difference variable "TRTA" in `levels` must differ.
+
+---
+
+    Code
+      diff_ard_hierarchical(ard, levels = list(list("Placebo"), list(TRTA = "Placebo")))
+    Condition
+      Error in `diff_ard_hierarchical()`:
+      ! Each group in `levels` must be a fully named list of `by` variable levels.
+
+---
+
+    Code
+      diff_ard_hierarchical(ard, levels = list(list(TRTA = "Placebo", TRTA = "Xanomeline High Dose"),
+      list(TRTA = "Placebo")))
+    Condition
+      Error in `diff_ard_hierarchical()`:
+      ! Each `by` variable may be specified only once within a group of `levels`.
+
+---
+
+    Code
+      diff_ard_hierarchical(ard, levels = list(list(TRTA = c("Placebo",
+        "Xanomeline High Dose")), list(TRTA = "Placebo")))
+    Condition
+      Error in `diff_ard_hierarchical()`:
+      ! Each element of a `levels` group must be a single level.
+
+---
+
+    Code
+      diff_ard_hierarchical(ard, levels = list(list(TRTA = "Nope"), list(TRTA = "Placebo")))
+    Condition
+      Error in `diff_ard_hierarchical()`:
+      ! The `levels` value for "TRTA" must be one of "Placebo", "Xanomeline High Dose", and "Xanomeline Low Dose", not "Nope".
+

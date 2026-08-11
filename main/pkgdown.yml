@@ -1,4 +1,4 @@
-pandoc: '3.9'
+pandoc: '3.10'
 pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
@@ -7,7 +7,7 @@ articles:
   articles/long_data: long_data.html
   articles/structures: structures.html
   articles/update-ard: update-ard.html
-last_built: 2026-08-07T06:18Z
+last_built: 2026-08-11T17:46Z
 urls:
   reference: https://pharmaverse.github.io/cards/reference
   article: https://pharmaverse.github.io/cards/articles

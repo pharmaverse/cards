@@ -378,7 +378,7 @@ diff_ard_hierarchical <- function(x, levels = NULL) {
   out$stat_name <- "estimate"
   out$stat_label <- "% difference"
   out$context <- "diff_hierarchical"
-  out$fmt_fun <- list(label_round(digits = 3, scale = 100))
+  out$fmt_fun <- list(label_round(digits = 1, scale = 100))
   out$warning <- list(NULL)
   out$error <- list(NULL)
 

@@ -6,10 +6,10 @@
 #' hierarchical ARD created with [ard_stack_hierarchical()]. For every node in
 #' the hierarchy (e.g. each system organ class and each preferred term), the
 #' rate (`p` statistic) of a second group is subtracted from the rate of a first
-#' group and returned under a new statistic named `"p_diff"`.
+#' group and returned under a new statistic named `"estimate"`.
 #'
 #' The input ARD must contain the `p` statistic and at least one `by` variable.
-#' The `by` (grouping) dimension is collapsed in the result---only the `p_diff`
+#' The `by` (grouping) dimension is collapsed in the result---only the `estimate`
 #' rows are returned.
 #'
 #' @param x (`card`)\cr
@@ -40,7 +40,7 @@
 #' @name diff_ard_hierarchical
 #'
 #' @details
-#' Rates are stored on the `[0, 1]` scale (as `p` is), so the returned `p_diff`
+#' Rates are stored on the `[0, 1]` scale (as `p` is), so the returned `estimate`
 #' values lie in `[-1, 1]`. A hierarchy node observed in only one of the two
 #' groups is treated as a rate of `0` in the group where it is absent.
 #'
@@ -327,7 +327,7 @@ diff_ard_hierarchical <- function(x, levels = NULL) {
 }
 
 # compute `p(group A) - p(group B)` for every hierarchy node and return the reshaped ARD
-# (only the `p_diff` rows, with the `by` group columns collapsed away).
+# (only the `estimate` rows, with the `by` group columns collapsed away).
 .diff_compute <- function(x, by, groupA, groupB) {
   # `p` rows for hierarchy nodes only (excludes `by` univariate tabulation, attributes, etc.)
   xp <- x[x$stat_name %in% "p" & x$context %in% "hierarchical", , drop = FALSE]
@@ -375,7 +375,7 @@ diff_ard_hierarchical <- function(x, levels = NULL) {
   }
 
   # overwrite statistic metadata
-  out$stat_name <- "p_diff"
+  out$stat_name <- "estimate"
   out$stat_label <- "% difference"
   out$context <- "diff_hierarchical"
   out$fmt_fun <- list(label_round(digits = 3, scale = 100))

@@ -33,8 +33,8 @@ test_that("diff_ard_hierarchical() works", {
     d <- diff_ard_hierarchical(ard, levels = list(TRTA = "Xanomeline High Dose", TRTA = "Placebo"))
   )
 
-  # only p_diff rows are returned
-  expect_setequal(d$stat_name, "p_diff")
+  # only estimate rows are returned
+  expect_setequal(d$stat_name, "estimate")
   # the `by` (TRTA) group column has been collapsed away
   expect_false("TRTA" %in% unlist(d$group1))
   expect_s3_class(d, "ard_stack_hierarchical")
@@ -100,7 +100,7 @@ test_that("diff_ard_hierarchical() defaults to first-minus-second for a single 2
   )
 
   expect_silent(d_default <- diff_ard_hierarchical(ard_2lvl))
-  expect_setequal(d_default$stat_name, "p_diff")
+  expect_setequal(d_default$stat_name, "estimate")
 
   # default order follows the source-data (factor) order: Placebo minus High Dose
   d_explicit <- diff_ard_hierarchical(ard_2lvl, levels = list(TRTA = "Placebo", TRTA = "Xanomeline High Dose"))
@@ -123,7 +123,7 @@ test_that("diff_ard_hierarchical() works with more than one `by` variable", {
       list(TRTA = "Placebo", SEX = "F")
     )
   )
-  expect_setequal(d_cell$stat_name, "p_diff")
+  expect_setequal(d_cell$stat_name, "estimate")
 
   # flat form (difference variable repeated + other `by` variable pinned) agrees
   d_flat <- diff_ard_hierarchical(
@@ -211,7 +211,7 @@ test_that("diff_ard_hierarchical() default level order falls back without `by` t
   )
   expect_false(any(ard_2lvl_nobystat$variable == "TRTA"))
   expect_silent(d <- diff_ard_hierarchical(ard_2lvl_nobystat))
-  expect_setequal(d$stat_name, "p_diff")
+  expect_setequal(d$stat_name, "estimate")
 })
 
 test_that("diff_ard_hierarchical() input checks with multiple `by` variables", {

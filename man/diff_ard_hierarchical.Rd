@@ -43,14 +43,14 @@ Calculate the difference in event rates between two groups of a stacked
 hierarchical ARD created with \code{\link[=ard_stack_hierarchical]{ard_stack_hierarchical()}}. For every node in
 the hierarchy (e.g. each system organ class and each preferred term), the
 rate (\code{p} statistic) of a second group is subtracted from the rate of a first
-group and returned under a new statistic named \code{"p_diff"}.
+group and returned under a new statistic named \code{"estimate"}.
 
 The input ARD must contain the \code{p} statistic and at least one \code{by} variable.
-The \code{by} (grouping) dimension is collapsed in the result---only the \code{p_diff}
+The \code{by} (grouping) dimension is collapsed in the result---only the \code{estimate}
 rows are returned.
 }
 \details{
-Rates are stored on the \verb{[0, 1]} scale (as \code{p} is), so the returned \code{p_diff}
+Rates are stored on the \verb{[0, 1]} scale (as \code{p} is), so the returned \code{estimate}
 values lie in \verb{[-1, 1]}. A hierarchy node observed in only one of the two
 groups is treated as a rate of \code{0} in the group where it is absent.
 }

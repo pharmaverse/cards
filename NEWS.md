@@ -1,6 +1,6 @@
 # cards 0.8.1.9002
 
-* Added `diff_ard_hierarchical()`, which calculates the difference in event rates (the `p` statistic) between two groups of a stacked hierarchical ARD created with `ard_stack_hierarchical()`, returning the result under a new `"p_diff"` statistic. When there is a single `by` variable with two levels the difference defaults to the first level minus the second; otherwise the two groups are specified via the `levels` argument.
+* Added `diff_ard_hierarchical()`, which calculates the difference in event rates (the `p` statistic) between two groups of a stacked hierarchical ARD created with `ard_stack_hierarchical()`, returning the result under a new `"estimate"` statistic. When there is a single `by` variable with two levels the difference defaults to the first level minus the second; otherwise the two groups are specified via the `levels` argument.
 
 * ARDs now print through the pillar/tibble machinery: the header reads `An ARD data frame`, columns show their names and classes, and scalar list-column elements print their value (falling back to the standard tibble summary such as `<chr [2]>`, `<fn>`, and `<NULL>` for non-scalars). When the output is too wide for the console, all-`NULL` `error` and `warning` columns are dropped first, then `fmt_fun`, `stat_label`, `stat_fmt`, and `context`, before the standard tibble column shrinking; suppressed columns are listed in the footer. `as_card()` now always returns a tibble so that every ARD prints this way.
 

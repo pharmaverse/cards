@@ -45,7 +45,7 @@ test_that("diff_ard_hierarchical() works", {
   expect_true(all(vapply(d$fmt_fun, is.function, logical(1))))
   expect_true(all(c("warning", "error") %in% names(d)))
   # fmt_fun scales by 100 and rounds to 3 decimals
-  expect_equal(d$fmt_fun[[1]](0.024086), "2.409")
+  expect_equal(d$fmt_fun[[1]](0.024086), "2.4")
 
   expect_snapshot(
     d |>

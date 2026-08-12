@@ -281,7 +281,7 @@ test_that("ard_stack_hierarchical(by) with columns not in `denominator`", {
       data = ADAE_small_bind,
       by = c(TRTA, AESEV),
       variables = AESOC,
-      statistic = ~ "n",
+      statistic = ~"n",
       denominator = ADSL,
       id = USUBJID,
       by_stats = FALSE

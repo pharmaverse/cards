@@ -59,6 +59,35 @@
       Error in `ard_stack_hierarchical()`:
       ! The `denominator` argument cannot be missing.
 
+# ard_stack_hierarchical(by) with columns not in `denominator`
+
+    Code
+      ard_stack_hierarchical(data = ADAE_small_bind, by = c(TRTA, AESEV), variables = AESOC,
+      statistic = ~"n", denominator = ADSL, id = USUBJID, by_stats = FALSE)
+    Message
+      i Denominator set by "TRTA" column in `denominator` data frame.
+      i  Column "AESEV" in the `by` argument is not present in `denominator`.
+      * Subjects with multiple "AESEV" value will only be counted once, in the last level after sorting.
+      * See cards::ard_stack_hierarchical() (`?cards::ard_stack_hierarchical()`) for details.
+    Output
+      # An ARD data frame: 12 x 13
+         group1 group1_level     group2 group2_level variable variable_level stat_name
+         <chr>  <list>           <chr>  <list>       <chr>    <list>         <chr>    
+       1 TRTA   Placebo          AESEV  MILD         AESOC    GENERAL DISOR~ n        
+       2 TRTA   Placebo          AESEV  MODERATE     AESOC    GENERAL DISOR~ n        
+       3 TRTA   Xanomeline High~ AESEV  MILD         AESOC    GENERAL DISOR~ n        
+       4 TRTA   Xanomeline High~ AESEV  MODERATE     AESOC    GENERAL DISOR~ n        
+       5 TRTA   Xanomeline Low ~ AESEV  MILD         AESOC    GENERAL DISOR~ n        
+       6 TRTA   Xanomeline Low ~ AESEV  MODERATE     AESOC    GENERAL DISOR~ n        
+       7 TRTA   Placebo          AESEV  MILD         AESOC    SKIN AND SUBC~ n        
+       8 TRTA   Placebo          AESEV  MODERATE     AESOC    SKIN AND SUBC~ n        
+       9 TRTA   Xanomeline High~ AESEV  MILD         AESOC    SKIN AND SUBC~ n        
+      10 TRTA   Xanomeline High~ AESEV  MODERATE     AESOC    SKIN AND SUBC~ n        
+      11 TRTA   Xanomeline Low ~ AESEV  MILD         AESOC    SKIN AND SUBC~ n        
+      12 TRTA   Xanomeline Low ~ AESEV  MODERATE     AESOC    SKIN AND SUBC~ n        
+      # i 6 more variables: context <chr>, stat_label <chr>, stat <list>,
+      #   fmt_fun <list>, warning <list>, error <list>
+
 # ard_stack_hierarchical(variables, include) messaging
 
     Code

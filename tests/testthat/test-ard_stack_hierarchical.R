@@ -268,15 +268,24 @@ test_that("ard_stack_hierarchical(by) with columns not in `denominator`", {
 
   # message advises that subjects with multiple `by` levels not in `denominator`
   # are only counted once
-  expect_message(
+
+  ADAE_row_add <- ADAE_small |> dplyr::slice(1)
+
+  ADAE_small_bind <- ADAE_small |>
+    dplyr::bind_rows(
+      ADAE_row_add |> dplyr::mutate(AESEV = "MODERATE")
+    )
+
+  expect_snapshot(
     ard_stack_hierarchical(
-      ADAE_small,
-      variables = c(AESOC, AEDECOD),
+      data = ADAE_small_bind,
       by = c(TRTA, AESEV),
+      variables = AESOC,
+      statistic = ~ "n",
+      denominator = ADSL,
       id = USUBJID,
-      denominator = ADSL
-    ),
-    'Column.*"AESEV".*in the `by` argument.*not present in `denominator`' # styler: off
+      by_stats = FALSE
+    )
   )
 
   expect_message(

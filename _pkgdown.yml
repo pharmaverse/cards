@@ -83,6 +83,7 @@ reference:
       - as_cards_fn
   - subtitle: "Wrangle ARD"
     contents:
+      - diff_ard_hierarchical
       - filter_ard_hierarchical
       - sort_ard_hierarchical
       - shuffle_ard

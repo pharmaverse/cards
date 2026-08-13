@@ -161,7 +161,7 @@ test_that("ard_stack_hierarchical(by)", {
   )
 
   # ARD with >2 `by` variables works
-  expect_silent(expect_message(
+  expect_snapshot(expect_message(
     ard_stack_hierarchical(
       cards::ADAE,
       variables = c(AESOC, AEDECOD),
@@ -266,8 +266,25 @@ test_that("ard_stack_hierarchical(by) with columns not in `denominator`", {
     'Denominator set by number of rows in.*denominator.*data frame.' # styler: off
   )
 
-  # message advises that subjects with multiple `by` levels not in `denominator`
-  # are only counted once
+  # when the `by` column not in `denominator` is constant within each subject
+  # (i.e. no subject has multiple different levels of it), no rows are
+  # actually collapsed/removed, so no message about dropped rows is emitted
+
+
+  expect_no_message(
+    ard_stack_hierarchical(
+      ADAE_small,
+      variables = c(AESOC, AEDECOD),
+      by = c(TRTA, AESEV),
+      id = USUBJID,
+      denominator = ADSL
+    ),
+    message = "Because"
+  )
+
+  # a subject has both a MILD (or whatever the original level is) and a
+  # MODERATE record for the same AESOC - only one is retained/counted, and we
+  # should message that rows were dropped because of it
 
   ADAE_row_add <- ADAE_small |> dplyr::slice(1)
 
@@ -280,7 +297,7 @@ test_that("ard_stack_hierarchical(by) with columns not in `denominator`", {
     ard_stack_hierarchical(
       data = ADAE_small_bind,
       by = c(TRTA, AESEV),
-      variables = AESOC,
+      variables = c(AESOC, AEDECOD),
       statistic = ~"n",
       denominator = ADSL,
       id = USUBJID,

@@ -357,16 +357,26 @@ internal_stack_hierarchical <- function(
           "Denominator set by number of rows in {.arg denominator} data frame.",
           "Denominator set by {.val {denom_cols}} column{?s} in {.arg denominator} data frame."
         )
-
-      # advise that subjects appearing at multiple levels of a `by` column not
-      # in `denominator` will only be counted once (in the last-sorted level)
-      by_not_in_denom <- setdiff(by, denom_cols)
-      cli::cli_inform(c(
-        "i" = msg,
-        "i" = "{cli::qty(by_not_in_denom)} Column{?s} {.val {by_not_in_denom}} in the {.arg by} argument {?is/are} not present in {.arg denominator}.",
-        "*" = "Subjects with multiple {.val {by_not_in_denom}} value{?s} will only be counted once, in the last level after sorting.",
-        "*" = "See {.help [cards::ard_stack_hierarchical()](cards::ard_stack_hierarchical)} for details."
-      ))
+      cli::cli_inform(c("i" = msg))
+    }
+    # message only if rows are actually dropped because `by` includes a column
+    # not in `denominator` (i.e. a subject has multiple values of that column
+    # within an `id`/`variables` group, so only the last is kept, see #525)
+    by_not_in_denom <- setdiff(by, denom_cols)
+    if (!is_empty(by_not_in_denom)) {
+      keep_last <-
+        !duplicated(vctrs::vec_group_id(data[c(id, denom_cols, variables)]), fromLast = TRUE)
+      keep_last_full <-
+        !duplicated(vctrs::vec_group_id(data[c(id, by, variables)]), fromLast = TRUE)
+      n_dropped <- sum(keep_last_full) - sum(keep_last)
+      if (n_dropped > 0L) {
+        cli::cli_inform(c(
+          "i" = "Because {.val {by_not_in_denom}} in the {.arg by} argument is not present in the {.arg denominator},
+                 {.val {n_dropped}} row{?s} of {.arg data} {?was/were} removed while calculating rates.",
+          "*" = "Subjects with multiple {.val {by_not_in_denom}} value{?s} will only be counted once, in the last level after sorting.",
+          "*" = "See {.help [cards::ard_stack_hierarchical()](cards::ard_stack_hierarchical)} for details."
+        ))
+      }
     }
   }
 

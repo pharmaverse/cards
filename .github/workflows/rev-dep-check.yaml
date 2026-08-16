@@ -37,6 +37,48 @@ jobs:
       - name: Check Reverse Dependencies
         shell: Rscript {0}
         run: |
+          # --- checked <> R-universe compatibility patch -----------------------
+          # For R-universe repos, available.packages() reports `Repository` as a
+          # full immutable tarball URL (".../src/contrib/<pkg>_<ver>.tar.gz?
+          # sha256=...&file="), not a plain contrib.url. checked's
+          # strip_src_contrib() matches Repository against contrib.url(repo) with
+          # `==`, so the match fails, it returns character(0), and
+          # get_package_source() then indexes available.packages(repos =
+          # character(0)) -> "subscript out of bounds". Patch both internals to
+          # (a) match repos by contrib.url prefix and (b) fetch sources via
+          # utils::download.packages(), which understands R-universe URLs. Both
+          # run in the main process (checker -> start_task -> check_path), so
+          # assignInNamespace() reaches the code actually used.
+          loadNamespace("checked")
+
+          patched_strip_src_contrib <- function(x, repos) {
+            match <- vapply(
+              repos,
+              function(r) startsWith(x, utils::contrib.url(r, type = "source")),
+              logical(1)
+            )
+            repos[match]
+          }
+
+          patched_get_package_source <- function(package, repos, db = NULL, destdir = NULL) {
+            if (is.null(db)) db <- utils::available.packages(repos = repos)
+            if (is.null(destdir)) {
+              pkg <- db[package, ]
+              return(sprintf("%s/%s_%s.tar.gz", pkg["Repository"], pkg["Package"], pkg["Version"]))
+            }
+            res <- utils::download.packages(
+              package, destdir = destdir, available = db, repos = repos, type = "source"
+            )
+            if (nrow(res) < 1L || is.na(res[1L, 2L])) {
+              stop(sprintf("Failed to download source for package '%s'", package))
+            }
+            unname(res[1L, 2L])
+          }
+
+          assignInNamespace("strip_src_contrib", patched_strip_src_contrib, ns = "checked")
+          assignInNamespace("get_package_source", patched_get_package_source, ns = "checked")
+          # --------------------------------------------------------------------
+
           g <- checked::plan_rev_dep_checks(
             path = ".",
             repos = c('https://ddsjoberg.r-universe.dev', 'https://cloud.r-project.org')

@@ -4,88 +4,139 @@ on:
   pull_request:
     branches: [ main ]
 
-# Each reverse dependency is checked out from its GitHub repo at its most recent
-# final-release tag (pre-releases excluded; falling back to the default branch
-# if it publishes no version tags), the cards from this PR is installed over it,
-# and the revdep's test suite is run against that cards. The job fails if any of
-# the revdep's tests fail.
-#
-# This replaced a `checked`-based CRAN-baseline job whose package source
-# resolution was persistently unstable, and folds the previously separate crane
-# job into the matrix.
 jobs:
-  revdep:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        revdep:
-          - ddsjoberg/gtsummary
-          - pharmaverse/cardx
-          - insightsengineering/crane
-    name: ${{ matrix.revdep }}
+  gtsummary:
+    # Pinned to 24.04 (noble) so the hardcoded Posit PPM binary path below
+    # ('.../__linux__/noble/latest') always matches the runner's distro.
+    runs-on: ubuntu-24.04
 
     steps:
-      - name: Checkout cards (this PR)
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          path: cards
-
-      - name: Resolve most recent release of ${{ matrix.revdep }}
-        id: rev
-        run: |
-          repo="https://github.com/${{ matrix.revdep }}.git"
-          # highest final-release version tag (exclude pre-releases like -rc1)
-          tag=$(git ls-remote --tags --refs --sort=-v:refname "$repo" \
-                | sed 's#.*refs/tags/##' | grep -E '^v?[0-9]+(\.[0-9]+)+$' | head -n1)
-          if [ -z "$tag" ]; then
-            tag=$(git ls-remote --symref "$repo" HEAD | awk '/ref:/{sub("refs/heads/","",$2); print $2}')
-          fi
-          echo "Using ${{ matrix.revdep }}@$tag"
-          echo "ref=$tag" >> "$GITHUB_OUTPUT"
-
-      - name: Checkout ${{ matrix.revdep }}
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ matrix.revdep }}
-          ref: ${{ steps.rev.outputs.ref }}
-          path: revdep
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: 'release'
-          use-public-rspm: true
 
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
 
-      - name: Install ${{ matrix.revdep }} dependencies
+      - name: Install and Cache Dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          working-directory: revdep
+          # List the packages your script needs here
           extra-packages: |
-            any::testthat
-            any::pkgload
-            any::vctrs
+            any::checked
+            any::rlang
+            any::cli
+          # This key ensures that if you change the list above,
+          # it creates a new cache rather than using an old one.
           cache-version: 1
 
-      - name: Install cards from this PR
+      - name: Check Reverse Dependencies
         shell: Rscript {0}
-        run: install.packages("./cards", repos = NULL, type = "source")
-
-      - name: Run ${{ matrix.revdep }} tests against this PR's cards
-        shell: Rscript {0}
-        working-directory: revdep
         run: |
-          res <- as.data.frame(
-            testthat::test_local(".", stop_on_failure = FALSE, reporter = "summary")
+          # --- checked <> R-universe compatibility patch -----------------------
+          # For R-universe repos, available.packages() reports `Repository` as a
+          # full immutable tarball URL (".../src/contrib/<pkg>_<ver>.tar.gz?
+          # sha256=...&file="), not a plain contrib.url. checked's
+          # strip_src_contrib() matches Repository against contrib.url(repo) with
+          # `==`, so the match fails, it returns character(0), and
+          # get_package_source() then indexes available.packages(repos =
+          # character(0)) -> "subscript out of bounds". Patch both internals to
+          # (a) match repos by contrib.url prefix and (b) fetch sources via
+          # utils::download.packages(), which understands R-universe URLs. Both
+          # run in the main process (checker -> start_task -> check_path), so
+          # assignInNamespace() reaches the code actually used.
+          loadNamespace("checked")
+
+          patched_strip_src_contrib <- function(x, repos) {
+            match <- vapply(
+              repos,
+              function(r) startsWith(x, utils::contrib.url(r, type = "source")),
+              logical(1)
+            )
+            repos[match]
+          }
+
+          patched_get_package_source <- function(package, repos, db = NULL, destdir = NULL) {
+            if (is.null(db)) db <- utils::available.packages(repos = repos)
+            if (is.null(destdir)) {
+              pkg <- db[package, ]
+              return(sprintf("%s/%s_%s.tar.gz", pkg["Repository"], pkg["Package"], pkg["Version"]))
+            }
+            res <- utils::download.packages(
+              package, destdir = destdir, available = db, repos = repos, type = "source"
+            )
+            if (nrow(res) < 1L || is.na(res[1L, 2L])) {
+              stop(sprintf("Failed to download source for package '%s'", package))
+            }
+            unname(res[1L, 2L])
+          }
+
+          assignInNamespace("strip_src_contrib", patched_strip_src_contrib, ns = "checked")
+          assignInNamespace("get_package_source", patched_get_package_source, ns = "checked")
+          # --------------------------------------------------------------------
+
+          # Posit Public Package Manager is listed first so heavy revdep
+          # Suggests (e.g. gtsummary -> flextable -> gdtools/systemfonts/ragg)
+          # install as prebuilt Linux binaries instead of compiling from
+          # source, which the runner lacks the system libraries to do. Dev
+          # versions of cards/gtsummary still win via R-universe (higher
+          # version), and CRAN remains as the final fallback.
+          repos <- c(
+            'https://packagemanager.posit.co/cran/__linux__/noble/latest',
+            'https://ddsjoberg.r-universe.dev',
+            'https://cloud.r-project.org'
           )
-          n_failed <- sum(res$failed)
-          cat(sprintf("\n%s: %d failed, %d passed\n", "${{ matrix.revdep }}", n_failed, sum(res$passed)))
-          if (n_failed > 0L) {
-            print(res[res$failed > 0L, c("file", "test", "failed")])
-            stop("Reverse dependency tests failed against this PR's cards")
+
+          g <- checked::plan_rev_dep_checks(
+            path = ".",
+            repos = repos
+          )
+          vs <- igraph::V(g)
+          mt <- vs[checked:::is_meta(vs$task)]
+          nodes_to_skip <- mt[!xor(
+            endsWith(mt$name, "meta-revdep-gtsummary-of-cards"),
+            endsWith(mt$name, "meta-revdeps-of-cards")
+          )]
+          g <- igraph::delete_vertices(
+            g,
+            unlist(igraph::neighborhood(g, order = 1, nodes_to_skip, mode = "out"))
+          )
+          g <- checked:::task_graph_class(g)
+
+          design <- checked::checker$new(
+            g,
+            n = 20,
+            output = tempdir(),
+            lib.loc = .libPaths(),
+            repos = repos,
+            restore = FALSE
+          )
+
+          checked::run(design, reporter = NULL)
+          (r <- checked::results(design))
+
+          # Logic to check for errors and abort if found
+          potential_issues <- r[[1]][[1]]$errors$potential_issues
+          issues <- r[[1]][[1]]$errors$issues
+
+          if (!rlang::is_empty(potential_issues)) {
+            cli::cli_warn(
+              c("A potential issue was flagged in {.pkg gtsummary}.",
+                "i" = "This might mean the CRAN baseline is currently unstable, but a manual review is required just in case.")
+            )
+          }
+
+          if (!rlang::is_empty(issues)) {
+            cli::cli_abort(
+              c("This PR newly breaks {.pkg gtsummary}",
+                "!" = "The PR must be updated as to not break {.pkg gtsummary}.",
+                "i" = "In rare cases where the break is acceptable, the change {.emph MUST} first be approved by Daniel Sjoberg (danieldsjoberg@gmail.com) {.emph before} this PR could potentially be merged."
+              )
+            )
           }

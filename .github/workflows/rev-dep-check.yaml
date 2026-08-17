@@ -6,7 +6,9 @@ on:
 
 jobs:
   gtsummary:
-    runs-on: ubuntu-latest
+    # Pinned to 24.04 (noble) so the hardcoded Posit PPM binary path below
+    # ('.../__linux__/noble/latest') always matches the runner's distro.
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
@@ -79,9 +81,21 @@ jobs:
           assignInNamespace("get_package_source", patched_get_package_source, ns = "checked")
           # --------------------------------------------------------------------
 
+          # Posit Public Package Manager is listed first so heavy revdep
+          # Suggests (e.g. gtsummary -> flextable -> gdtools/systemfonts/ragg)
+          # install as prebuilt Linux binaries instead of compiling from
+          # source, which the runner lacks the system libraries to do. Dev
+          # versions of cards/gtsummary still win via R-universe (higher
+          # version), and CRAN remains as the final fallback.
+          repos <- c(
+            'https://packagemanager.posit.co/cran/__linux__/noble/latest',
+            'https://ddsjoberg.r-universe.dev',
+            'https://cloud.r-project.org'
+          )
+
           g <- checked::plan_rev_dep_checks(
             path = ".",
-            repos = c('https://ddsjoberg.r-universe.dev', 'https://cloud.r-project.org')
+            repos = repos
           )
           vs <- igraph::V(g)
           mt <- vs[checked:::is_meta(vs$task)]
@@ -100,10 +114,7 @@ jobs:
             n = 20,
             output = tempdir(),
             lib.loc = .libPaths(),
-            repos = c(
-            'https://ddsjoberg.r-universe.dev',
-            'https://cloud.r-project.org'
-            ),
+            repos = repos,
             restore = FALSE
           )
 

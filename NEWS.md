@@ -1,4 +1,4 @@
-# cards 0.8.1.9003
+# cards 0.8.1.9004
 
 * Added `diff_ard_hierarchical()`, which calculates the difference in event rates (the `p` statistic) between two groups of a stacked hierarchical ARD created with `ard_stack_hierarchical()`, returning the result under a new `"estimate"` statistic. When there is a single `by` variable with two levels the difference defaults to the first level minus the second; otherwise the two groups are specified via the `levels` argument.
 

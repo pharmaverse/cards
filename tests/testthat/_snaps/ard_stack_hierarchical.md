@@ -39,7 +39,7 @@
       expect_message(ard_stack_hierarchical(cards::ADAE, variables = c(AESOC, AEDECOD),
       by = c(TRTA, TRTEMFL, AESEV), id = USUBJID, denominator = ADSL))
     Message
-      i Because "TRTEMFL" and "AESEV" in the `by` argument is not present in the `denominator`, 96 rows of `data` were removed while calculating rates.
+      i Because "TRTEMFL" and "AESEV" in the `by` argument are not present in the `denominator`, rows of `data` were removed while calculating rates.
       * Subjects with multiple "TRTEMFL" and "AESEV" values will only be counted once, in the last level after sorting.
       * See cards::ard_stack_hierarchical() (`?cards::ard_stack_hierarchical()`) for details.
 
@@ -77,8 +77,8 @@
       by_stats = FALSE)
     Message
       i Denominator set by "TRTA" column in `denominator` data frame.
-      i Because "AESEV" in the `by` argument is not present in the `denominator`, 1 row of `data` was removed while calculating rates.
-      * Subjects with multiple "AESEV" value will only be counted once, in the last level after sorting.
+      i Because "AESEV" in the `by` argument is not present in the `denominator`, rows of `data` were removed while calculating rates.
+      * Subjects with multiple "AESEV" values will only be counted once, in the last level after sorting.
       * See cards::ard_stack_hierarchical() (`?cards::ard_stack_hierarchical()`) for details.
     Output
       # An ARD data frame: 36 x 15

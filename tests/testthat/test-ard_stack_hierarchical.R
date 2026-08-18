@@ -270,7 +270,6 @@ test_that("ard_stack_hierarchical(by) with columns not in `denominator`", {
   # (i.e. no subject has multiple different levels of it), no rows are
   # actually collapsed/removed, so no message about dropped rows is emitted
 
-
   expect_no_message(
     ard_stack_hierarchical(
       ADAE_small,

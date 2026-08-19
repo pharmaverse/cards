@@ -27,7 +27,6 @@ ata
 behaviour
 cardx
 cli
-coercions
 colour
 de
 dplyr
@@ -59,5 +58,4 @@ unlist
 unlists
 unnested
 unnests
-vectorizing
 wilcox

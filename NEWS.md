@@ -16,9 +16,7 @@
 
 * Reduced the run time and memory use of `ard_summary()` by replacing the nested `purrr`/`dplyr` iteration in its internals with base R equivalents. Results are unchanged. (#575)
 
-* `ard_tabulate()`---and the functions built on it (`ard_tabulate_value()`, `ard_tabulate_rows()`, `ard_hierarchical()`, `ard_hierarchical_count()`, `ard_stack()`, `ard_stack_hierarchical()`)---now uses a rewritten sparse single-pass counting engine, substantially reducing run time and memory use for data with many `strata` combinations or high-cardinality variables. Results are unchanged. (#176)
-
-* Reduced the run time and memory use of `ard_stack_hierarchical()` and `ard_stack_hierarchical_count()`. Results are unchanged. (#176)
+* `ard_tabulate()`---and the functions built on it (`ard_tabulate_value()`, `ard_tabulate_rows()`, `ard_hierarchical()`, `ard_hierarchical_count()`, `ard_stack()`, `ard_stack_hierarchical()`, `ard_stack_hierarchical_count()`)---now uses a rewritten sparse single-pass counting engine, substantially reducing run time and memory use for data with many `strata` combinations or high-cardinality variables. Results are unchanged. (#176)
 
 * Reduced the run time and memory use of `sort_ard_hierarchical()` and `filter_ard_hierarchical()`, particularly for ARDs with many hierarchy sections. Because `sort_ard_hierarchical()` also runs inside `ard_stack_hierarchical()`, this speeds up ARD construction as well. Results are unchanged. (#176)
 

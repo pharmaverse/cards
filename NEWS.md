@@ -34,8 +34,6 @@
 
 ## Bug Fixes
 
-* `ard_tabulate()` now correctly handles inputs that previously triggered the internal "If you see this message, the order of the sorted variables in the tabulation is unexpected" message (e.g. `NaN` in a `by` column); that message and the code path that triggered it have been removed. (#176)
-
 * `ard_tabulate()` with zero-row data and `strata`, or with an empty `statistic` vector, previously errored with internal errors; both now return an empty ARD. (#176)
 
 ## Lifecycle Changes

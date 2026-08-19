@@ -10,6 +10,7 @@ output: github_document
 ```{r, echo=FALSE}
 dplyr::tribble(
   ~venue, ~title, ~url_slides, ~url_video,
+  "2025 BBSW", "ARDs + AI: Building the Future of Clinical Reporting with {gtsummary} and {cards}", "https://www.danieldsjoberg.com/BBSW-gtsummary-ARD-2025/", NA_character_,
   "`posit::conf(2025)`", "{pharmaverse} workshop", "https://posit-conf-2025.github.io/pharmaverse/", NA_character_,
   "2025 CDISC COSA Spotlight", "ARD-based Reporting in R with {cards} and {gtsummary} packages", "https://www.danieldsjoberg.com/CDISC-COSA-Spotlight-ARD-gtsummary-2025/", "https://www.cdisc.org/events/webinar/cosa-spotlight-q2-2025",
   "2025 R/Medicine", "Supercharging Statistical Analysis with ARDs and the {cards} R Package", "https://melkiades.github.io/ARD_rmedicine25/", "https://youtu.be/C_Y1pzpCS5o?feature=shared",

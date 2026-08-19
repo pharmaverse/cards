@@ -1,27 +1,44 @@
 # cards 0.8.1.9004
 
+## Performance
+
+* This release substantially reduces the run time and memory use of the ARD-building functions. Selected highlights from the [efficiency tracking benchmarks](https://github.com/ddsjoberg/tracking-gtsummary-cards-efficiency), comparing the development version to the last CRAN release:
+
+  | Function and input data | Computation time | Memory |
+  | :--- | :--- | :--- |
+  | `ard_summary()` — 20× replicated `ADSL` | 83.7% faster | 6.8% less |
+  | `ard_tabulate()` — 20× replicated `ADSL` | 71.5% faster | 57.5% less |
+  | `ard_tabulate()` — 200k rows, 5k levels | 94.1% faster | 68.2% less |
+  | `ard_hierarchical()` — 10× replicated `ADAE`, denominator `ADSL` | 90.9% faster | 73.5% less |
+  | `ard_stack_hierarchical()` — 10× replicated `ADAE`, denominator `ADSL` | 89.5% faster | 42.2% less |
+  | `filter_ard_hierarchical()` (`n_1`) — 10× replicated `ADAE`, `overall = TRUE` | 97.8% faster | 93.9% less |
+  | `filter_ard_hierarchical()` (`n_overall`) — 10× replicated `ADAE`, `overall = TRUE` | 97.0% faster | 93.1% less |
+
+* Reduced the run time and memory use of `ard_summary()` by replacing the nested `purrr`/`dplyr` iteration in its internals with base R equivalents. Results are unchanged. (#575)
+
+* `ard_tabulate()`---and the functions built on it (`ard_tabulate_value()`, `ard_tabulate_rows()`, `ard_hierarchical()`, `ard_hierarchical_count()`, `ard_stack()`, `ard_stack_hierarchical()`, `ard_stack_hierarchical_count()`)---now uses a rewritten sparse single-pass counting engine, substantially reducing run time and memory use for data with many `strata` combinations or high-cardinality variables. Results are unchanged. (#176)
+
+* Reduced the run time and memory use of `sort_ard_hierarchical()` and `filter_ard_hierarchical()`, particularly for ARDs with many hierarchy sections. Because `sort_ard_hierarchical()` also runs inside `ard_stack_hierarchical()`, this speeds up ARD construction as well. Results are unchanged. (#176)
+
+## New Features and Functions
+
 * Added `diff_ard_hierarchical()`, which calculates the difference in event rates (the `p` statistic) between two groups of a stacked hierarchical ARD created with `ard_stack_hierarchical()`, returning the result under a new `"estimate"` statistic. When there is a single `by` variable with two levels the difference defaults to the first level minus the second; otherwise the two groups are specified via the `levels` argument.
-
-* ARDs now print through the pillar/tibble machinery: the header reads `An ARD data frame`, columns show their names and classes, and scalar list-column elements print their value (falling back to the standard tibble summary such as `<chr [2]>`, `<fn>`, and `<NULL>` for non-scalars). When the output is too wide for the console, all-`NULL` `error` and `warning` columns are dropped first, then `fmt_fun`, `stat_label`, `stat_fmt`, and `context`, before the standard tibble column shrinking; suppressed columns are listed in the footer. `as_card()` now always returns a tibble so that every ARD prints this way.
-
-* Removed the deprecated handling of `dplyr::vars()` in selecting environments (`cards_select()`), along with the `vars()` re-export. Use `c()` instead.
 
 * Added the `by_level` argument to `sort_ard_hierarchical()`, allowing `"descending"` sorting to rank variable groups by the counts observed within specific `by` variable levels (e.g. `by_level = list(TRTA = "Placebo")`) rather than the sums across all `by` variable levels. The argument accepts a named list, so any combination of `by` variables may be used. (#548, @rikoprogrammer)
 
-* Reduced the run time and memory use of `sort_ard_hierarchical()` and `filter_ard_hierarchical()`, particularly for ARDs with many hierarchy sections. The per-level grouped sums, the group-wise filter loop (including the previously per-group `tidyr::pivot_wider()` for column statistics and the per-group join used to derive the `_overall` statistics), the reformatting helper, and the empty-section pruning were all replaced with `vctrs`-based equivalents. Because `sort_ard_hierarchical()` also runs inside `ard_stack_hierarchical()`, this speeds up ARD construction as well. Results are unchanged. (#176)
+## Other Updates
 
-* Further reduced the run time and memory use of `ard_stack_hierarchical()` and `ard_stack_hierarchical_count()`, primarily by replacing the per-level `dplyr::slice_tail()` de-duplication with a `vctrs`-based equivalent and by avoiding unnecessary coercions of data frame denominators. Results are unchanged. (#176)
-
-* Reduced the run time and memory use of `ard_tabulate()` (and the functions built on it) for results with many rows, by vectorizing the assignment of the default statistic labels. Results are unchanged. (#176)
-
-* `ard_tabulate()` — and the functions built on it (`ard_tabulate_value()`, `ard_tabulate_rows()`, `ard_hierarchical()`, `ard_hierarchical_count()`, `ard_stack()`, `ard_stack_hierarchical()`) — now uses a rewritten sparse single-pass counting engine, substantially reducing run time and memory use for data with many `strata` combinations or high-cardinality variables. The data is tabulated once per variable, and the `column`/`row`/`cell`/integer denominators are derived from the same counts. (#176)
-
-  Results are otherwise unchanged — including value types and row ordering — with these exceptions:
-
-  * The internal message beginning "If you see this message, the order of the sorted variables in the tabulation is unexpected" has been removed along with the code path that triggered it; inputs that previously hit it (e.g. `NaN` in a `by` column) are now handled correctly.
-  * Zero-row data with `strata`, and an empty `statistic` vector, previously errored with internal errors; both now return an empty ARD.
+* ARDs now print through the pillar/tibble machinery: the header reads `An ARD data frame`, columns show their names and classes, and scalar list-column elements print their value (falling back to the standard tibble summary such as `<chr [2]>`, `<fn>`, and `<NULL>` for non-scalars). When the output is too wide for the console, all-`NULL` `error` and `warning` columns are dropped first, then `fmt_fun`, `stat_label`, `stat_fmt`, and `context`, before the standard tibble column shrinking; suppressed columns are listed in the footer. `as_card()` now always returns a tibble so that every ARD prints this way.
 
 * Character values are now sorted in the C locale throughout the package (via `order(method = "radix")`), so the ordering of `variable` and `group` levels no longer depends on the session locale and is consistent with `dplyr::arrange()`. Previously, character `variable`/`by` levels were sorted in the session locale (`base::sort()`) while `strata` levels already used `dplyr::arrange()`; these now agree. This affects `ard_tabulate()`, `ard_summary()`, `ard_pairwise()`, `ard_tabulate_value()` (via `maximum_variable_value()`), and related functions, and differs from prior releases only for locale-sensitive character values (mixed case, punctuation).
+
+## Bug Fixes
+
+* `ard_tabulate()` with zero-row data and `strata`, or with an empty `statistic` vector, previously errored with internal errors; both now return an empty ARD. (#176)
+
+## Lifecycle Changes
+
+* Removed the deprecated handling of `dplyr::vars()` in selecting environments (`cards_select()`), along with the `vars()` re-export. Use `c()` instead.
 
 # cards 0.8.1
 

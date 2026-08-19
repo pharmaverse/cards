@@ -32,6 +32,8 @@
 
 * Character values are now sorted in the C locale throughout the package (via `order(method = "radix")`), so the ordering of `variable` and `group` levels no longer depends on the session locale and is consistent with `dplyr::arrange()`. Previously, character `variable`/`by` levels were sorted in the session locale (`base::sort()`) while `strata` levels already used `dplyr::arrange()`; these now agree. This affects `ard_tabulate()`, `ard_summary()`, `ard_pairwise()`, `ard_tabulate_value()` (via `maximum_variable_value()`), and related functions, and differs from prior releases only for locale-sensitive character values (mixed case, punctuation).
 
+* `ard_stack_hierarchical()` now messages when a column in the `by` argument is not present in `denominator`, clarifying that subjects with multiple values of that column are counted only once, in the last level after sorting. (#525, @alanahjonas95)
+
 ## Bug Fixes
 
 * `ard_tabulate()` with zero-row data and `strata`, or with an empty `statistic` vector, previously errored with internal errors; both now return an empty ARD. (#176)

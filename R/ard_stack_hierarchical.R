@@ -371,9 +371,8 @@ internal_stack_hierarchical <- function(
       n_dropped <- sum(keep_last_full) - sum(keep_last)
       if (n_dropped > 0L) {
         cli::cli_inform(c(
-          "i" = "Because {.val {by_not_in_denom}} in the {.arg by} argument is not present in the {.arg denominator},
-                 {.val {n_dropped}} row{?s} of {.arg data} {?was/were} removed while calculating rates.",
-          "*" = "Subjects with multiple {.val {by_not_in_denom}} value{?s} will only be counted once, in the last level after sorting.",
+          "i" = "Because {.val {by_not_in_denom}} in the {.arg by} argument {cli::qty(by_not_in_denom)}{?is/are} not present in the {.arg denominator}, rows of {.arg data} were removed while calculating rates.",
+          "*" = "Subjects with multiple {.val {by_not_in_denom}} values will only be counted once, in the last level after sorting.",
           "*" = "See {.help [cards::ard_stack_hierarchical()](cards::ard_stack_hierarchical)} for details."
         ))
       }

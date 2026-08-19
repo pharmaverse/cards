@@ -5,7 +5,7 @@
 * This release substantially reduces the run time and memory use of the ARD-building functions. Selected highlights from the [efficiency tracking benchmarks](https://github.com/ddsjoberg/tracking-gtsummary-cards-efficiency), comparing the development version to the last CRAN release:
 
   | Function and input data | Computation time | Memory |
-  | --- | --- | --- |
+  | :--- | :--- | :--- |
   | `ard_summary()` — 20× replicated `ADSL` | 83.7% faster | 6.8% less |
   | `ard_tabulate()` — 20× replicated `ADSL` | 71.5% faster | 57.5% less |
   | `ard_tabulate()` — 200k rows, 5k levels | 94.1% faster | 68.2% less |

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "https://raw.githubusercontent.com/cobertura/cobertura/master/cobertura/src/site/htdocs/xml/coverage-04.dtd">
-<coverage line-rate="0.939054726368159" branch-rate="0" lines-covered="3775" lines-valid="4020" branches-covered="0" branches-valid="0" complexity="0" version="3.6.5" timestamp="2026-08-19 17:21:28.240511">
+<coverage line-rate="0.939054726368159" branch-rate="0" lines-covered="3775" lines-valid="4020" branches-covered="0" branches-valid="0" complexity="0" version="3.6.5" timestamp="2026-08-20 03:18:39.969944">
   <sources>
     <source>/__w/cards/cards/cards</source>
   </sources>
@@ -4927,118 +4927,118 @@
           <methods>
             <method name="ard_continuous" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
-                <line number="40" hits="0" branch="false"/>
-                <line number="41" hits="0" branch="false"/>
+                <line number="42" hits="0" branch="false"/>
+                <line number="43" hits="0" branch="false"/>
               </lines>
             </method>
             <method name="ard_categorical" signature="" line-rate="1" branch-rate="0" complexity="0">
               <lines>
-                <line number="48" hits="2" branch="false"/>
-                <line number="49" hits="2" branch="false"/>
+                <line number="50" hits="2" branch="false"/>
+                <line number="51" hits="2" branch="false"/>
               </lines>
             </method>
             <method name="ard_complex" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
-                <line number="56" hits="0" branch="false"/>
-                <line number="57" hits="0" branch="false"/>
+                <line number="58" hits="0" branch="false"/>
+                <line number="59" hits="0" branch="false"/>
               </lines>
             </method>
             <method name="ard_dichotomous" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
-                <line number="64" hits="0" branch="false"/>
-                <line number="65" hits="0" branch="false"/>
+                <line number="66" hits="0" branch="false"/>
+                <line number="67" hits="0" branch="false"/>
               </lines>
             </method>
             <method name="ard_continuous.data.frame" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
-                <line number="72" hits="0" branch="false"/>
-                <line number="73" hits="0" branch="false"/>
+                <line number="74" hits="0" branch="false"/>
+                <line number="75" hits="0" branch="false"/>
               </lines>
             </method>
             <method name="ard_categorical.data.frame" signature="" line-rate="1" branch-rate="0" complexity="0">
               <lines>
-                <line number="80" hits="2" branch="false"/>
-                <line number="81" hits="2" branch="false"/>
+                <line number="82" hits="2" branch="false"/>
+                <line number="83" hits="2" branch="false"/>
               </lines>
             </method>
             <method name="ard_complex.data.frame" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
-                <line number="88" hits="0" branch="false"/>
-                <line number="89" hits="0" branch="false"/>
+                <line number="90" hits="0" branch="false"/>
+                <line number="91" hits="0" branch="false"/>
               </lines>
             </method>
             <method name="ard_dichotomous.data.frame" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
-                <line number="96" hits="0" branch="false"/>
-                <line number="97" hits="0" branch="false"/>
+                <line number="98" hits="0" branch="false"/>
+                <line number="99" hits="0" branch="false"/>
               </lines>
             </method>
             <method name="apply_fmt_fn" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
-                <line number="104" hits="0" branch="false"/>
-                <line number="105" hits="0" branch="false"/>
                 <line number="106" hits="0" branch="false"/>
                 <line number="107" hits="0" branch="false"/>
                 <line number="108" hits="0" branch="false"/>
+                <line number="109" hits="0" branch="false"/>
                 <line number="110" hits="0" branch="false"/>
+                <line number="112" hits="0" branch="false"/>
               </lines>
             </method>
             <method name="alias_as_fmt_fn" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
-                <line number="116" hits="0" branch="false"/>
-                <line number="117" hits="0" branch="false"/>
                 <line number="118" hits="0" branch="false"/>
                 <line number="119" hits="0" branch="false"/>
                 <line number="120" hits="0" branch="false"/>
+                <line number="121" hits="0" branch="false"/>
                 <line number="122" hits="0" branch="false"/>
+                <line number="124" hits="0" branch="false"/>
               </lines>
             </method>
             <method name="update_ard_fmt_fn" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
-                <line number="128" hits="0" branch="false"/>
-                <line number="129" hits="0" branch="false"/>
                 <line number="130" hits="0" branch="false"/>
                 <line number="131" hits="0" branch="false"/>
                 <line number="132" hits="0" branch="false"/>
+                <line number="133" hits="0" branch="false"/>
                 <line number="134" hits="0" branch="false"/>
+                <line number="136" hits="0" branch="false"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="40" hits="0" branch="false"/>
-            <line number="41" hits="0" branch="false"/>
-            <line number="48" hits="2" branch="false"/>
-            <line number="49" hits="2" branch="false"/>
-            <line number="56" hits="0" branch="false"/>
-            <line number="57" hits="0" branch="false"/>
-            <line number="64" hits="0" branch="false"/>
-            <line number="65" hits="0" branch="false"/>
-            <line number="72" hits="0" branch="false"/>
-            <line number="73" hits="0" branch="false"/>
-            <line number="80" hits="2" branch="false"/>
-            <line number="81" hits="2" branch="false"/>
-            <line number="88" hits="0" branch="false"/>
-            <line number="89" hits="0" branch="false"/>
-            <line number="96" hits="0" branch="false"/>
-            <line number="97" hits="0" branch="false"/>
-            <line number="104" hits="0" branch="false"/>
-            <line number="105" hits="0" branch="false"/>
+            <line number="42" hits="0" branch="false"/>
+            <line number="43" hits="0" branch="false"/>
+            <line number="50" hits="2" branch="false"/>
+            <line number="51" hits="2" branch="false"/>
+            <line number="58" hits="0" branch="false"/>
+            <line number="59" hits="0" branch="false"/>
+            <line number="66" hits="0" branch="false"/>
+            <line number="67" hits="0" branch="false"/>
+            <line number="74" hits="0" branch="false"/>
+            <line number="75" hits="0" branch="false"/>
+            <line number="82" hits="2" branch="false"/>
+            <line number="83" hits="2" branch="false"/>
+            <line number="90" hits="0" branch="false"/>
+            <line number="91" hits="0" branch="false"/>
+            <line number="98" hits="0" branch="false"/>
+            <line number="99" hits="0" branch="false"/>
             <line number="106" hits="0" branch="false"/>
             <line number="107" hits="0" branch="false"/>
             <line number="108" hits="0" branch="false"/>
+            <line number="109" hits="0" branch="false"/>
             <line number="110" hits="0" branch="false"/>
-            <line number="116" hits="0" branch="false"/>
-            <line number="117" hits="0" branch="false"/>
+            <line number="112" hits="0" branch="false"/>
             <line number="118" hits="0" branch="false"/>
             <line number="119" hits="0" branch="false"/>
             <line number="120" hits="0" branch="false"/>
+            <line number="121" hits="0" branch="false"/>
             <line number="122" hits="0" branch="false"/>
-            <line number="128" hits="0" branch="false"/>
-            <line number="129" hits="0" branch="false"/>
+            <line number="124" hits="0" branch="false"/>
             <line number="130" hits="0" branch="false"/>
             <line number="131" hits="0" branch="false"/>
             <line number="132" hits="0" branch="false"/>
+            <line number="133" hits="0" branch="false"/>
             <line number="134" hits="0" branch="false"/>
+            <line number="136" hits="0" branch="false"/>
           </lines>
         </class>
         <class name="diff_ard_hierarchical.R" filename="R/diff_ard_hierarchical.R" line-rate="1" branch-rate="0" complexity="0">

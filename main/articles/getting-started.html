@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cards</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.1.9006</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.1.9007</span>
       </span>
     </div>
 
@@ -669,8 +669,8 @@ package.</p>
 <span>      <span class="st">"max"</span></span>
 <span>    <span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="va">df_continuous_ard</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># An ARD data frame: 5 × 10</span></span></span>
+<span><span class="va">df_continuous_ard</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># An ARD data frame: 21 × 10</span></span></span>
 <span><span class="co">#&gt;   group1 group1_level variable context stat_name stat_label   stat fmt_fun</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ARM    Placebo      AGE      summary median    Median      76          1</span></span>
@@ -678,6 +678,7 @@ package.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ARM    Placebo      AGE      summary p75       Q3          82          1</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ARM    Placebo      AGE      summary mean      Mean        75.2        1</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ARM    Placebo      AGE      summary sd        SD           8.59       1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 16 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: warning &lt;list&gt;, error &lt;list&gt;</span></span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -692,8 +693,8 @@ package.</p>
 <span>    by <span class="op">=</span> <span class="va">ARM</span>,</span>
 <span>    variables <span class="op">=</span> <span class="va">AGEGR1</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="va">df_categorical_ard</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># An ARD data frame: 5 × 11</span></span></span>
+<span><span class="va">df_categorical_ard</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># An ARD data frame: 27 × 11</span></span></span>
 <span><span class="co">#&gt;   group1 group1_level variable variable_level context  stat_name   stat</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;list&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ARM    Placebo      AGEGR1   65-80          tabulate n         42    </span></span>
@@ -701,6 +702,7 @@ package.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ARM    Placebo      AGEGR1   65-80          tabulate p          0.488</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ARM    Placebo      AGEGR1   &lt;65            tabulate n         14    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ARM    Placebo      AGEGR1   &lt;65            tabulate N         86    </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: stat_label &lt;chr&gt;, fmt_fun &lt;list&gt;, warning &lt;list&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   error &lt;list&gt;</span></span></span></code></pre></div>
 </div>
@@ -719,8 +721,8 @@ specify this with the <code>values</code> argument.</p>
 <span>    variables <span class="op">=</span> <span class="va">SEX</span>,</span>
 <span>    value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>SEX <span class="op">=</span> <span class="st">"F"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="va">df_dichotomous_ard</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># An ARD data frame: 5 × 11</span></span></span>
+<span><span class="va">df_dichotomous_ard</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># An ARD data frame: 9 × 11</span></span></span>
 <span><span class="co">#&gt;   group1 group1_level         variable variable_level context   stat_name   stat</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;list&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ARM    Placebo              SEX      F              tabulate… n         53    </span></span>
@@ -728,6 +730,10 @@ specify this with the <code>values</code> argument.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ARM    Placebo              SEX      F              tabulate… p          0.616</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ARM    Xanomeline High Dose SEX      F              tabulate… n         40    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ARM    Xanomeline High Dose SEX      F              tabulate… N         84    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> ARM    Xanomeline High Dose SEX      F              tabulate… p          0.476</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> ARM    Xanomeline Low Dose  SEX      F              tabulate… n         50    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> ARM    Xanomeline Low Dose  SEX      F              tabulate… N         84    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">9</span> ARM    Xanomeline Low Dose  SEX      F              tabulate… p          0.595</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: stat_label &lt;chr&gt;, fmt_fun &lt;list&gt;, warning &lt;list&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   error &lt;list&gt;</span></span></span></code></pre></div>
 </div>
@@ -745,21 +751,15 @@ checks for our results.</p>
 <span>  <span class="va">df_dichotomous_ard</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># An ARD data frame: 57 × 11</span></span></span>
-<span><span class="co">#&gt;    group1 group1_level         variable variable_level context stat_name   stat</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;list&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ARM    Placebo              AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary median     76   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ARM    Placebo              AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary p25        69   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ARM    Placebo              AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary p75        82   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> ARM    Placebo              AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary mean       75.2 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> ARM    Placebo              AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary sd          8.59</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> ARM    Placebo              AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary min        52   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> ARM    Placebo              AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary max        89   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> ARM    Xanomeline High Dose AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary median     76   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> ARM    Xanomeline High Dose AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary p25        70.5 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> ARM    Xanomeline High Dose AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary p75        80   </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 47 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: stat_label &lt;chr&gt;, fmt_fun &lt;list&gt;, warning &lt;list&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   error &lt;list&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt;   group1 group1_level variable variable_level context stat_name stat_label  stat</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lis&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary median    Median     76   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary p25       Q1         69   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary p75       Q3         82   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary mean      Mean       75.2 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary sd        SD          8.59</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 52 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: fmt_fun &lt;list&gt;, warning &lt;list&gt;, error &lt;list&gt;</span></span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="shortcut">Shortcut<a class="anchor" aria-label="anchor" href="#shortcut"></a>
@@ -791,21 +791,15 @@ header row of the table.</p>
 <span>  <span class="fu"><a href="../reference/ard_tabulate_value.html">ard_tabulate_value</a></span><span class="op">(</span>variables <span class="op">=</span> <span class="va">SEX</span>, value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>SEX <span class="op">=</span> <span class="st">"F"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># An ARD data frame: 66 × 11</span></span></span>
-<span><span class="co">#&gt;    group1 group1_level variable variable_level context  stat_name   stat</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;list&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary  median    76    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary  p25       69    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary  p75       82    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary  mean      75.2  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary  sd         8.59 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary  min       52    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary  max       89    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> ARM    Placebo      AGEGR1   65-80          tabulate n         42    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> ARM    Placebo      AGEGR1   65-80          tabulate N         86    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> ARM    Placebo      AGEGR1   65-80          tabulate p          0.488</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 56 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: stat_label &lt;chr&gt;, fmt_fun &lt;list&gt;, warning &lt;list&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   error &lt;list&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt;   group1 group1_level variable variable_level context stat_name stat_label  stat</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lis&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary median    Median     76   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary p25       Q1         69   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary p75       Q3         82   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary mean      Mean       75.2 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ARM    Placebo      AGE      <span style="color: #949494;">&lt;NULL&gt;</span>         summary sd        SD          8.59</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 61 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: fmt_fun &lt;list&gt;, warning &lt;list&gt;, error &lt;list&gt;</span></span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -1415,21 +1409,16 @@ terms.</p>
 <span>  over_variables <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># An ARD data frame: 117 × 13</span></span></span>
-<span><span class="co">#&gt;    group1 group1_level group2 group2_level variable         variable_level      </span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>              </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       TRTA             Placebo             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       TRTA             Placebo             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       TRTA             Placebo             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       TRTA             Xanomeline High Dose</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       TRTA             Xanomeline High Dose</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       TRTA             Xanomeline High Dose</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       TRTA             Xanomeline Low Dose </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       TRTA             Xanomeline Low Dose </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       TRTA             Xanomeline Low Dose </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> TRTA   Placebo      <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       ..ard_hierarchi… TRUE                </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 107 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 7 more variables: context &lt;chr&gt;, stat_name &lt;chr&gt;, stat_label &lt;chr&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   stat &lt;list&gt;, fmt_fun &lt;list&gt;, warning &lt;list&gt;, error &lt;list&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt;   group1 group1_level group2 group2_level variable variable_level      stat_name</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       TRTA     Placebo             n        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       TRTA     Placebo             N        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       TRTA     Placebo             p        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       TRTA     Xanomeline High Do… n        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       TRTA     Xanomeline High Do… N        </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 112 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: context &lt;chr&gt;, stat_label &lt;chr&gt;, stat &lt;list&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   fmt_fun &lt;list&gt;, warning &lt;list&gt;, error &lt;list&gt;</span></span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="event-level-summaries">Event-level Summaries<a class="anchor" aria-label="anchor" href="#event-level-summaries"></a>
@@ -2011,22 +2000,16 @@ terms.</p>
 <span>  over_variables <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># An ARD data frame: 36 × 13</span></span></span>
-<span><span class="co">#&gt;    group1 group1_level         group2  </span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TRTA   Placebo              <span style="color: #BB0000;">NA</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> TRTA   Xanomeline High Dose <span style="color: #BB0000;">NA</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TRTA   Xanomeline Low Dose  <span style="color: #BB0000;">NA</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TRTA   Placebo              <span style="color: #BB0000;">NA</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TRTA   Xanomeline High Dose <span style="color: #BB0000;">NA</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TRTA   Xanomeline Low Dose  <span style="color: #BB0000;">NA</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> TRTA   Placebo              AEBODSYS</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> TRTA   Xanomeline High Dose AEBODSYS</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> TRTA   Xanomeline Low Dose  AEBODSYS</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> TRTA   Placebo              AEBODSYS</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 26 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 10 more variables: group2_level &lt;list&gt;, variable &lt;chr&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   variable_level &lt;list&gt;, context &lt;chr&gt;, stat_name &lt;chr&gt;, stat_label &lt;chr&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   stat &lt;list&gt;, fmt_fun &lt;list&gt;, warning &lt;list&gt;, error &lt;list&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt;   group1 group1_level         group2 group2_level variable                    </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> TRTA   Placebo              <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       ..ard_hierarchical_overall..</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> TRTA   Xanomeline High Dose <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       ..ard_hierarchical_overall..</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> TRTA   Xanomeline Low Dose  <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       ..ard_hierarchical_overall..</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> TRTA   Placebo              <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       AEBODSYS                    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> TRTA   Xanomeline High Dose <span style="color: #BB0000;">NA</span>     <span style="color: #949494;">&lt;NULL&gt;</span>       AEBODSYS                    </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 31 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 8 more variables: variable_level &lt;list&gt;, context &lt;chr&gt;, stat_name &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   stat_label &lt;chr&gt;, stat &lt;list&gt;, fmt_fun &lt;list&gt;, warning &lt;list&gt;, error &lt;list&gt;</span></span></span></code></pre></div>
 </div>
 </div>
   </div>
@@ -2041,7 +2024,7 @@ terms.</p>
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by <a href="http://www.danieldsjoberg.com/" class="external-link">Daniel D. Sjoberg</a>, Becca Krouse, Emily de la Rua, Davide Garolini, Malan Bosman, F. Hoffmann-La Roche AG, Alanah Jonas.</p>
+<p>Developed by <a href="http://www.danieldsjoberg.com/" class="external-link">Daniel D. Sjoberg</a>, Becca Krouse, Emily de la Rua, Davide Garolini, Malan Bosman, Alanah Jonas, F. Hoffmann-La Roche AG.</p>
 </div>
 
 <div class="pkgdown">

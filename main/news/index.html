@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cards</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.1.9006</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.1.9007</span>
       </span>
     </div>
 
@@ -76,9 +76,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.8.1.9006" id="cards-0819006">cards 0.8.1.9006<a class="anchor" aria-label="anchor" href="#cards-0819006"></a></h2>
+<h2 class="page-header" data-toc-text="0.8.1.9007" id="cards-0819007">cards 0.8.1.9007<a class="anchor" aria-label="anchor" href="#cards-0819007"></a></h2>
 <div class="section level3">
-<h3 id="performance-0-8-1-9006">Performance<a class="anchor" aria-label="anchor" href="#performance-0-8-1-9006"></a></h3>
+<h3 id="performance-0-8-1-9007">Performance<a class="anchor" aria-label="anchor" href="#performance-0-8-1-9007"></a></h3>
 <ul><li>
 <p>This release substantially reduces the run time and memory use of the ARD-building functions. Selected highlights from the <a href="https://github.com/ddsjoberg/tracking-gtsummary-cards-efficiency" class="external-link">efficiency tracking benchmarks</a>, comparing the development version to the last CRAN release:</p>
 <table class="table"><colgroup><col width="33%"><col width="33%"><col width="33%"></colgroup><thead><tr><th align="left">Function and input data</th>
@@ -124,23 +124,23 @@
 <li><p>Reduced the run time and memory use of <code><a href="../reference/sort_ard_hierarchical.html">sort_ard_hierarchical()</a></code> and <code><a href="../reference/filter_ard_hierarchical.html">filter_ard_hierarchical()</a></code>, particularly for ARDs with many hierarchy sections. Because <code><a href="../reference/sort_ard_hierarchical.html">sort_ard_hierarchical()</a></code> also runs inside <code><a href="../reference/ard_stack_hierarchical.html">ard_stack_hierarchical()</a></code>, this speeds up ARD construction as well. Results are unchanged. (<a href="https://github.com/pharmaverse/cards/issues/176" class="external-link">#176</a>)</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="new-features-and-functions-0-8-1-9006">New Features and Functions<a class="anchor" aria-label="anchor" href="#new-features-and-functions-0-8-1-9006"></a></h3>
+<h3 id="new-features-and-functions-0-8-1-9007">New Features and Functions<a class="anchor" aria-label="anchor" href="#new-features-and-functions-0-8-1-9007"></a></h3>
 <ul><li><p>Added <code><a href="../reference/diff_ard_hierarchical.html">diff_ard_hierarchical()</a></code>, which calculates the difference in event rates (the <code>p</code> statistic) between two groups of a stacked hierarchical ARD created with <code><a href="../reference/ard_stack_hierarchical.html">ard_stack_hierarchical()</a></code>, returning the result under a new <code>"estimate"</code> statistic. When there is a single <code>by</code> variable with two levels the difference defaults to the first level minus the second; otherwise the two groups are specified via the <code>levels</code> argument.</p></li>
 <li><p>Added the <code>by_level</code> argument to <code><a href="../reference/sort_ard_hierarchical.html">sort_ard_hierarchical()</a></code>, allowing <code>"descending"</code> sorting to rank variable groups by the counts observed within specific <code>by</code> variable levels (e.g. <code>by_level = list(TRTA = "Placebo")</code>) rather than the sums across all <code>by</code> variable levels. The argument accepts a named list, so any combination of <code>by</code> variables may be used. (<a href="https://github.com/pharmaverse/cards/issues/548" class="external-link">#548</a>, <a href="https://github.com/rikoprogrammer" class="external-link">@rikoprogrammer</a>)</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="other-updates-0-8-1-9006">Other Updates<a class="anchor" aria-label="anchor" href="#other-updates-0-8-1-9006"></a></h3>
+<h3 id="other-updates-0-8-1-9007">Other Updates<a class="anchor" aria-label="anchor" href="#other-updates-0-8-1-9007"></a></h3>
 <ul><li><p>ARDs now print through the pillar/tibble machinery: the header reads <code>An ARD data frame</code>, columns show their names and classes, and scalar list-column elements print their value (falling back to the standard tibble summary such as <code>&lt;chr [2]&gt;</code>, <code>&lt;fn&gt;</code>, and <code>&lt;NULL&gt;</code> for non-scalars). When the output is too wide for the console, all-<code>NULL</code> <code>error</code> and <code>warning</code> columns are dropped first, then <code>fmt_fun</code>, <code>stat_label</code>, <code>stat_fmt</code>, and <code>context</code>, before the standard tibble column shrinking; suppressed columns are listed in the footer. <code><a href="../reference/as_card.html">as_card()</a></code> now always returns a tibble so that every ARD prints this way.</p></li>
 <li><p>Character values are now sorted in the C locale throughout the package (via <code>order(method = "radix")</code>), so the ordering of <code>variable</code> and <code>group</code> levels no longer depends on the session locale and is consistent with <code><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">dplyr::arrange()</a></code>. Previously, character <code>variable</code>/<code>by</code> levels were sorted in the session locale (<code><a href="https://rdrr.io/r/base/sort.html" class="external-link">base::sort()</a></code>) while <code>strata</code> levels already used <code><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">dplyr::arrange()</a></code>; these now agree. This affects <code><a href="../reference/ard_tabulate.html">ard_tabulate()</a></code>, <code><a href="../reference/ard_summary.html">ard_summary()</a></code>, <code><a href="../reference/ard_pairwise.html">ard_pairwise()</a></code>, <code><a href="../reference/ard_tabulate_value.html">ard_tabulate_value()</a></code> (via <code><a href="../reference/maximum_variable_value.html">maximum_variable_value()</a></code>), and related functions, and differs from prior releases only for locale-sensitive character values (mixed case, punctuation).</p></li>
 <li><p><code><a href="../reference/ard_stack_hierarchical.html">ard_stack_hierarchical()</a></code> now messages when a column in the <code>by</code> argument is not present in <code>denominator</code>, clarifying that subjects with multiple values of that column are counted only once, in the last level after sorting. (<a href="https://github.com/pharmaverse/cards/issues/525" class="external-link">#525</a>, <a href="https://github.com/alanahjonas95" class="external-link">@alanahjonas95</a>)</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-0-8-1-9006">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-8-1-9006"></a></h3>
+<h3 id="bug-fixes-0-8-1-9007">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-8-1-9007"></a></h3>
 <ul><li>
 <code><a href="../reference/ard_tabulate.html">ard_tabulate()</a></code> with zero-row data and <code>strata</code>, or with an empty <code>statistic</code> vector, previously errored with internal errors; both now return an empty ARD. (<a href="https://github.com/pharmaverse/cards/issues/176" class="external-link">#176</a>)</li>
 </ul></div>
 <div class="section level3">
-<h3 id="lifecycle-changes-0-8-1-9006">Lifecycle Changes<a class="anchor" aria-label="anchor" href="#lifecycle-changes-0-8-1-9006"></a></h3>
+<h3 id="lifecycle-changes-0-8-1-9007">Lifecycle Changes<a class="anchor" aria-label="anchor" href="#lifecycle-changes-0-8-1-9007"></a></h3>
 <ul><li>Removed the deprecated handling of <code><a href="https://dplyr.tidyverse.org/reference/vars.html" class="external-link">dplyr::vars()</a></code> in selecting environments (<code><a href="../reference/process_selectors.html">cards_select()</a></code>), along with the <code><a href="https://dplyr.tidyverse.org/reference/vars.html" class="external-link">vars()</a></code> re-export. Use <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> instead.</li>
 </ul></div>
 </div>
@@ -396,7 +396,7 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by <a href="http://www.danieldsjoberg.com/" class="external-link">Daniel D. Sjoberg</a>, Becca Krouse, Emily de la Rua, Davide Garolini, Malan Bosman, F. Hoffmann-La Roche AG, Alanah Jonas.</p>
+  <p></p><p>Developed by <a href="http://www.danieldsjoberg.com/" class="external-link">Daniel D. Sjoberg</a>, Becca Krouse, Emily de la Rua, Davide Garolini, Malan Bosman, Alanah Jonas, F. Hoffmann-La Roche AG.</p>
 </div>
 
 <div class="pkgdown">

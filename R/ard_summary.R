@@ -379,8 +379,6 @@ ard_summary.data.frame <- function(data,
   # add column if not already present
   if (!new_column %in% names(x)) {
     x[[new_column]] <- vector("list", nrow(x))
-  } else if (!is.list(x[[new_column]])) {
-    x[[new_column]] <- as.list(x[[new_column]])
   }
 
   # process argument if not NULL, and update new column

@@ -103,19 +103,23 @@ nest_for_ard <- function(data, by = NULL, strata = NULL, key = "data",
   # we will now add a column to the df_return data frame of the subsetted data
   #   to do so, we partition the row indices in a single pass and slice
   if (isTRUE(include_data)) {
-    cols_to_keep <- if (!include_by_and_strata) setdiff(names(data), c(by, strata)) else names(data)
-    data_to_slice <- data[cols_to_keep]
+    data_to_slice <- data
+    if (!include_by_and_strata) data_to_slice[c(by, strata)] <- NULL
 
-    m <- vctrs::vec_match(data[names(df_return)], df_return)
-    n_groups <- nrow(df_return)
-    idx_list <- split(seq_len(nrow(data)), factor(m, levels = seq_len(n_groups)))
-    res_list <- lapply(idx_list, function(idx) {
-      sub <- data_to_slice[idx, , drop = FALSE]
-      rownames(sub) <- NULL
-      sub
-    })
-    names(res_list) <- NULL
-    df_return[[key]] <- res_list
+    # `.unique_and_sorted()` can return a bare vector where `data` holds a classed
+    #   one, because `unique()` drops the class of vectors without a method for it.
+    #   `vctrs::vec_match()` then aborts for any class it cannot coerce, so compare
+    #   the underlying values instead, as the previous `%in%` filtering did.
+    df_keys <- data[names(df_return)]
+    for (col in names(df_keys)) {
+      if (!identical(class(df_keys[[col]]), class(df_return[[col]]))) {
+        df_keys[[col]] <- unclass(df_keys[[col]])
+      }
+    }
+
+    m <- vctrs::vec_match(df_keys, df_return)
+    idx_list <- split(seq_len(nrow(data)), factor(m, levels = seq_len(nrow(df_return))))
+    df_return[[key]] <- unname(lapply(idx_list, function(idx) vctrs::vec_slice(data_to_slice, idx)))
   }
 
   # put variable levels in list to preserve types when stacked -----------------

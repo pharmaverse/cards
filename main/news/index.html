@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cards</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.9001</span>
       </span>
     </div>
 
@@ -75,6 +75,14 @@
       <small>Source: <a href="https://github.com/pharmaverse/cards/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.9.0.9001" id="cards-0909001">cards 0.9.0.9001<a class="anchor" aria-label="anchor" href="#cards-0909001"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-9-0-9001">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-9-0-9001"></a></h3>
+<ul><li><p>Fixed a bug in <code><a href="../reference/print.card.html">print.compare_ard()</a></code> where the rows present in <code>x</code> but not in <code>y</code> were announced and then not printed. (<a href="https://github.com/pharmaverse/cards/issues/605" class="external-link">#605</a>, <a href="https://github.com/malanbos" class="external-link">@malanbos</a>)</p></li>
+<li><p><code><a href="../reference/print.card.html">print.compare_ard()</a></code> now prints its tables through the ARD print method rather than coercing them with <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code>. Scalar list-column values (e.g. <code>group1_level</code>, <code>variable_level</code>, <code>stat</code>) are shown rather than collapsed, and long tables are truncated with the withheld row count reported in the footer. (<a href="https://github.com/pharmaverse/cards/issues/605" class="external-link">#605</a>)</p></li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.0" id="cards-090">cards 0.9.0<small>2026-08-21</small><a class="anchor" aria-label="anchor" href="#cards-090"></a></h2>
 <div class="section level3">

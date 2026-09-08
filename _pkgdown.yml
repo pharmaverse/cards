@@ -83,6 +83,7 @@ reference:
       - as_cards_fn
   - subtitle: "Wrangle ARD"
     contents:
+      - add_hierarchical_unobserved_levels
       - diff_ard_hierarchical
       - filter_ard_hierarchical
       - sort_ard_hierarchical

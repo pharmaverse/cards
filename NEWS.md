@@ -10,7 +10,7 @@
 
 * `compare_ard()` now compares the `columns` the two ARDs have in common, rather than throwing an error when the selection resolves to a different set in each. Comparing a formatted ARD against one that has not been formatted, for example, previously failed on the default `columns` because `apply_fmt_fun()` adds `stat_fmt`; the shared columns are now compared and a message reports those that were skipped. An error is still thrown when the two selections have nothing in common, and `keys` must still resolve to the same columns in both ARDs. (#606)
 
-* Added `add_hierarchical_unobserved_levels()` to add zero-count rows for unobserved levels (top-level categories and nested children) to a stacked hierarchical ARD. Expected levels are read from the variables' factor levels. (#602)
+* Added `add_hierarchical_unobserved_levels()` to add zero-count rows for unobserved levels (top-level categories and nested children) to a stacked hierarchical ARD. The expected level combinations are supplied as a data frame whose columns are named after the hierarchical variables. (#602, @Melkiades)
 
 # cards 0.9.0
 

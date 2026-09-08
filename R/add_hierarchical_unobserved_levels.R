@@ -7,26 +7,21 @@
 #' under an observed SOC, an unused grade) simply drops out instead of showing
 #' up with a count of zero.
 #'
-#' `add_hierarchical_unobserved_levels()` puts those rows back. Name the
-#' hierarchical variable(s) to complete and the missing levels are added with a
-#' count of zero; proportions are left as `NaN`, since a never-observed level has
-#' no one at risk (`0 / 0` is undefined) and should be recoded for display rather
-#' than asserted as zero here. The expected levels are taken from the variable's
-#' factor `levels()`, which the ARD already stores, so no reference data is
-#' needed.
+#' `add_hierarchical_unobserved_levels()` puts those rows back. Supply a data
+#' frame of the level combinations you expect to see, and any that are missing
+#' are added with a count of zero; proportions are left as `NaN`, since a
+#' never-observed level has no one at risk (`0 / 0` is undefined) and should be
+#' recoded for display rather than asserted as zero here.
 #'
 #' @param x (`card`)\cr
 #'   a stacked hierarchical ARD created with [ard_stack_hierarchical()].
-#' @param variables ([`tidy-select`][dplyr::dplyr_tidy_select])\cr
-#'   hierarchical variable(s) to complete, in hierarchy order. Use a single
-#'   variable (e.g. `variables = AESOC`) to complete the top level, or the full
-#'   set (e.g. `variables = c(AESOC, AEDECOD)`) to also fill missing children
-#'   under each observed parent.
-#' @param mapping (named `list` or `data.frame`)\cr
-#'   optional. Only needed to add children under a parent that is itself
-#'   unobserved -- factor levels cannot say which children belong there. Supply
-#'   either a named list, `list("SOC A" = c("PT1", "PT2"))`, or a two-column data
-#'   frame whose columns are named after the parent and child variables.
+#' @param levels (`data.frame`)\cr
+#'   the expected level combinations. Its columns are named after the
+#'   hierarchical variables to complete, in hierarchy order (e.g. columns
+#'   `AESOC` and `AEDECOD`), matching the `variables`/`include` of the original
+#'   [ard_stack_hierarchical()] call. Each row is a combination that should be
+#'   present: any combination not already in `x` is added as a zero-count row.
+#'   Use a single column (e.g. just `AESOC`) to complete only the top level.
 #'
 #' @return a stacked hierarchical ARD
 #' @seealso [gtsummary::tbl_hierarchical()], [ard_stack_hierarchical()], [sort_ard_hierarchical()]
@@ -36,8 +31,8 @@
 #' set.seed(1)
 #' adae <- data.frame(
 #'   USUBJID = sprintf("S%03d", 1:20),
-#'   AESOC = factor(sample(c("Cardiac", "GI"), 20, TRUE), levels = c("Cardiac", "GI", "Vascular")),
-#'   AEDECOD = factor(sample(c("PT1", "PT2"), 20, TRUE), levels = c("PT1", "PT2", "PT3"))
+#'   AESOC = sample(c("Cardiac", "GI"), 20, TRUE),
+#'   AEDECOD = sample(c("PT1", "PT2"), 20, TRUE)
 #' )
 #'
 #' ard <- ard_stack_hierarchical(
@@ -49,17 +44,17 @@
 #'
 #' # complete the top level: the unobserved SOC "Vascular" is added as a zero-row
 #' ard |>
-#'   add_hierarchical_unobserved_levels(variables = AESOC)
+#'   add_hierarchical_unobserved_levels(
+#'     levels = data.frame(AESOC = c("Cardiac", "GI", "Vascular"))
+#'   )
 #'
-#' # complete both levels: also fill the missing PT ("PT3") under each observed SOC
-#' ard |>
-#'   add_hierarchical_unobserved_levels(variables = c(AESOC, AEDECOD))
-#'
-#' # `mapping` names the children to add under the unobserved parent "Vascular"
+#' # complete both levels, including children of the unobserved parent "Vascular"
 #' ard |>
 #'   add_hierarchical_unobserved_levels(
-#'     variables = c(AESOC, AEDECOD),
-#'     mapping = list(Vascular = c("PT1", "PT2"))
+#'     levels = data.frame(
+#'       AESOC = c("Cardiac", "Cardiac", "GI", "GI", "Vascular", "Vascular"),
+#'       AEDECOD = c("PT1", "PT2", "PT1", "PT2", "PTX", "PTY")
+#'     )
 #'   )
 NULL
 
@@ -71,32 +66,38 @@ NULL
 
 #' @rdname add_hierarchical_unobserved_levels
 #' @export
-add_hierarchical_unobserved_levels <- function(x, variables, mapping = NULL) {
+add_hierarchical_unobserved_levels <- function(x, levels) {
   set_cli_abort_call()
 
   # process inputs -------------------------------------------------------------
   check_not_missing(x)
-  check_not_missing(variables)
+  check_not_missing(levels)
   check_class(x, "card")
   check_class(x, "ard_stack_hierarchical")
+  check_data_frame(levels)
 
-  # `variables` is tidy-selected against the ARD's own variable column so the
-  # helper accepts the same style of input as ard_stack_hierarchical()
+  # the columns of `levels` name the hierarchical variables to complete, in
+  # hierarchy order, and must exist in the ARD's own variable column
+  vars <- names(levels)
   var_universe <- unique(x[["variable"]])
-  scaffold <- as.data.frame(
-    stats::setNames(rep(list(logical(0)), length(var_universe)), var_universe)
-  )
-  process_selectors(scaffold, variables = {{ variables }})
-
-  if (!is.null(mapping) && !is.list(mapping) && !is.data.frame(mapping)) {
+  unknown <- setdiff(vars, var_universe)
+  if (length(unknown) > 0L) {
     cli::cli_abort(
-      "The {.arg mapping} argument must be {.code NULL}, a named {.cls list}, or a {.cls data.frame}.",
+      c(
+        "Columns of {.arg levels} must name hierarchical variables present in {.arg x}.",
+        "i" = "Unknown column{?s}: {.val {unknown}}.",
+        "i" = "Available variable{?s}: {.val {var_universe}}."
+      ),
       call = get_cli_abort_call()
     )
   }
 
-  top_var <- variables[1L]
-  child_var <- if (length(variables) >= 2L) variables[2L] else NA_character_
+  # a level column that is a factor could reintroduce the very NA-from-bad-level
+  # problem we are fixing, so compare as character throughout
+  levels[] <- lapply(levels, as.character)
+
+  top_var <- vars[1L]
+  child_var <- if (length(vars) >= 2L) vars[2L] else NA_character_
 
   # helper: first level value from a list-column (`variable_level`, `groupN_level`)
   level_chr <- function(col) {
@@ -108,18 +109,6 @@ add_hierarchical_unobserved_levels <- function(x, variables, mapping = NULL) {
       },
       character(1L)
     )
-  }
-
-  # helper: the factor levels stored in a list-column, if any. The ARD keeps the
-  # full factor (including unobserved levels) inside each list element, so the
-  # expected universe can be recovered without the original data.
-  level_universe <- function(col) {
-    for (z in col) {
-      if (is.factor(z)) {
-        return(levels(z))
-      }
-    }
-    NULL
   }
 
   # the hierarchical parent of a nested variable is stored in the last populated
@@ -160,27 +149,9 @@ add_hierarchical_unobserved_levels <- function(x, variables, mapping = NULL) {
     template
   }
 
-  # observed top-level values and the expected universe. Without a `mapping` the
-  # universe is the top variable's factor levels stored in the ARD; a `mapping`
-  # overrides that (and can introduce parents the factor levels do not contain).
-  observed_top <- unique(level_chr(x[["variable_level"]][x[["variable"]] == top_var]))
-  top_factor_levels <- level_universe(x[["variable_level"]][x[["variable"]] == top_var])
-  expected_top <- if (is.null(mapping)) {
-    top_factor_levels %||% observed_top
-  } else {
-    union(.zero_rows_expected_top(mapping, top_var), observed_top)
-  }
-  missing_top <- setdiff(expected_top, observed_top)
-
-  # child factor levels stored in the ARD, used when `mapping` is NULL
-  child_factor_levels <- if (!is.na(child_var)) {
-    level_universe(child_rows[["variable_level"]])
-  } else {
-    NULL
-  }
-
   # blueprint rows carry the correct stat structure (n/N/p, by-groups, fmt_fun).
   # one blueprint per `by`-group is preserved by taking all rows of one level.
+  observed_top <- unique(level_chr(x[["variable_level"]][x[["variable"]] == top_var]))
   blueprint_top <- x[x[["variable"]] == top_var & level_chr(x[["variable_level"]]) == observed_top[1L], ]
   # a child blueprint spans one child level under one parent, across all
   # `by`-groups; the parent level is overwritten per added row
@@ -199,27 +170,21 @@ add_hierarchical_unobserved_levels <- function(x, variables, mapping = NULL) {
 
   new_blocks <- list()
 
-  # top-level completion plus the children of any missing parent. Without a
-  # `mapping`, factor levels cannot say which children belong under an unobserved
-  # parent, so such a parent is added at the top level only.
-  for (lvl in missing_top) {
+  # top-level completion: add every expected top value not already observed
+  expected_top <- unique(levels[[top_var]])
+  expected_top <- expected_top[!is.na(expected_top)]
+  for (lvl in setdiff(expected_top, observed_top)) {
     new_blocks <- c(new_blocks, list(build_block(blueprint_top, NULL, top_var, lvl)))
-    if (!is.na(child_var) && !is.null(mapping)) {
-      for (kid in .zero_rows_children(mapping, lvl, top_var, child_var)) {
-        new_blocks <- c(new_blocks, list(build_block(blueprint_child, lvl, child_var, kid)))
-      }
-    }
   }
 
-  # nested completion: observed parent, unobserved child. Expected children come
-  # from `mapping` when supplied, otherwise from the child's factor levels.
+  # child completion: for every expected parent, add the children listed in
+  # `levels` that are not already observed under it. A newly added (unobserved)
+  # parent has no observed children, so its full child set is added -- the same
+  # code path as an observed parent, giving consistent behaviour for all levels.
   if (!is.na(child_var) && !is.na(parent_level_col)) {
-    for (parent in observed_top) {
-      expected_kids <- if (is.null(mapping)) {
-        child_factor_levels %||% character(0L)
-      } else {
-        .zero_rows_children(mapping, parent, top_var, child_var)
-      }
+    for (parent in expected_top) {
+      expected_kids <- unique(levels[[child_var]][levels[[top_var]] == parent])
+      expected_kids <- expected_kids[!is.na(expected_kids)]
       observed_kids <- unique(level_chr(
         child_rows[["variable_level"]][level_chr(child_rows[[parent_level_col]]) == parent]
       ))
@@ -236,34 +201,4 @@ add_hierarchical_unobserved_levels <- function(x, variables, mapping = NULL) {
   out <- dplyr::bind_rows(x, dplyr::bind_rows(new_blocks))
   class(out) <- class(x)
   out
-}
-
-# expected top-level values from a list (its names) or data.frame (first column)
-.zero_rows_expected_top <- function(mapping, top_var) {
-  if (is.data.frame(mapping)) {
-    if (!top_var %in% names(mapping)) {
-      cli::cli_abort(
-        "A {.cls data.frame} {.arg mapping} must contain a column named {.val {top_var}}.",
-        call = get_cli_abort_call()
-      )
-    }
-    unique(as.character(mapping[[top_var]]))
-  } else {
-    names(mapping)
-  }
-}
-
-# expected child levels for a parent from a list or data.frame mapping
-.zero_rows_children <- function(mapping, parent, top_var, child_var) {
-  if (is.data.frame(mapping)) {
-    if (!child_var %in% names(mapping)) {
-      cli::cli_abort(
-        "A {.cls data.frame} {.arg mapping} must contain a column named {.val {child_var}}.",
-        call = get_cli_abort_call()
-      )
-    }
-    as.character(unique(mapping[[child_var]][as.character(mapping[[top_var]]) == parent]))
-  } else {
-    as.character(mapping[[parent]] %||% character(0L))
-  }
 }

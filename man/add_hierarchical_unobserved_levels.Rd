@@ -4,23 +4,19 @@
 \alias{add_hierarchical_unobserved_levels}
 \title{Add Unobserved Levels to Hierarchical ARDs}
 \usage{
-add_hierarchical_unobserved_levels(x, variables, mapping = NULL)
+add_hierarchical_unobserved_levels(x, levels)
 }
 \arguments{
 \item{x}{(\code{card})\cr
 a stacked hierarchical ARD created with \code{\link[=ard_stack_hierarchical]{ard_stack_hierarchical()}}.}
 
-\item{variables}{(\code{\link[dplyr:dplyr_tidy_select]{tidy-select}})\cr
-hierarchical variable(s) to complete, in hierarchy order. Use a single
-variable (e.g. \code{variables = AESOC}) to complete the top level, or the full
-set (e.g. \code{variables = c(AESOC, AEDECOD)}) to also fill missing children
-under each observed parent.}
-
-\item{mapping}{(named \code{list} or \code{data.frame})\cr
-optional. Only needed to add children under a parent that is itself
-unobserved -- factor levels cannot say which children belong there. Supply
-either a named list, \code{list("SOC A" = c("PT1", "PT2"))}, or a two-column data
-frame whose columns are named after the parent and child variables.}
+\item{levels}{(\code{data.frame})\cr
+the expected level combinations. Its columns are named after the
+hierarchical variables to complete, in hierarchy order (e.g. columns
+\code{AESOC} and \code{AEDECOD}), matching the \code{variables}/\code{include} of the original
+\code{\link[=ard_stack_hierarchical]{ard_stack_hierarchical()}} call. Each row is a combination that should be
+present: any combination not already in \code{x} is added as a zero-count row.
+Use a single column (e.g. just \code{AESOC}) to complete only the top level.}
 }
 \value{
 a stacked hierarchical ARD
@@ -33,20 +29,18 @@ category that never occurs (an SOC with no events, a preferred term absent
 under an observed SOC, an unused grade) simply drops out instead of showing
 up with a count of zero.
 
-\code{add_hierarchical_unobserved_levels()} puts those rows back. Name the
-hierarchical variable(s) to complete and the missing levels are added with a
-count of zero; proportions are left as \code{NaN}, since a never-observed level has
-no one at risk (\code{0 / 0} is undefined) and should be recoded for display rather
-than asserted as zero here. The expected levels are taken from the variable's
-factor \code{levels()}, which the ARD already stores, so no reference data is
-needed.
+\code{add_hierarchical_unobserved_levels()} puts those rows back. Supply a data
+frame of the level combinations you expect to see, and any that are missing
+are added with a count of zero; proportions are left as \code{NaN}, since a
+never-observed level has no one at risk (\code{0 / 0} is undefined) and should be
+recoded for display rather than asserted as zero here.
 }
 \examples{
 set.seed(1)
 adae <- data.frame(
   USUBJID = sprintf("S\%03d", 1:20),
-  AESOC = factor(sample(c("Cardiac", "GI"), 20, TRUE), levels = c("Cardiac", "GI", "Vascular")),
-  AEDECOD = factor(sample(c("PT1", "PT2"), 20, TRUE), levels = c("PT1", "PT2", "PT3"))
+  AESOC = sample(c("Cardiac", "GI"), 20, TRUE),
+  AEDECOD = sample(c("PT1", "PT2"), 20, TRUE)
 )
 
 ard <- ard_stack_hierarchical(
@@ -58,17 +52,17 @@ ard <- ard_stack_hierarchical(
 
 # complete the top level: the unobserved SOC "Vascular" is added as a zero-row
 ard |>
-  add_hierarchical_unobserved_levels(variables = AESOC)
+  add_hierarchical_unobserved_levels(
+    levels = data.frame(AESOC = c("Cardiac", "GI", "Vascular"))
+  )
 
-# complete both levels: also fill the missing PT ("PT3") under each observed SOC
-ard |>
-  add_hierarchical_unobserved_levels(variables = c(AESOC, AEDECOD))
-
-# `mapping` names the children to add under the unobserved parent "Vascular"
+# complete both levels, including children of the unobserved parent "Vascular"
 ard |>
   add_hierarchical_unobserved_levels(
-    variables = c(AESOC, AEDECOD),
-    mapping = list(Vascular = c("PT1", "PT2"))
+    levels = data.frame(
+      AESOC = c("Cardiac", "Cardiac", "GI", "GI", "Vascular", "Vascular"),
+      AEDECOD = c("PT1", "PT2", "PT1", "PT2", "PTX", "PTY")
+    )
   )
 }
 \seealso{

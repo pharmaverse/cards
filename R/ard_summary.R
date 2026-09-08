@@ -378,37 +378,45 @@ ard_summary.data.frame <- function(data,
 .process_nested_list_as_df <- function(x, arg, new_column, unlist = FALSE) {
   # add column if not already present
   if (!new_column %in% names(x)) {
-    x[[new_column]] <- list(NULL)
+    x[[new_column]] <- vector("list", nrow(x))
+  } else if (!is.list(x[[new_column]])) {
+    x[[new_column]] <- as.list(x[[new_column]])
   }
 
   # process argument if not NULL, and update new column
-  if (!is_empty(arg)) {
-    df_argument <-
-      imap(
-        arg,
-        function(enlst_arg, variable) {
-          lst_stat_names <-
-            x[c("variable", "stat_name")] |>
-            dplyr::filter(.data$variable %in% .env$variable) |>
-            unique() %>%
-            {stats::setNames(as.list(.[["stat_name"]]), .[["stat_name"]])} # styler: off
+  if (!is_empty(arg) && nrow(x) > 0L) {
+    uniq_var_stat <- unique(x[c("variable", "stat_name")])
+    var_stat_map <- split(uniq_var_stat$stat_name, uniq_var_stat$variable)
 
-          compute_formula_selector(
-            data = lst_stat_names,
-            x = enlst_arg
-          ) %>%
-            # styler: off
-            {dplyr::tibble(
-              variable = variable,
-              stat_name = names(.),
-              "{new_column}" := unname(.)
-            )}
-          # styler: on
-        }
-      ) |>
-      dplyr::bind_rows()
+    arg_vars <- character()
+    arg_stats <- character()
+    arg_vals <- list()
 
-    x <- x |> dplyr::rows_update(df_argument, by = c("variable", "stat_name"), unmatched = "ignore")
+    for (variable in names(arg)) {
+      stat_names <- var_stat_map[[variable]]
+      if (is.null(stat_names) || length(stat_names) == 0L) next
+      lst_stat_names <- stats::setNames(as.list(stat_names), stat_names)
+      computed <- compute_formula_selector(
+        data = lst_stat_names,
+        x = arg[[variable]]
+      )
+      if (length(computed) > 0L) {
+        c_names <- names(computed)
+        arg_vars <- c(arg_vars, rep.int(variable, length(computed)))
+        arg_stats <- c(arg_stats, c_names)
+        arg_vals <- c(arg_vals, unname(computed))
+      }
+    }
+
+    if (length(arg_vars) > 0L) {
+      target_keys <- data.frame(variable = x$variable, stat_name = x$stat_name, stringsAsFactors = FALSE)
+      source_keys <- data.frame(variable = arg_vars, stat_name = arg_stats, stringsAsFactors = FALSE)
+      m <- vctrs::vec_match(target_keys, source_keys)
+      matched <- which(!is.na(m))
+      if (length(matched) > 0L) {
+        x[[new_column]][matched] <- arg_vals[m[matched]]
+      }
+    }
   }
 
   if (isTRUE(unlist)) {

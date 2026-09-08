@@ -101,44 +101,29 @@ nest_for_ard <- function(data, by = NULL, strata = NULL, key = "data",
   }
 
   # we will now add a column to the df_return data frame of the subsetted data
-  #   to do so, we'll construct a list of expressions that can be passed to
-  #   dplyr::filter() to subset the data frame
+  #   to do so, we partition the row indices in a single pass and slice
   if (isTRUE(include_data)) {
-    lst_filter_exprs <-
-      seq_len(nrow(df_return)) |>
-      lapply(
-        FUN = function(i) {
-          lapply(
-            X = c(by, strata),
-            FUN = function(z) {
-              expr(!!data_sym(z) %in% df_return[[!!z]][!!i])
-            }
-          )
-        }
-      )
+    cols_to_keep <- if (!include_by_and_strata) setdiff(names(data), c(by, strata)) else names(data)
+    data_to_slice <- data[cols_to_keep]
 
-    # now adding the subsetted data frames to the nested tibble
-    df_return[[key]] <-
-      lapply(
-        seq_len(nrow(df_return)),
-        FUN = function(i) {
-          data <- dplyr::filter(data, !!!lst_filter_exprs[[i]])
-
-          # remove by and strata columns, unless requested to stay
-          if (!include_by_and_strata) {
-            data <- dplyr::select(data, -all_of(.env$by), -all_of(.env$strata))
-          }
-
-          data
-        }
-      )
+    m <- vctrs::vec_match(data[names(df_return)], df_return)
+    n_groups <- nrow(df_return)
+    idx_list <- split(seq_len(nrow(data)), factor(m, levels = seq_len(n_groups)))
+    res_list <- lapply(idx_list, function(idx) {
+      sub <- data_to_slice[idx, , drop = FALSE]
+      rownames(sub) <- NULL
+      sub
+    })
+    names(res_list) <- NULL
+    df_return[[key]] <- res_list
   }
 
   # put variable levels in list to preserve types when stacked -----------------
   if (isTRUE(list_columns)) {
-    df_return <-
-      df_return |>
-      dplyr::mutate(across(.cols = -any_of(key), .fns = as.list))
+    cols_to_list <- setdiff(names(df_return), key)
+    for (col in cols_to_list) {
+      df_return[[col]] <- as.list(df_return[[col]])
+    }
   }
 
   # rename by and strata columns to group## and group##_level ------------------

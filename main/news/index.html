@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cards</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.9002</span>
       </span>
     </div>
 
@@ -76,11 +76,13 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.9.0.9001" id="cards-0909001">cards 0.9.0.9001<a class="anchor" aria-label="anchor" href="#cards-0909001"></a></h2>
+<h2 class="page-header" data-toc-text="0.9.0.9002" id="cards-0909002">cards 0.9.0.9002<a class="anchor" aria-label="anchor" href="#cards-0909002"></a></h2>
 <div class="section level3">
-<h3 id="bug-fixes-0-9-0-9001">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-9-0-9001"></a></h3>
+<h3 id="bug-fixes-0-9-0-9002">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-9-0-9002"></a></h3>
 <ul><li><p>Fixed a bug in <code><a href="../reference/print.card.html">print.compare_ard()</a></code> where the rows present in <code>x</code> but not in <code>y</code> were announced and then not printed. (<a href="https://github.com/pharmaverse/cards/issues/605" class="external-link">#605</a>, <a href="https://github.com/malanbos" class="external-link">@malanbos</a>)</p></li>
 <li><p><code><a href="../reference/print.card.html">print.compare_ard()</a></code> now prints its tables through the ARD print method rather than coercing them with <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code>. Scalar list-column values (e.g. <code>group1_level</code>, <code>variable_level</code>, <code>stat</code>) are shown rather than collapsed, and long tables are truncated with the withheld row count reported in the footer. (<a href="https://github.com/pharmaverse/cards/issues/605" class="external-link">#605</a>)</p></li>
+<li><p>Fixed a bug in <code><a href="../reference/compare_ard.html">compare_ard()</a></code> where the <code>keys</code> and <code>columns</code> arguments were not evaluated as tidyselect expressions: the selection was resolved against <code>x</code> alone and the resulting column positions were re-used on <code>y</code>. Each selection is now evaluated against both ARDs, so ARDs holding the same columns in a different order can be compared, and selecting functions may be combined with column names, e.g. <code>keys = c(all_ard_groups("levels"), "stat_name")</code>. (<a href="https://github.com/pharmaverse/cards/issues/606" class="external-link">#606</a>, <a href="https://github.com/malanbos" class="external-link">@malanbos</a>)</p></li>
+<li><p><code><a href="../reference/compare_ard.html">compare_ard()</a></code> now compares the <code>columns</code> the two ARDs have in common, rather than throwing an error when the selection resolves to a different set in each. Comparing a formatted ARD against one that has not been formatted, for example, previously failed on the default <code>columns</code> because <code><a href="../reference/apply_fmt_fun.html">apply_fmt_fun()</a></code> adds <code>stat_fmt</code>; the shared columns are now compared and a message reports those that were skipped. An error is still thrown when the two selections have nothing in common, and <code>keys</code> must still resolve to the same columns in both ARDs. (<a href="https://github.com/pharmaverse/cards/issues/606" class="external-link">#606</a>)</p></li>
 </ul></div>
 </div>
     <div class="section level2">

@@ -22,7 +22,7 @@ reported difference. check_ard_equal() returns as error if not equal."><meta pro
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cards</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.9002</span>
       </span>
     </div>
 
@@ -121,14 +121,18 @@ second ARD to compare.</p></dd>
 
 <dt id="arg-keys">keys<a class="anchor" aria-label="anchor" href="#arg-keys"></a></dt>
 <dd><p>(<code><a href="https://dplyr.tidyverse.org/reference/dplyr_tidy_select.html" class="external-link">tidy-select</a></code>)<br>
-columns identifying unique records. The intersection of the selected
-columns in both ARDs is used. Default is
+columns identifying unique records. The selection is evaluated
+separately against each ARD and must resolve to the same set of
+columns in both; otherwise an error is thrown. Default is
 <code>c(all_ard_groups(), all_ard_variables(), any_of(c("variable", "variable_level", "stat_name")))</code>.</p></dd>
 
 
 <dt id="arg-columns">columns<a class="anchor" aria-label="anchor" href="#arg-columns"></a></dt>
 <dd><p>(<code><a href="https://dplyr.tidyverse.org/reference/dplyr_tidy_select.html" class="external-link">tidy-select</a></code>)<br>
-columns to compare between the two ARDs. Default is
+columns to compare between the two ARDs. The selection is evaluated
+against each ARD, and the columns present in both are compared. When the
+two selections differ, a message reports the columns that were skipped;
+when they have nothing in common, an error is thrown. Default is
 <code>any_of(c("stat_label", "stat", "stat_fmt"))</code>.</p></dd>
 
 

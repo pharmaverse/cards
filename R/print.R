@@ -172,6 +172,10 @@ tbl_format_setup.card <- function(x, width = NULL, ...) {
 #' @export
 #' @rdname print.card
 print.compare_ard <- function(x, ...) {
+  # sub-headers sit directly beneath their section rule; the div closes itself
+  # when this function exits
+  cli::cli_div(theme = list(h3 = list("margin-top" = 0)))
+
   # print comparison details ---------------------------------------------------
   cli::cli_inform("The comparison {.arg keys} are {.val {x$keys}}.")
   cli::cli_inform("The comparison columns are {.val {x$columns}}.")
@@ -182,13 +186,13 @@ print.compare_ard <- function(x, ...) {
     cli::cli_alert_success("No rows in {.arg x} that do not appear in {.arg y}.")
   } else {
     cli::cli_h3("Rows in {.arg x} that do not appear in {.arg y}.")
-    as.data.frame(x$rows_in_x_not_y)
+    print(x$rows_in_x_not_y)
   }
   if (nrow(x$rows_in_y_not_x) == 0L) {
     cli::cli_alert_success("No rows in {.arg y} that do not appear in {.arg x}.")
   } else {
     cli::cli_h3("Rows in {.arg y} that do not appear in {.arg x}.")
-    as.data.frame(x$rows_in_y_not_x) |> print()
+    print(x$rows_in_y_not_x)
   }
 
   # print comparison results ---------------------------------------------------
@@ -199,9 +203,7 @@ print.compare_ard <- function(x, ...) {
       next
     }
     cli::cli_alert_warning("Differences found in column {.val {names(x$comparison[i])}} for {.val {nrow(x$comparison[[i]])}} rows.")
-    as.data.frame(x$comparison[[i]]) |>
-      utils::head(n = 10) |>
-      print()
+    print(x$comparison[[i]])
   }
 
   # return input invisibly -----------------------------------------------------

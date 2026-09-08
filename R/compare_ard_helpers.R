@@ -8,10 +8,15 @@
 #' @keywords internal
 #' @noRd
 .process_keys_arg <- function(x, y, keys) {
-  keys_x <- cards_select({{ keys }}, data = x)
-  keys_y <- cards_select({{ keys }}, data = y)
+  # defuse the selection once, so that it is evaluated against each ARD in turn.
+  # evaluating `{{ keys }}` twice resolves the selection against `x` and then
+  # re-uses those column positions on `y`.
+  keys <- enquo(keys)
 
-  .check_not_empty(keys_x)
+  keys_x <- cards_select(expr = keys, data = x, allow_rename = FALSE, arg_name = "keys")
+  keys_y <- cards_select(expr = keys, data = y, allow_rename = FALSE, arg_name = "keys")
+
+  .check_not_empty(keys_x, arg_name = "keys")
 
   if (!setequal(keys_x, keys_y)) {
     cli::cli_abort(
@@ -36,13 +41,22 @@
 #' @keywords internal
 #' @noRd
 .process_compare_arg <- function(x, y, columns) {
-  columns_x <- cards_select({{ columns }}, data = x)
-  columns_y <- cards_select({{ columns }}, data = y)
+  # defused for the same reason as `keys` above
+  columns <- enquo(columns)
 
-  .check_not_empty(columns_x)
-  if (!setequal(columns_x, columns_y)) {
+  columns_x <- cards_select(expr = columns, data = x, allow_rename = FALSE, arg_name = "columns")
+  columns_y <- cards_select(expr = columns, data = y, allow_rename = FALSE, arg_name = "columns")
+
+  .check_not_empty(columns_x, arg_name = "columns")
+
+  # compare the columns the two ARDs have in common, so that an ARD carrying an
+  # optional column the other does not (e.g. `stat_fmt`, added by
+  # `apply_fmt_fun()`) can still be compared on the rest
+  columns_common <- intersect(columns_x, columns_y)
+
+  if (rlang::is_empty(columns_common)) {
     cli::cli_abort(
-      c("The comparison {.arg columns} from {.arg x} and {.arg y} do not match.",
+      c("The comparison {.arg columns} from {.arg x} and {.arg y} have no columns in common.",
         "i" = "Comparison {.arg columns} in {.arg x}: {.val {columns_x}}",
         "i" = "Comparison {.arg columns} in {.arg y}: {.val {columns_y}}"
       ),
@@ -50,7 +64,19 @@
     )
   }
 
-  columns_x
+  if (!setequal(columns_x, columns_y)) {
+    only_x <- setdiff(columns_x, columns_y)
+    only_y <- setdiff(columns_y, columns_x)
+    cli::cli_inform(
+      c(
+        "!" = "Some comparison {.arg columns} are not present in both ARDs and are not compared.",
+        if (!rlang::is_empty(only_x)) c("i" = "Not present in {.arg y}: {.val {only_x}}"),
+        if (!rlang::is_empty(only_y)) c("i" = "Not present in {.arg x}: {.val {only_y}}")
+      )
+    )
+  }
+
+  columns_common
 }
 
 #' Check Argument is Not Empty
@@ -220,16 +246,6 @@
   # select relevant columns
   x <- x[c(keys, compare)]
   y <- y[c(keys, compare)]
-
-  # ensure all compare columns exist in both data frames
-  for (column in compare) {
-    if (!column %in% names(x)) {
-      x[[column]] <- vector("list", nrow(x))
-    }
-    if (!column %in% names(y)) {
-      y[[column]] <- vector("list", nrow(y))
-    }
-  }
 
   # perform inner join to compare only matching rows
   comparison <- dplyr::inner_join(

@@ -463,3 +463,82 @@ test_that("compare_ard detects differences in complex stat values from ard_ident
   result <- compare_ard(ard_base, ard_modified)
   expect_false(is_ard_equal(result))
 })
+
+test_that("compare_ard() resolves keys and columns against each ARD", {
+  ard <- ard_tabulate(ADSL, variables = SEX)
+
+  # the same ARD with its columns in a different order, as it may be returned
+  # from a source other than cards
+  ard_reordered <- dplyr::relocate(ard, "stat_label", .before = 1L)
+
+  expect_silent(result <- compare_ard(ard, ard_reordered))
+
+  expect_equal(result$keys, c("variable", "variable_level", "stat_name"))
+  expect_equal(result$columns, c("stat_label", "stat"))
+  expect_true(is_ard_equal(result))
+})
+
+test_that("compare_ard() accepts selectors combined with column names", {
+  # the same summary under two names for the treatment variable
+  ard_arm <- ard_summary(ADSL, by = ARM, variables = AGE)
+  ard_trt01a <- ard_summary(ADSL, by = TRT01A, variables = AGE)
+
+  expect_silent(
+    result <-
+      compare_ard(
+        ard_arm,
+        ard_trt01a,
+        keys = c(all_ard_groups("levels"), all_ard_variables(), "stat_name"),
+        columns = c(any_of("stat_label"), "stat")
+      )
+  )
+
+  expect_equal(result$keys, c("group1_level", "variable", "stat_name"))
+  expect_equal(result$columns, c("stat_label", "stat"))
+  expect_true(is_ard_equal(result))
+})
+
+test_that("compare_ard() error messages name the user-facing argument", {
+  ard <- ard_tabulate(ADSL, variables = SEX)
+
+  # `.check_not_empty()` reports `keys`/`columns`, not the internal locals
+  expect_snapshot(error = TRUE, compare_ard(ard, ard, keys = any_of("not_a_column")))
+  expect_snapshot(error = TRUE, compare_ard(ard, ard, columns = any_of("not_a_column")))
+
+  # an unusable selection names the argument it came from
+  expect_snapshot(error = TRUE, compare_ard(ard, ard, keys = not_a_column))
+
+  # renaming is not a valid selection here, as the names are used on both ARDs
+  expect_snapshot(error = TRUE, compare_ard(ard, ard, keys = c(foo = variable)))
+})
+
+test_that("compare_ard() compares the columns present in both ARDs", {
+  ard <- ard_summary(ADSL, by = ARM, variables = AGE)
+  # `apply_fmt_fun()` adds `stat_fmt`, which the unformatted ARD does not have,
+  # so the default `columns` selection resolves differently in each ARD
+  ard_fmt <- apply_fmt_fun(ard)
+
+  expect_message(
+    result <- compare_ard(ard_fmt, ard),
+    "not present in both ARDs"
+  )
+
+  expect_equal(result$columns, c("stat_label", "stat"))
+  expect_true(is_ard_equal(result))
+
+  # no message when the two selections agree
+  expect_silent(compare_ard(ard, ard))
+})
+
+test_that("compare_ard() errors when the comparison columns have nothing in common", {
+  ard <- ard_summary(ADSL, by = ARM, variables = AGE)
+
+  expect_snapshot(
+    error = TRUE,
+    compare_ard(
+      dplyr::select(ard, -"stat"),
+      dplyr::select(ard, -"stat_label"),
+      columns = any_of(c("stat_label", "stat"))
+    )
+  )
+})

@@ -14,11 +14,15 @@
 #' @param y (`card`)\cr
 #'   second ARD to compare.
 #' @param keys ([`tidy-select`][dplyr::dplyr_tidy_select])\cr
-#'   columns identifying unique records. The intersection of the selected
-#'   columns in both ARDs is used. Default is
+#'   columns identifying unique records. The selection is evaluated
+#'   separately against each ARD and must resolve to the same set of
+#'   columns in both; otherwise an error is thrown. Default is
 #'   `c(all_ard_groups(), all_ard_variables(), any_of(c("variable", "variable_level", "stat_name")))`.
 #' @param columns ([`tidy-select`][dplyr::dplyr_tidy_select])\cr
-#'   columns to compare between the two ARDs. Default is
+#'   columns to compare between the two ARDs. The selection is evaluated
+#'   against each ARD, and the columns present in both are compared. When the
+#'   two selections differ, a message reports the columns that were skipped;
+#'   when they have nothing in common, an error is thrown. Default is
 #'   `any_of(c("stat_label", "stat", "stat_fmt"))`.
 #' @param tolerance (`numeric(1)`)\cr
 #'   numeric tolerance passed to `all.equal()` for numeric comparisons.

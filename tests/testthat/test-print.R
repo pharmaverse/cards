@@ -61,3 +61,106 @@ test_that("print.card() keeps non-NULL warning/error columns when narrow", {
     print(ard, width = 60)
   )
 })
+
+test_that("print.compare_ard() works", {
+  # widen the console so the comparison tables print in one piece rather than
+  # being split into column chunks by `print.data.frame()`
+  withr::local_options(width = 200)
+
+  ard <- ard_tabulate(ADSL, by = "ARM", variables = "AGEGR1")
+
+  # equal ARDs
+  expect_snapshot(
+    compare_ard(ard, ard)
+  )
+
+  # ARDs that differ in both their rows and their values: `x` holds the rows
+  # for the ">80" age group and `y` does not, and the percentages differ
+  ard_subset <-
+    ard_tabulate(
+      dplyr::filter(ADSL, AGEGR1 != ">80"),
+      by = "ARM",
+      variables = "AGEGR1"
+    )
+
+  expect_snapshot(
+    compare_ard(ard, ard_subset)
+  )
+
+  # rows in `y` that do not appear in `x`
+  expect_snapshot(
+    compare_ard(ard_subset, ard)
+  )
+})
+
+test_that("print.compare_ard() prints both mis-matched row blocks", {
+  # widen the console so the comparison tables print in one piece rather than
+  # being split into column chunks by `print.data.frame()`
+  withr::local_options(width = 200)
+
+  # each ARD holds an age group the other does not, so both blocks print
+  ard_no_high <-
+    ard_tabulate(
+      dplyr::filter(ADSL, AGEGR1 != ">80"),
+      by = "ARM",
+      variables = "AGEGR1"
+    )
+  ard_no_low <-
+    ard_tabulate(
+      dplyr::filter(ADSL, AGEGR1 != "<65"),
+      by = "ARM",
+      variables = "AGEGR1"
+    )
+
+  expect_snapshot(
+    compare_ard(ard_no_high, ard_no_low)
+  )
+})
+
+test_that("print.compare_ard() prints the mis-matched rows themselves (#605)", {
+  ard <- ard_tabulate(ADSL, by = "ARM", variables = "AGEGR1")
+  ard_subset <-
+    ard_tabulate(
+      dplyr::filter(ADSL, AGEGR1 != ">80"),
+      by = "ARM",
+      variables = "AGEGR1"
+    )
+
+  # the ">80" rows appear in only one of the two ARDs, so they are never part
+  # of the comparison tables -- seeing ">80" on stdout means the mis-matched
+  # row block itself printed. `cli` writes to stderr, so it is not captured
+  # here. Asserted outside of a snapshot so that regenerating the snapshots
+  # cannot quietly accept the output going missing again.
+  expect_output(
+    print(compare_ard(ard, ard_subset)),
+    ">80",
+    fixed = TRUE
+  )
+  expect_output(
+    print(compare_ard(ard_subset, ard)),
+    ">80",
+    fixed = TRUE
+  )
+})
+
+test_that("print.compare_ard() truncates long mis-matched row blocks", {
+  # widen the console so the comparison tables print in one piece rather than
+  # being split into column chunks by `print.data.frame()`
+  withr::local_options(width = 200)
+
+  # 17 sites x 3 statistics, of which only two sites survive the filter, so the
+  # block is far longer than the console can hold and is truncated by the ARD
+  # print method with the withheld row count in the footer
+  ard <- ard_tabulate(ADSL, variables = "SITEID")
+  ard_two_sites <-
+    ard_tabulate(
+      dplyr::filter(ADSL, SITEID %in% c("701", "703")),
+      variables = "SITEID"
+    )
+
+  expect_equal(nrow(compare_ard(ard, ard_two_sites)$rows_in_x_not_y), 45L)
+
+  expect_snapshot(
+    compare_ard(ard, ard_two_sites)
+  )
+})

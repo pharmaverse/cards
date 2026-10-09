@@ -77,7 +77,7 @@ get_ard_statistics <- function(x,
 #' cards:::.create_list_for_attributes(ard, c("group1", "group1_level"), 1)
 .create_list_for_attributes <- function(ard_subset, attributes, i) {
   ret <- list()
-  for (attr in seq_along(attributes)) {
+  for (attr in attributes) {
     ret <- c(ret, list(ard_subset[[attr]][[i]]))
   }
   stats::setNames(ret, nm = attributes)

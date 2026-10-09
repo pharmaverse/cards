@@ -2,6 +2,8 @@
 
 ## Bug Fixes
 
+* Fixed a bug in `get_ard_statistics()` where the `.attributes` argument attached the values of the first columns of the ARD, rather than the values of the columns named in the argument. (#611, @alanahjonas95)
+
 * Fixed a bug in `print.compare_ard()` where the rows present in `x` but not in `y` were announced and then not printed. (#605, @malanbos)
 
 * `print.compare_ard()` now prints its tables through the ARD print method rather than coercing them with `as.data.frame()`. Scalar list-column values (e.g. `group1_level`, `variable_level`, `stat`) are shown rather than collapsed, and long tables are truncated with the withheld row count reported in the footer. (#605)

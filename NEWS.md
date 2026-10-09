@@ -1,5 +1,9 @@
 # cards 0.9.0.9002
 
+## New Features and Functions
+
+* Added function `get_ard_stat_string()` to return formatted statistics from an ARD combined into a single string, e.g. `"42 / 86 (48.8%)"`. The statistics are inserted into a glue `pattern` such as `"{n} / {N} ({p}%)"`. (#452)
+
 ## Bug Fixes
 
 * Fixed a bug in `print.compare_ard()` where the rows present in `x` but not in `y` were announced and then not printed. (#605, @malanbos)

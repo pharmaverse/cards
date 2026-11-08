@@ -57,12 +57,7 @@ bind_ard <- function(..., .distinct = TRUE, .update = FALSE, .order = FALSE, .qu
         "*" = "See {.help [cards::bind_ard(.distinct)](cards::bind_ard)} for details."
       ))
     }
-    data <-
-      dplyr::filter(
-        data,
-        .by = c(all_ard_groups(), all_ard_variables(), "stat_name"),
-        dplyr::row_number() == dplyr::n()
-      )
+    data <- data[!rev(not_distinct), ]
   }
 
   # check for duplicate stat_name ----------------------------------------------

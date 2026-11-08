@@ -2,6 +2,8 @@
 
 ## Bug Fixes
 
+* `bind_ard()` no longer silently removes conflicting statistics when exact duplicates are also present. (#614, @algoria-contributions)
+
 * Fixed a bug in `print.compare_ard()` where the rows present in `x` but not in `y` were announced and then not printed. (#605, @malanbos)
 
 * `print.compare_ard()` now prints its tables through the ARD print method rather than coercing them with `as.data.frame()`. Scalar list-column values (e.g. `group1_level`, `variable_level`, `stat`) are shown rather than collapsed, and long tables are truncated with the withheld row count reported in the footer. (#605)

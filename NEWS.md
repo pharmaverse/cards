@@ -1,5 +1,9 @@
 # cards 0.9.0.9003
 
+## New Features and Functions
+
+* Added function `get_ard_stat_string()` to return formatted statistics from an ARD combined into a single string, e.g. `"42 / 86 (48.8%)"`. The statistics are inserted into a glue `pattern` such as `"{n} / {N} ({p}%)"`. (#452)
+
 ## Bug Fixes
 
 * Fixed a bug in `get_ard_statistics()` where the `.attributes` argument attached the values of the first columns of the ARD, rather than the values of the columns named in the argument. (#611, @alanahjonas95)

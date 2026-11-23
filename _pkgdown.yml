@@ -89,6 +89,7 @@ reference:
       - shuffle_ard
       - as_nested_list
       - get_ard_statistics
+      - get_ard_stat_string
       - replace_null_statistic
       - rename_ard_groups
       - compare_ard

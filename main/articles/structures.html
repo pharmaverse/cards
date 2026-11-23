@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cards</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.9003</span>
       </span>
     </div>
 
@@ -176,7 +176,7 @@ frame to be converted to a JSON object.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ard</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/as_nested_list.html">as_nested_list</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span>pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span>pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; {</span></span>
 <span><span class="co">#&gt;   "variable": {</span></span>
 <span><span class="co">#&gt;     "AGE": {</span></span>
@@ -193,7 +193,7 @@ frame to be converted to a JSON object.</p>
 <span><span class="co">#&gt;                   "context": ["summary"]</span></span>
 <span><span class="co">#&gt;                 },</span></span>
 <span><span class="va">...</span></span></code></pre></div>
-<p>Use the <code><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html" class="external-link">jsonlite::write_json()</a></code> function to convert to
+<p>Use the <code><a href="https://rdrr.io/pkg/jsonlite/man/read_json.html" class="external-link">jsonlite::write_json()</a></code> function to convert to
 JSON and write to disk simultaneously.</p>
 </div>
 <div class="section level2">
@@ -217,7 +217,7 @@ Using the {plumber} package, an API can be created in a
 <span></span>
 <span>  <span class="va">ard</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/as_nested_list.html">as_nested_list</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>The following code serves the API, making it available for testing.
 Note: “plumber.R” represents the path to the <code>plumber.R</code> file
@@ -238,7 +238,7 @@ converted back to a nested list using {jsonlite}.</p>
 <span></span>
 <span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="st">"http://127.0.0.1:8000/nested_json"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
   </div>
 

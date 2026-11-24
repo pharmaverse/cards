@@ -2,7 +2,7 @@
 
 ## New Features and Functions
 
-* Added `add_hierarchical_zero_rows()` to add zero-count rows to `ard_stack_hierarchical()` and `ard_stack_hierarchical_count()` results for the level combinations that do not occur in the data, e.g. an SOC with no events. The expected combinations are passed as a data frame with columns named after the hierarchy variables. (#602, @Melkiades)
+* Added `complete_ard_hierarchical()` to add zero-count rows to `ard_stack_hierarchical()` and `ard_stack_hierarchical_count()` results for the level combinations that do not occur in the data, e.g. an SOC with no events. The expected combinations are passed as a data frame with columns named after the hierarchy variables. (#602, @Melkiades)
 
 ## Bug Fixes
 

@@ -1,19 +1,19 @@
-#' Add Zero Rows to Stacked Hierarchical ARDs
+#' Complete Stacked Hierarchical ARDs
 #'
 #' @description `r lifecycle::badge('experimental')`\cr
 #'
 #' A stacked hierarchical ARD only has rows for the levels observed in the data:
 #' an SOC with no events, or an AE never reported under an SOC, has no rows.
 #'
-#' `add_hierarchical_zero_rows()` adds these rows. Pass the level
-#' combinations you expect in `levels`: each combination missing from `x` is
-#' added with `n = 0`, the denominator `N` of its `by` group, and `p = 0`. As in
-#' the rest of the ARD, `p` is `NaN` only when the `by` group is empty (`N = 0`).
+#' `complete_ard_hierarchical()` adds these rows. Pass the level combinations
+#' you expect in `combinations`: each one missing from `x` is added with
+#' `n = 0`, the denominator `N` of its `by` group, and `p = 0`. As in the rest
+#' of the ARD, `p` is `NaN` only when the `by` group is empty (`N = 0`).
 #'
 #' @param x (`card`)\cr
 #'   a stacked hierarchical ARD of class `'card'` created using [ard_stack_hierarchical()] or
 #'   [ard_stack_hierarchical_count()].
-#' @param levels (`data.frame`)\cr
+#' @param combinations (`data.frame`)\cr
 #'   the expected level combinations, one per row. The columns are named after the
 #'   hierarchy variables of `x` and start from the top of the hierarchy, e.g. `AESOC`
 #'   alone, or `AESOC` and `AEDECOD`. Their order does not matter.
@@ -28,7 +28,7 @@
 #'
 #' @return an ARD data frame of class 'card'
 #' @seealso [sort_ard_hierarchical()]
-#' @name add_hierarchical_zero_rows
+#' @name complete_ard_hierarchical
 #'
 #' @examplesIf (identical(Sys.getenv("NOT_CRAN"), "true") || identical(Sys.getenv("IN_PKGDOWN"), "true"))
 #' # AEs of two SOCs: no severe AE is reported for EYE DISORDERS,
@@ -46,44 +46,44 @@
 #'   )
 #'
 #' # add the SOC with no severe AEs
-#' add_hierarchical_zero_rows(ard, levels = dplyr::distinct(adae, AESOC))
+#' complete_ard_hierarchical(ard, combinations = dplyr::distinct(adae, AESOC))
 #'
 #' # add every SOC/AE combination of the two SOCs
-#' add_hierarchical_zero_rows(ard, levels = dplyr::distinct(adae, AESOC, AEDECOD))
+#' complete_ard_hierarchical(ard, combinations = dplyr::distinct(adae, AESOC, AEDECOD))
 NULL
 
-#' @rdname add_hierarchical_zero_rows
+#' @rdname complete_ard_hierarchical
 #' @export
-add_hierarchical_zero_rows <- function(x, levels) {
+complete_ard_hierarchical <- function(x, combinations) {
   set_cli_abort_call()
 
   # check inputs ---------------------------------------------------------------
   check_not_missing(x)
-  check_not_missing(levels)
+  check_not_missing(combinations)
   check_class(x, c("ard_stack_hierarchical", "ard_stack_hierarchical_count"))
-  check_data_frame(levels)
+  check_data_frame(combinations)
 
   ard_args <- attributes(x)$args
   variables <- ard_args$variables
 
-  # the columns of `levels` are the top hierarchy variables, in any order
-  top_variables <- variables[seq_len(ncol(levels))]
-  if (ncol(levels) == 0L || !setequal(names(levels), top_variables)) {
+  # the columns of `combinations` are the top hierarchy variables, in any order
+  top_variables <- variables[seq_len(ncol(combinations))]
+  if (ncol(combinations) == 0L || !setequal(names(combinations), top_variables)) {
     cli::cli_abort(
       c(
-        "The columns of {.arg levels} must be hierarchy variables of {.arg x}, starting from the top.",
+        "The columns of {.arg combinations} must be hierarchy variables of {.arg x}, starting from the top.",
         i = "The hierarchy variables of {.arg x}, from the top, are {.val {variables}}."
       ),
       call = get_cli_abort_call()
     )
   }
-  if (anyNA(levels)) {
+  if (anyNA(combinations)) {
     cli::cli_abort(
-      "The {.arg levels} argument cannot contain missing values.",
+      "The {.arg combinations} argument cannot contain missing values.",
       call = get_cli_abort_call()
     )
   }
-  levels <- dplyr::distinct(levels[top_variables])
+  combinations <- dplyr::distinct(combinations[top_variables])
 
   # only the variables with summary rows in `x` get new rows, and only `n`, `N`
   # and `p` have a known value for an unobserved level
@@ -107,7 +107,7 @@ add_hierarchical_zero_rows <- function(x, levels) {
       \(variable) {
         .unobserved_level_rows(
           x = x[is_summary_row & x$variable == variable, ],
-          levels = levels,
+          combinations = combinations,
           variable = variable,
           ancestors = variables[seq_len(match(variable, variables) - 1L)]
         )
@@ -124,18 +124,18 @@ add_hierarchical_zero_rows <- function(x, levels) {
     sort_ard_hierarchical(sort = "alphanumeric")
 }
 
-# rows for the combinations of `levels` missing from `x`, the summary rows of
+# rows for the combinations in `combinations` missing from `x`, the summary rows of
 # `variable`. Each layout of `x` (one per set of group columns: with the `by`
 # variables, or overall without them) is completed from a template, the rows of
 # one observed level, which hold every `by` group with its denominator `N`
-.unobserved_level_rows <- function(x, levels, variable, ancestors) {
+.unobserved_level_rows <- function(x, combinations, variable, ancestors) {
   if (nrow(x) == 0L) {
     cli::cli_abort(
       "Cannot add levels for {.val {variable}}: {.arg x} has no rows for this variable to copy.",
       call = get_cli_abort_call()
     )
   }
-  expected <- dplyr::distinct(levels[c(ancestors, variable)])
+  expected <- dplyr::distinct(combinations[c(ancestors, variable)])
   expected_chr <- dplyr::mutate(expected, across(everything(), as.character))
   group_cols <- grep("^group[0-9]+$", names(x), value = TRUE)
 
@@ -165,7 +165,7 @@ add_hierarchical_zero_rows <- function(x, levels) {
         new[[level_cols[i]]] <- .as_levels_like(
           missing[[i]][i_missing],
           like = template[[level_cols[i]]][[1L]],
-          arg = paste0("levels$", names(missing)[i])
+          arg = paste0("combinations$", names(missing)[i])
         )
       }
 

@@ -2,6 +2,8 @@
 
 ## Bug Fixes
 
+* `bind_ard()` no longer silently removes conflicting statistics when exact duplicates are also present. (#614, @algoria-contributions)
+
 * Fixed a bug in `get_ard_statistics()` where the `.attributes` argument attached the values of the first columns of the ARD, rather than the values of the columns named in the argument. (#611, @alanahjonas95)
 
 * Fixed a bug in `print.compare_ard()` where the rows present in `x` but not in `y` were announced and then not printed. (#605, @malanbos)

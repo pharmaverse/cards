@@ -1,5 +1,9 @@
 # cards 0.9.0.9003
 
+## New Features and Functions
+
+* Added `complete_ard_hierarchical()` to add zero-count rows to `ard_stack_hierarchical()` and `ard_stack_hierarchical_count()` results for the level combinations that do not occur in the data, e.g. an SOC with no events. The expected combinations are passed as a data frame with columns named after the hierarchy variables. (#602, @Melkiades)
+
 ## Bug Fixes
 
 * Fixed a bug in `get_ard_statistics()` where the `.attributes` argument attached the values of the first columns of the ARD, rather than the values of the columns named in the argument. (#611, @alanahjonas95)

@@ -12,7 +12,7 @@
       bind_ard(ard, ard, .distinct = FALSE, .update = FALSE)
     Condition
       Error in `bind_ard()`:
-      ! 27 rows with duplicated statistic names have been found.
+      ! 27 rows with duplicated statistic names have been found: "AGEGR1: n", "AGEGR1: N", and "AGEGR1: p".
       i See cards::bind_ard(.update) (`?cards::bind_ard()`) for details.
 
 # bind_ard() .order argument works
@@ -90,4 +90,57 @@
       6 AGE      summary p75       Q3          81          1 <NULL>  <NULL>
       7 AGE      summary min       Min         51          1 <NULL>  <NULL>
       8 AGE      summary max       Max         89          1 <NULL>  <NULL>
+
+# bind_ard() names the duplicated statistics
+
+    Code
+      bind_ard(a, b)
+    Message
+      i 1 row with duplicated statistic values has been removed.
+      * See cards::bind_ard(.distinct) (`?cards::bind_ard()`) for details.
+    Condition
+      Error in `bind_ard()`:
+      ! 1 row with duplicated statistic names has been found: "AGE: mean".
+      i See cards::bind_ard(.update) (`?cards::bind_ard()`) for details.
+
+---
+
+    Code
+      res <- bind_ard(a, b, .update = TRUE)
+    Message
+      i 1 row with duplicated statistic values has been removed.
+      * See cards::bind_ard(.distinct) (`?cards::bind_ard()`) for details.
+      i 1 row with duplicated statistic names has been removed: "AGE: mean".
+      * See cards::bind_ard(.update) (`?cards::bind_ard()`) for details.
+
+---
+
+    Code
+      res <- bind_ard(dplyr::select(a, -context), dplyr::select(b, -context),
+      .update = TRUE)
+    Message
+      i 1 row with duplicated statistic values has been removed.
+      * See cards::bind_ard(.distinct) (`?cards::bind_ard()`) for details.
+      i 1 row with duplicated statistic names has been removed: "AGE: mean".
+      * See cards::bind_ard(.update) (`?cards::bind_ard()`) for details.
+
+# bind_ard(.update) says when it replaces a statistic from another context
+
+    Code
+      bind_ard(ard_subjects, ard_events, .quiet = TRUE)
+    Condition
+      Error in `bind_ard()`:
+      ! 795 rows with duplicated statistic names have been found: "AESOC: n" and "AEDECOD: n".
+      i See cards::bind_ard(.update) (`?cards::bind_ard()`) for details.
+
+---
+
+    Code
+      res <- bind_ard(ard_subjects, ard_events, .update = TRUE)
+    Message
+      i 9 rows with duplicated statistic values have been removed.
+      * See cards::bind_ard(.distinct) (`?cards::bind_ard()`) for details.
+      i 795 rows with duplicated statistic names have been removed: "AESOC: n" and "AEDECOD: n".
+      ! Replaced by a statistic from another context: "AESOC: n (hierarchical -> hierarchical_count)" and "AEDECOD: n (hierarchical -> hierarchical_count)".
+      * See cards::bind_ard(.update) (`?cards::bind_ard()`) for details.
 

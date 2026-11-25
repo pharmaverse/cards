@@ -64,11 +64,16 @@ bind_ard <- function(..., .distinct = TRUE, .update = FALSE, .order = FALSE, .qu
   dupes <-
     dplyr::select(data, all_ard_groups(), all_ard_variables(), "stat_name")[seq(nrow(data), 1L), ] |>
     duplicated()
+  # the rows followed by a row with the same groups, variables and statistic name
+  replaced <- rev(dupes)
+  duplicated_stats <- .duplicated_stat_names(data, replaced)
 
   if (any(dupes) && isTRUE(.update)) {
     if (isFALSE(.quiet)) {
+      context_changes <- .context_changes(data, replaced)
       cli::cli_inform(c(
-        "i" = "{sum(dupes)} row{?s} with {.emph duplicated statistic names} {?has/have} been removed.",
+        "i" = "{sum(dupes)} row{?s} with {.emph duplicated statistic names} {?has/have} been removed: {.val {duplicated_stats}}.",
+        "!" = if (!is_empty(context_changes)) "Replaced by a statistic from another {.field context}: {.val {context_changes}}.",
         "*" = "See {.help [cards::bind_ard(.update)](cards::bind_ard)} for details."
       ))
     }
@@ -81,7 +86,7 @@ bind_ard <- function(..., .distinct = TRUE, .update = FALSE, .order = FALSE, .qu
   } else if (any(dupes) && isFALSE(.update)) {
     cli::cli_abort(
       c(
-        "!" = "{sum(dupes)} row{?s} with {.emph duplicated statistic names} {?has/have} been found.",
+        "!" = "{sum(dupes)} row{?s} with {.emph duplicated statistic names} {?has/have} been found: {.val {duplicated_stats}}.",
         "i" = "See {.help [cards::bind_ard(.update)](cards::bind_ard)} for details."
       ),
       call = get_cli_abort_call()
@@ -100,4 +105,42 @@ bind_ard <- function(..., .distinct = TRUE, .update = FALSE, .order = FALSE, .qu
   class(res) <- c("bind_ard", class(res))
 
   res
+}
+
+#' Duplicated Statistic Names
+#'
+#' @param data (`card`)\cr stacked ARDs
+#' @param rows (`logical`)\cr the rows with a duplicated statistic name
+#'
+#' @return unique character vector of `"<variable>: <stat_name>"`, e.g. `"AGE: mean"`
+#' @keywords internal
+#' @noRd
+.duplicated_stat_names <- function(data, rows) {
+  unique(paste0(data$variable[rows], ": ", data$stat_name[rows], recycle0 = TRUE))
+}
+
+#' Statistics Replaced From Another Context
+#'
+#' @param data (`card`)\cr stacked ARDs
+#' @param replaced (`logical`)\cr the rows followed by a row with the same groups,
+#'   variables and statistic name, which `bind_ard(.update = TRUE)` removes
+#'
+#' @return unique character vector of `"<variable>: <stat_name> (<context> -> <context>)"`
+#'   for the removed rows whose replacement has another context; empty without a `context` column
+#' @keywords internal
+#' @noRd
+.context_changes <- function(data, replaced) {
+  if (!"context" %in% names(data)) {
+    return(character(0L))
+  }
+  key <- vctrs::vec_group_id(dplyr::select(data, all_ard_groups(), all_ard_variables(), "stat_name"))
+  kept <- which(!replaced)
+  new_context <- data$context[kept][match(key, key[kept])]
+  changed <- replaced & !vctrs::vec_equal(data$context, new_context, na_equal = TRUE)
+
+  unique(paste0(
+    data$variable[changed], ": ", data$stat_name[changed],
+    " (", data$context[changed], " -> ", new_context[changed], ")",
+    recycle0 = TRUE
+  ))
 }

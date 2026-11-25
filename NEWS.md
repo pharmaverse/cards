@@ -1,8 +1,12 @@
 # cards 0.9.0.9002
 
+## Other Updates
+
+* `bind_ard()` names the duplicated statistics in its error and in its `.update` message, and says when `.update` replaces a statistic with one from another `context`. (#614, @Melkiades)
+
 ## Bug Fixes
 
-* `bind_ard()` no longer silently removes conflicting statistics when exact duplicates are also present. (#614, @algoria-contributions)
+* `bind_ard()` now errors on conflicting statistics also when the ARDs share an exact duplicate, instead of silently keeping the last one. (#614, @algoria-contributions)
 
 * Fixed a bug in `print.compare_ard()` where the rows present in `x` but not in `y` were announced and then not printed. (#605, @malanbos)
 

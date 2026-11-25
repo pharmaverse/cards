@@ -127,3 +127,24 @@ test_that("bind_ard() preserves grouping and variable keys", {
     as.data.frame(b)
   )
 })
+
+test_that("bind_ard() names the duplicated statistics", {
+  a <- ard_summary(ADSL, variables = AGE, statistic = ~ continuous_summary_fns(c("mean", "sd")))
+  b <- a
+  b$stat[b$stat_name == "mean"] <- list(999)
+
+  expect_snapshot(error = TRUE, bind_ard(a, b))
+  expect_snapshot(res <- bind_ard(a, b, .update = TRUE))
+  # ARDs without a context column
+  expect_snapshot(res <- bind_ard(dplyr::select(a, -context), dplyr::select(b, -context), .update = TRUE))
+})
+
+test_that("bind_ard(.update) says when it replaces a statistic from another context", {
+  ard_subjects <- ard_stack_hierarchical(ADAE, variables = c(AESOC, AEDECOD), by = TRTA, denominator = ADSL, id = USUBJID)
+  ard_events <- ard_stack_hierarchical_count(ADAE, variables = c(AESOC, AEDECOD), by = TRTA, denominator = ADSL)
+
+  expect_snapshot(error = TRUE, bind_ard(ard_subjects, ard_events, .quiet = TRUE))
+  expect_snapshot(res <- bind_ard(ard_subjects, ard_events, .update = TRUE))
+  # the subject counts were replaced by the event counts
+  expect_equal(unique(res$context[res$variable == "AEDECOD" & res$stat_name == "n"]), "hierarchical_count")
+})
